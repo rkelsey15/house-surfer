@@ -9,7 +9,7 @@ const monthYear = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 's
 // Shell version of the profile. Karma, homes rated, comments, activity and
 // badges are filled in during later steps.
 export default function Profile() {
-  const { profile, clearProfile } = useProfile()
+  const { profile } = useProfile()
   const { count, karmaFromRatings } = useRatings()
   const { count: commentCount, karmaFromComments } = useComments()
 
@@ -34,9 +34,7 @@ export default function Profile() {
       </div>
       <div className="setting">
         <span>Surfer name</span>
-        <button className="btn" onClick={clearProfile}>
-          Change name
-        </button>
+        <span className="muted small">{profile.handle} · locked</span>
       </div>
     </div>
   )

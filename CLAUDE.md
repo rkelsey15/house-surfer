@@ -31,7 +31,7 @@ In the portfolio case study it's pitched as "Zillow Surfer", a concept for Zillo
 
 ## Progress
 
-Last updated: Nov 15, 2026 (after step 4). Repo: https://github.com/rkelsey15/house-surfer (branch `main`). Update this section at the end of every step.
+Last updated: Nov 15, 2026 (after step 5). Repo: https://github.com/rkelsey15/house-surfer (branch `main`). Update this section at the end of every step.
 
 ### Steps done
 
@@ -43,8 +43,8 @@ Last updated: Nov 15, 2026 (after step 4). Repo: https://github.com/rkelsey15/ho
 
 - [x] **3. Feed.** `src/screens/Surf.jsx`: shuffled queue of unrated homes, 1 to 5 stars, Skip / Next (Next needs a rating). Ratings live in `src/lib/RatingsContext.jsx` (`useRatings()`, key `hs.ratings`, `{homeId: {stars, at}}`). Karma pill and Profile now show real karma (+5 per rating) and homes rated. The Comments button is disabled until step 4.
 - [x] **4. Home page.** `src/screens/HomePage.jsx`, route `/#/home/:id`, opened from the Surf screen's Comments button. Shows the average and count, your editable rating, threaded comments (replies one level deep, 280 characters max), likes, and edit (marked "edited") and delete for your own. Comments live in `src/lib/CommentsContext.jsx` (`useComments()`), stored as three tables shaped like the V2 database: `hs.comments` (id, home_id, parent_id, user, body, created_at, edited_at, deleted_at), `hs.comment_edits` (comment_id, old_body, edited_at) and `hs.likes` (comment_id, user, created_at; one per user per comment). Like counts and karma are computed from these rows, never stored. Deleting sets `deleted_at` and keeps the row, its edit history and its likes. The screen shows "[deleted]" if the comment still has replies and hides it if not; deleted comments stop earning karma. Karma is +5 per rating, +10 per comment, +1 per like received. Sample comments and ratings come from `src/lib/sampleData.js` (made up, generated from the home id, never saved). The Surf feed now remembers its place when you come Back from a home page.
-- [ ] 5. **(next)** Map and list (Leaflet). Reuse `HouseArt` on the map card and list, and link to `/home/:id`.
-- [ ] 6. Snap a house (3 nearest homes)
+- [x] **5. Map and list.** `src/screens/MapScreen.jsx`, route `/#/map`. Leaflet (react-leaflet) with OpenStreetMap tiles and attribution, canvas circle pins sized by zoom. Pin colors: green 4+ stars, orange hot this week (2+ comments in 7 days), gold rated under 4, gray unrated (no ratings at all). Search by street, filters All/Top rated/Unrated plus a style dropdown. Tap a pin for a card with `HouseArt` linking to `/home/:id`. Phone: Map/List toggle; desktop (900px+): list left, map right. Averages and hot come from `src/lib/homeStats.js` (`useHomeStats`), using the same sample ratings as the home page. Search, filters and map position are remembered while the app is open. Dark mode darkens the tiles with a CSS filter.
+- [ ] 6. **(next)** Snap a house (3 nearest homes)
 - [ ] 7. Moderation (rule-based block on comments about people)
 - [ ] 8. Profile (karma, homes rated, comments, activity, locked badges)
 - [ ] 9. Event logging and `/stats`
@@ -56,6 +56,7 @@ Step numbers match the "V1 scope" list above.
 
 - **Townhouses:** kept in `homes.json` (type `Townhouse`), hidden in V1 by the feature flag `showTownhouses` in `src/config.js` (default `false`). The flag is applied in one place, `src/lib/HomesContext.jsx`, so always get homes from `useHomes()`, never fetch `homes.json` directly.
 - **Naming:** user posts are called "comments" everywhere: the app, code, storage keys, CLAUDE.md, `docs/PRD.md`, `README.md` and `design/prototype.html` (renamed from "takes" on Nov 15, 2026, including event names like `comment_posted`). Use "comments" in code, keys and screen text.
+- **Handle is locked after sign-up** (Nov 15, 2026): no rename in V1. `ProfileContext` has no clear/rename function; Profile shows the handle as "locked".
 - **Style is a rough era tag** (Victorian era, Craftsman era, Pre-war, Mid-century, Late century, Modern) from year built, because county data has no architectural style.
 - **Privacy in the data:** pin locations are fuzzed 25 to 50 m by the pipeline and the exact point is never saved; ids are hashes, not parcel numbers; only the last sale *year* is kept (no prices, no names); numbers under 100 show as "0–99 block".
 - **Storage:** everything saved in the browser uses keys starting with `hs.` through `src/lib/storage.js` (safe if storage is blocked). Existing keys: `hs.profile` (handle and join date), `hs.theme`. Use the same pattern (`useStoredState`) for ratings, comments and events.
@@ -68,7 +69,7 @@ Step numbers match the "V1 scope" list above.
 - Likes received (+1 karma) are computed already but stay 0 in single-player (you can't like your own comments) until V2. Sample comments have made-up like rows; a like you give a sample comment is saved with that sample id, so V2 needs to ignore or drop those.
 - `src/lib/moderation.js` `checkComment()` is a placeholder that lets everything through. Step 7 fills it in; the comment box already shows its message.
 - Profile "recent activity" and Top screen should use `useComments()` and `useRatings()`.
-- The `/map`, `/snap` and `/top` routes in `src/App.jsx` are `ComingSoon` placeholders.
+- The `/snap` and `/top` routes in `src/App.jsx` are `ComingSoon` placeholders.
 
 ## V1 scope (build this now)
 
