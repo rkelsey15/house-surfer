@@ -4,12 +4,12 @@ Nov 15, 2026 · Ryan Kelsey
 
 ## Overview
 
-**House Surfer** is a mobile-first social app for rating houses: you swipe through homes in your neighborhood, give them 1 to 5 stars, and leave short takes that others like and reply to. Think Yelp-style ratings with Reddit-style threads, but for houses. In the case study it's pitched as **Zillow Surfer**, a concept for turning casual listing browsers into a community.
+**House Surfer** is a mobile-first social app for rating houses: you swipe through homes in your neighborhood, give them 1 to 5 stars, and leave short comments that others like and reply to. Think Yelp-style ratings with Reddit-style threads, but for houses. In the case study it's pitched as **Zillow Surfer**, a concept for turning casual listing browsers into a community.
 
 |  |  |
 | --- | --- |
 | **Who it's for** | People who browse homes for fun, on the couch or on a walk with friends |
-| **Core loop** | See a house, rate it, read or add a take, earn karma, come back |
+| **Core loop** | See a house, rate it, read or add a comment, earn karma, come back |
 | **V1 scope** | Queen Anne, Seattle; about 8,000 houses from King County public records |
 | **V1 audience** | Ryan, then up to 10 invited friends |
 | **One rule** | Talk about the house, never the people who live there |
@@ -23,7 +23,7 @@ People love looking at houses, but home sites only give them something to do whe
 **The opportunity:** give that energy a home. A light game layer (rate, react, earn points) turns a one-time visit into a habit, and it keeps people engaged between moves. For a listings company, that means:
 
 - Users who are already active on the platform when they're ready to buy or rent.
-- Local takes and photos that no competitor has.
+- Local comments and photos that no competitor has.
 - Early signal about which homes and blocks draw interest.
 
 ### Goals and non-goals
@@ -31,7 +31,7 @@ People love looking at houses, but home sites only give them something to do whe
 **Goals for V1 (proof of concept)**
 
 1. Prove the core loop is fun: users rate several homes per session and come back within a week.
-2. Show that a social layer on homes can stay friendly, with takes kept about the house.
+2. Show that a social layer on homes can stay friendly, with comments kept about the house.
 3. Ship a working, mobile-first app on real public data that works in light and dark mode.
 4. Produce a portfolio-ready case study with a live link, a repo and a demo video.
 
@@ -51,13 +51,13 @@ People love looking at houses, but home sites only give them something to do whe
 | --- | --- | --- | --- |
 | North star | Ratings per active user per week | Ratings divided by weekly active users | 20+ |
 | Engagement | Weekly active users | Users with any event that week | 7 of 10 |
-| Engagement | Take rate | Share of ratings that also get a take | 10%+ |
+| Engagement | Comment rate | Share of ratings that also get a comment | 10%+ |
 | Engagement | Home opens | Home pages opened, by source (feed, map, search) | Tracked |
-| Engagement | Likes per take | Likes received divided by takes | Tracked |
+| Engagement | Likes per comment | Likes received divided by comments | Tracked |
 | Engagement | Photo uploads | Approved photos per week | 5+ |
 | Retention | Day 7 return | Share of users back 7 days after first visit | 50%+ |
-| Guardrail | Block rate | Share of takes and photos the screen stopped | Under 5% |
-| Guardrail | Report rate | Reports per 100 takes | Under 2 |
+| Guardrail | Block rate | Share of comments and photos the screen stopped | Under 5% |
+| Guardrail | Report rate | Reports per 100 comments | Under 2 |
 
 Targets are starting guesses for a 10-person test, set to be revisited after week 1.
 
@@ -68,12 +68,12 @@ Targets are starting guesses for a 10-person test, set to be revisited after wee
 | app\_opened | App opens | user, time, device |
 | home\_viewed | A home page opens | home, source |
 | rating\_submitted | Stars given or changed | home, stars, is\_edit |
-| take\_posted | A take or reply posts | home, parent take, has\_photo |
-| take\_edited / take\_deleted | Owner edits or removes a take | take |
-| like\_given | A take is liked | take |
+| comment\_posted | A comment or reply posts | home, parent comment, has\_photo |
+| comment\_edited / comment\_deleted | Owner edits or removes a comment | comment |
+| like\_given | A comment is liked | comment |
 | photo\_uploaded | A photo passes the screen | home |
-| take\_blocked | The screen stops a take or photo | reason |
-| report\_filed | Someone reports a take | take, reason |
+| comment\_blocked | The screen stops a comment or photo | reason |
+| report\_filed | Someone reports a comment | comment, reason |
 | theme\_changed | Light or dark mode switched | theme |
 
 ## Personas and user stories
@@ -89,11 +89,11 @@ Targets are starting guesses for a 10-person test, set to be revisited after wee
 
 - As a new user, I pick an anonymous handle so I can join without sharing my name.
 - As a Couch Surfer, I swipe through houses one at a time and rate each 1 to 5 stars.
-- As any user, I open a home to see its average rating, photos and threaded takes.
-- As any user, I post a take, reply to one, like one, and edit or delete my own.
+- As any user, I open a home to see its average rating, photos and threaded comments.
+- As any user, I post a comment, reply to one, like one, and edit or delete my own.
 - As a Sidewalk Scout, I snap a photo of a house I'm walking past; the app matches it by location and I rate it.
 - As any user, I browse homes on a map and filter by top rated or unrated.
-- As any user, I see my karma, homes rated and takes on my profile.
+- As any user, I see my karma, homes rated and comments on my profile.
 - As any user, I switch between light and dark mode.
 
 ## Product requirements
@@ -105,15 +105,15 @@ P0 ships in V1 (the proof of concept), P1 in V2, and P2 in V3 or later. See Mile
 | P0 | Account | Sign in and pick a generated anonymous handle; no real names shown anywhere |
 | P0 | Rating | Rate any house 1 to 5 stars; one rating per user per home, editable |
 | P0 | Rating | Home shows its average and count, Yelp-style ("4.5 from 32 ratings") |
-| P0 | Takes | Post a take on a home; threaded replies; like a take |
-| P0 | Takes | Edit (marked "edited") or delete your own takes |
+| P0 | Comments | Post a comment on a home; threaded replies; like a comment |
+| P0 | Comments | Edit (marked "edited") or delete your own comments |
 | P0 | Feed | One home at a time, rate then next; mobile-first layout |
 | P0 | Map | Map with pins (green 4+ stars, orange hot this week, gray unrated) and a list view on web |
 | P0 | Search and filter | Search by street; filter top rated, unrated, style tags |
 | P0 | Photos | Upload a sidewalk photo; first approved photo becomes the cover; illustration until then |
-| P0 | Safety | Every take and photo is screened before posting; report button |
-| P0 | Profile | Handle, karma, homes rated, takes, recent activity |
-| P0 | Points | Karma: +5 per rating, +10 per take, +1 per like received (values to tune) |
+| P0 | Safety | Every comment and photo is screened before posting; report button |
+| P0 | Profile | Handle, karma, homes rated, comments, recent activity |
+| P0 | Points | Karma: +5 per rating, +10 per comment, +1 per like received (values to tune) |
 | P0 | Theme | Light and dark mode, following the phone's setting with a manual switch |
 | P0 | Metrics | Log every user action as an event (see Metrics) |
 | P1 | Account | Real login for friends (email link, Apple or Google) |
@@ -131,18 +131,18 @@ The product rule is simple: **talk about the house, never the people who live th
 
 | Risk | Example | How the product handles it |
 | --- | --- | --- |
-| Harassing residents | "The guy who lives here is a creep" | Screen blocks takes about people before they post. House rules shown at sign-up. |
+| Harassing residents | "The guy who lives here is a creep" | Screen blocks comments about people before they post. House rules shown at sign-up. |
 | Doxxing | Naming owners, posting when they're away | No owner or resident names anywhere, even though they're in public records. Addresses shown at block level ("2400 block of Warren Ave N"). |
-| Profiling | "Sketchy people walk by here" | Screen blocks takes about who lives in or visits an area. |
+| Profiling | "Sketchy people walk by here" | Screen blocks comments about who lives in or visits an area. |
 | People in photos | Someone in the yard, a license plate | Photo screen rejects people and plates. Photos only from public sidewalks. |
 | Pile-ons | A house goes viral for its ugly kitchen | Rate limits per home; owner hide option (P2). |
 | Copyright | Reusing listing photos | Only user photos and illustrations. |
 
-**Privacy:** users are anonymous. The app stores an opaque user id and a generated handle, never a real name, email in public view, or contact list. Users can delete their takes and photos at any time.
+**Privacy:** users are anonymous. The app stores an opaque user id and a generated handle, never a real name, email in public view, or contact list. Users can delete their comments and photos at any time.
 
 ## Mockups
 
-Mobile first, with a web layout for browsing at home. All homes, handles and takes are sample data. The clickable prototype and a 44-second demo video are in `design/prototype.html` and `design/demo.mp4`.
+Mobile first, with a web layout for browsing at home. All homes, handles and comments are sample data. The clickable prototype and a 44-second demo video are in `design/prototype.html` and `design/demo.mp4`.
 
 **Phone:** sign up, feed, home page, snap a house, map, profile.
 
@@ -182,11 +182,11 @@ The idea has been tried in pieces for nearly 20 years. Swipe apps aimed at buyer
 | [House Safari](https://inman.com/2016/10/17/rank-your-neighbors-on-their-homes-with-house-safari) (2016) | "Yelp for houses" from the street | Closest to the walking moment; ranking neighbors' homes raised the privacy questions this PRD's rules address |
 | [Homely](https://apps.apple.com/app/id1004229463) (Australia) | Share, rate and comment on homes with friends; local suburb reviews | Good model for the friends-first stage |
 
-**Why Zillow hasn't done it:** reporting suggests its agent customers wouldn't welcome negative comments on their listings ([Inman, 2020](https://inman.com/2020/11/20/in-chaotic-times-zillow-becomes-the-solution-to-doomscrolling)). House Surfer's answer is star ratings plus takes kept about the house, with a screen before anything posts.
+**Why Zillow hasn't done it:** reporting suggests its agent customers wouldn't welcome negative comments on their listings ([Inman, 2020](https://inman.com/2020/11/20/in-chaotic-times-zillow-becomes-the-solution-to-doomscrolling)). House Surfer's answer is star ratings plus comments kept about the house, with a screen before anything posts.
 
 ### System data: what the app runs on
 
-Rule: use only data that is public and free. Everything social (ratings, takes, photos, events) is created by users and stored in the app's own database, which also feeds every success metric.
+Rule: use only data that is public and free. Everything social (ratings, comments, photos, events) is created by users and stored in the app's own database, which also feeds every success metric.
 
 All home data comes from free King County public records; Zillow and Redfin data isn't used because their terms don't allow reuse.
 
@@ -195,7 +195,7 @@ All home data comes from free King County public records; Zillow and Redfin data
 | King County Assessor downloads | Beds, baths, square feet, year built, building type, sale history | Home facts |
 | King County GIS open data | Parcel locations | Map pins |
 | OpenStreetMap | Map tiles | Base map, with attribution |
-| Users | Ratings, takes, photos | Everything social |
+| Users | Ratings, comments, photos | Everything social |
 
 **What counts as a house**
 
@@ -213,7 +213,7 @@ Queen Anne has roughly 8,000 qualifying houses; the exact count and field names 
 
 ![System design](system-design.png)
 
-In V1 the app is a static site: GitHub Pages serves it through its CDN, and ratings and takes save on the device. V2 adds Supabase behind an API gateway, which handles load balancing for us, so there's no separate load balancer or servers to run. A small function orchestrates moderation by sending each take and photo to Claude before it saves.
+In V1 the app is a static site: GitHub Pages serves it through its CDN, and ratings and comments save on the device. V2 adds Supabase behind an API gateway, which handles load balancing for us, so there's no separate load balancer or servers to run. A small function orchestrates moderation by sending each comment and photo to Claude before it saves.
 
 **Security by version**
 
@@ -236,11 +236,11 @@ Level of effort assumes building with Claude: **S** = under one working session,
 | Data pipeline: King County files to `homes.json` (Queen Anne houses only) | M |
 | Anonymous handle and house rules at sign-up (saved on the device) | S |
 | Feed: one home at a time, 1 to 5 stars, next | S |
-| Home page: average rating, threaded takes, likes, edit and delete | M |
+| Home page: average rating, threaded comments, likes, edit and delete | M |
 | Map and list, search by street, filters | M |
 | Photo upload from the camera (stored on the device) | S |
-| Basic moderation: rule-based block on takes about people | S |
-| Profile with karma, homes rated, takes | S |
+| Basic moderation: rule-based block on comments about people | S |
+| Profile with karma, homes rated, comments | S |
 | Light and dark mode | S |
 | Event logging and a simple counts page | S |
 | Hosted free on GitHub Pages | S |
@@ -252,7 +252,7 @@ Level of effort assumes building with Claude: **S** = under one working session,
 | Real login (email link, Apple or Google) | M |
 | Shared database with per-user permissions | M |
 | Photo storage in the cloud | S |
-| Claude moderation on every take and photo | M |
+| Claude moderation on every comment and photo | M |
 | Report button, auto-hide at 3 reports, review queue | S |
 | Rate limits | S |
 | First badges | M |
@@ -272,8 +272,8 @@ Level of effort assumes building with Claude: **S** = under one working session,
 
 | Capability | Effort |
 | --- | --- |
-| Personalized "homes to rate next" from your ratings, takes and badges (V5) | L |
-| Business rules, such as rating 20 homes before you can post takes | S |
+| Personalized "homes to rate next" from your ratings, comments and badges (V5) | L |
+| Business rules, such as rating 20 homes before you can post comments | S |
 | Rename karma to something house-themed | S |
 | "Guess the price" game on recently sold homes | M |
 | Native iPhone and Android apps | L |
@@ -284,9 +284,9 @@ Each stage adds only what the next group of users needs. The real architecture j
 
 | Stage | Users | What ships | Login | Moderation | Rough cost |
 | --- | --- | --- | --- | --- | --- |
-| V1 on your computer | 1 (Ryan) | Full P0 app on Ryan's computer, data saved in the browser | None needed | Screen on takes and photos | $0 |
+| V1 on your computer | 1 (Ryan) | Full P0 app on Ryan's computer, data saved in the browser | None needed | Screen on comments and photos | $0 |
 | V1 live link | 1 to 10 | Same app on GitHub Pages; demo video and case study | None yet (single-player per device) | Same | $0 |
-| V2 friends | Up to 50 | Supabase for logins, shared ratings and takes, photo storage | Email link, Apple or Google | Screen, auto-hide at 3 reports, review queue | About $0 to $25 a month |
+| V2 friends | Up to 50 | Supabase for logins, shared ratings and comments, photo storage | Email link, Apple or Google | Screen, auto-hide at 3 reports, review queue | About $0 to $25 a month |
 | V3 small beta | Up to 100 | Badges, Street View, a second neighborhood, metrics dashboard | Same, plus 18+ terms and a privacy policy | One or two volunteer moderators | About $25 to $50 a month |
 
 Costs are estimates for typical free and starter tiers, not quotes.
@@ -296,8 +296,8 @@ Costs are estimates for typical free and starter tiers, not quotes.
 | Risk | Mitigation |
 | --- | --- |
 | Novelty wears off after a few sessions | Karma, badges and "hot this week" give reasons to return; measure day 7 return |
-| Moderation misses a harmful take | Screen plus reports plus owner removal; start with trusted friends |
-| Too few users for it to feel social | Seed takes and photos during stage 1; invite friends in one batch |
+| Moderation misses a harmful comment | Screen plus reports plus owner removal; start with trusted friends |
+| Too few users for it to feel social | Seed comments and photos during stage 1; invite friends in one batch |
 | Photo location matches the wrong house | Let users confirm or pick from nearby homes |
 | County data fields differ from what's planned | Confirm in the data pull before building the UI on it |
 | Brand confusion | "Zillow Surfer" appears only in the case study pitch; the app is House Surfer |

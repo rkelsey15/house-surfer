@@ -55,7 +55,7 @@ Step numbers match the "V1 scope" list above.
 ### Decisions made
 
 - **Townhouses:** kept in `homes.json` (type `Townhouse`), hidden in V1 by the feature flag `showTownhouses` in `src/config.js` (default `false`). The flag is applied in one place, `src/lib/HomesContext.jsx`, so always get homes from `useHomes()`, never fetch `homes.json` directly.
-- **Naming:** user posts are called "comments" in the app and in this file (renamed from "takes" on Nov 15, 2026). `docs/PRD.md`, `README.md` and `design/prototype.html` still say "takes"; read those as comments, and use "comments" in code, keys and screen text.
+- **Naming:** user posts are called "comments" everywhere: the app, code, storage keys, CLAUDE.md, `docs/PRD.md`, `README.md` and `design/prototype.html` (renamed from "takes" on Nov 15, 2026, including event names like `comment_posted`). Use "comments" in code, keys and screen text.
 - **Style is a rough era tag** (Victorian era, Craftsman era, Pre-war, Mid-century, Late century, Modern) from year built, because county data has no architectural style.
 - **Privacy in the data:** pin locations are fuzzed 25 to 50 m by the pipeline and the exact point is never saved; ids are hashes, not parcel numbers; only the last sale *year* is kept (no prices, no names); numbers under 100 show as "0–99 block".
 - **Storage:** everything saved in the browser uses keys starting with `hs.` through `src/lib/storage.js` (safe if storage is blocked). Existing keys: `hs.profile` (handle and join date), `hs.theme`. Use the same pattern (`useStoredState`) for ratings, comments and events.

@@ -94,15 +94,15 @@ h1{font-size:28px;letter-spacing:-.02em}
 .score .s{color:var(--gold);font-size:13px;letter-spacing:1px}
 .score span{font-size:12px;color:var(--muted)}
 .sec-t{font-weight:700;font-size:15px;margin-top:16px}
-.take{padding:10px 0;border-bottom:1px solid var(--line)}
-.take .who{font-size:12px;color:var(--muted)}
-.take .who b{color:var(--ink)}
-.take p{margin-top:3px;font-size:13.5px}
-.take .meta{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:5px}
-.take .meta button{border:0;background:none;color:var(--muted);font-size:12px}
-.take .meta button.liked{color:var(--brand);font-weight:700}
-.take.reply{margin-left:18px;border-left:2px solid var(--line);padding-left:10px;border-bottom:0}
-.take.mine{animation:pop .35s ease}
+.comment{padding:10px 0;border-bottom:1px solid var(--line)}
+.comment .who{font-size:12px;color:var(--muted)}
+.comment .who b{color:var(--ink)}
+.comment p{margin-top:3px;font-size:13.5px}
+.comment .meta{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:5px}
+.comment .meta button{border:0;background:none;color:var(--muted);font-size:12px}
+.comment .meta button.liked{color:var(--brand);font-weight:700}
+.comment.reply{margin-left:18px;border-left:2px solid var(--line);padding-left:10px;border-bottom:0}
+.comment.mine{animation:pop .35s ease}
 @keyframes pop{from{background:var(--brand-soft)}to{background:transparent}}
 .badge{display:inline-block;font-size:9.5px;font-weight:800;color:var(--gold);border:1px solid var(--gold);border-radius:6px;padding:0 5px;margin-left:4px;vertical-align:1px}
 .compose{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:10px}
@@ -206,20 +206,20 @@ footer{color:var(--muted);font-size:12px;margin-top:36px}
   <div class="stage" id="phoneStage">
     <div class="iphone"><div class="screen" id="screen"><div class="island"></div><div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div><div id="app"></div><div class="homebar"></div><div class="toast" id="toast"></div><div class="tap" id="tap"></div></div></div>
     <div class="side">
-      <div class="caption" id="caption"><b>Try it</b>Pick a handle, rate a few homes, open one, post a take, or tap the camera to rate a house you're walking past.</div>
+      <div class="caption" id="caption"><b>Try it</b>Pick a handle, rate a few homes, open one, post a comment, or tap the camera to rate a house you're walking past.</div>
       <ol class="flow" id="flow">
         <li data-s="signup">Pick an anonymous handle</li>
         <li data-s="feed">Surf the feed and rate 1 to 5 stars</li>
-        <li data-s="home">Open a home, read and post takes</li>
+        <li data-s="home">Open a home, read and post comments</li>
         <li data-s="cam">Snap a house you're walking past</li>
         <li data-s="map">Find homes on the map</li>
         <li data-s="profile">See your karma and badges</li>
       </ol>
-      <p class="hint">Tip: try posting a take that mentions the people who live there to see the moderation screen.</p>
+      <p class="hint">Tip: try posting a comment that mentions the people who live there to see the moderation screen.</p>
     </div>
   </div>
   <div id="webStage" hidden></div>
-  <footer>House Surfer is an original concept prototype for a portfolio case study. All homes, ratings, handles and takes are made up. Homes are illustrations until a user adds a photo.</footer>
+  <footer>House Surfer is an original concept prototype for a portfolio case study. All homes, ratings, handles and comments are made up. Homes are illustrations until a user adds a photo.</footer>
 </div>
 
 <script>
@@ -253,7 +253,7 @@ const HOMES = [
   {i:0, a:'300 block of W Galer St', t:'Cottage', f:'2 bd · 1 ba · 1,120 sq ft · built 1924', avg:4.1, n:33},
   {i:2, a:'1800 block of 5th Ave W', t:'Modern', f:'4 bd · 3 ba · 2,650 sq ft · built 2019', avg:0, n:0}
 ];
-const fresh = () => ({screen:'signup', handle:'CedarSurfer42', idx:0, my:{}, karma:1284, rated:212, takes:18, open:1, liked:{}, blocked:false, posted:[], snapped:false, camStars:0, demo:false});
+const fresh = () => ({screen:'signup', handle:'CedarSurfer42', idx:0, my:{}, karma:1284, rated:212, comments:18, open:1, liked:{}, blocked:false, posted:[], snapped:false, camStars:0, demo:false});
 let S = fresh();
 const BAD = /\b(he|she|they|guy|lady|owner|owners|family|kids|neighbor|neighbors|lives|living|people|man|woman|tenant)\b/i;
 
@@ -268,30 +268,30 @@ function tabbar(on){return `<div class="tabbar">${[['feed','Surf','feed'],['map'
 const V = {
  signup(){return `<div class="view full"><div class="hero">${LOGO.replace('class="logo"','class="logo" style="justify-content:center"')}<h3>Pick your surfer name</h3><p>You stay anonymous. People only ever see this handle.</p></div>
   ${['CedarSurfer42','GableGazer7','PorchPerch88'].map(h=>`<button class="opt ${S.handle===h?'sel':''}" data-act="handle" data-v="${h}">${h}<span class="radio"></span></button>`).join('')}
-  <ul class="rules"><li>Talk about the house, never the people in it.</li><li>No names, schedules or plate numbers.</li><li>Every take and photo is screened before it posts.</li></ul>
+  <ul class="rules"><li>Talk about the house, never the people in it.</li><li>No names, schedules or plate numbers.</li><li>Every comment and photo is screened before it posts.</li></ul>
   <button class="btn pri full" style="margin-top:18px" data-go="feed" id="start">Start surfing</button></div>`;},
  feed(){const h=HOMES[S.idx], mine=S.my[S.idx]||0, a=avgStr(h);
   return `<div class="view"><div class="topbar">${LOGO}<span class="karma">${S.karma.toLocaleString()} karma</span></div>
   <div class="card">${house(h.i,'100%',210)}<div class="info"><div class="addr">${h.a}</div><div class="facts">${h.t} · ${h.f}</div>
   <div class="chips">${h.hot?'<span class="chip hot">Trending on Queen Anne</span>':''}<span class="chip">${a.n?`★ ${a.avg} · ${a.n} ratings`:'Not rated yet · be first'}</span></div>
   <div class="q">${mine?'Your rating · tap to change':'Rate this house'}</div>${starsHTML(mine,'rate')}
-  <div class="row-btns"><button class="btn" data-act="next">Skip</button><button class="btn" data-act="openHome">Takes</button><button class="btn pri" data-act="next" id="nextBtn">Next home</button></div></div></div><div class="peek"></div></div>${tabbar('feed')}`;},
+  <div class="row-btns"><button class="btn" data-act="next">Skip</button><button class="btn" data-act="openHome">Comments</button><button class="btn pri" data-act="next" id="nextBtn">Next home</button></div></div></div><div class="peek"></div></div>${tabbar('feed')}`;},
  home(){const idx=S.open,h=HOMES[idx],a=avgStr(h);
-  const mineTakes=S.posted.map(p=>`<div class="take mine"><div class="who"><b>${S.handle}</b> · just now${p.edited?' · edited':''}</div><p>${esc(p.text)}</p><div class="meta"><span>▲ 1</span><button data-act="edit">Edit</button><button data-act="del">Delete</button></div></div>`).join('');
+  const mineComments=S.posted.map(p=>`<div class="comment mine"><div class="who"><b>${S.handle}</b> · just now${p.edited?' · edited':''}</div><p>${esc(p.text)}</p><div class="meta"><span>▲ 1</span><button data-act="edit">Edit</button><button data-act="del">Delete</button></div></div>`).join('');
   return `<div class="view"><button class="back" data-go="feed">‹ Back</button>
   ${house(h.i,'100%',150).replace('class="art"','class="art" style="border-radius:18px"')}
   <div class="photo-strip"><div class="ph">${house(h.i,'100%',54,{photo:true})}<span>Photo · MossyRoof3</span></div><div class="ph">${house(h.i+1,'100%',54,{photo:true})}<span>Photo · you?</span></div></div>
   <div class="addr" style="margin-top:10px">${h.a}</div><div class="facts">${h.t} · ${h.f}</div>
   <div class="score"><b>${a.avg}</b><div><div class="s">★★★★★</div><span>${a.n} ratings · #3 on Queen Anne</span></div></div>
   <div class="q" style="text-align:left">Your rating</div>${starsHTML(S.my[idx]||0,'rateHome').replace('justify-content:center','')}
-  <div class="sec-t">Takes</div>
+  <div class="sec-t">Comments</div>
   <div class="compose"><div class="chips" style="margin-top:0"><button class="chip on" data-act="prompt" data-v="Best feature: ">Best feature?</button><button class="chip" data-act="prompt" data-v="I'd change ">What would you change?</button></div>
-   <textarea id="takeInput" placeholder="Say something about the house…"></textarea>
+   <textarea id="commentInput" placeholder="Say something about the house…"></textarea>
    ${S.blocked?`<div class="blocked"><b>Not posted.</b> Talk about the house, not the people who live there.</div>`:''}
-   <div class="bar"><button class="btn pri" data-act="post" id="postBtn">Post take</button></div></div>
-  ${mineTakes}
-  <div class="take"><div class="who"><b>GableGazer7</b><span class="badge">TOP 5%</span> · 2d</div><p>That turret is doing all the heavy lifting and I respect it.</p><div class="meta"><button class="${S.liked.a?'liked':''}" data-act="like" data-v="a">▲ ${48+(S.liked.a?1:0)}</button><span>Reply</span></div></div>
-  <div class="take reply"><div class="who"><b>MossyRoof3</b> · 1d</div><p>The wraparound porch would be my whole personality.</p><div class="meta"><button class="${S.liked.b?'liked':''}" data-act="like" data-v="b">▲ ${12+(S.liked.b?1:0)}</button><span>Reply</span></div></div>
+   <div class="bar"><button class="btn pri" data-act="post" id="postBtn">Post comment</button></div></div>
+  ${mineComments}
+  <div class="comment"><div class="who"><b>GableGazer7</b><span class="badge">TOP 5%</span> · 2d</div><p>That turret is doing all the heavy lifting and I respect it.</p><div class="meta"><button class="${S.liked.a?'liked':''}" data-act="like" data-v="a">▲ ${48+(S.liked.a?1:0)}</button><span>Reply</span></div></div>
+  <div class="comment reply"><div class="who"><b>MossyRoof3</b> · 1d</div><p>The wraparound porch would be my whole personality.</p><div class="meta"><button class="${S.liked.b?'liked':''}" data-act="like" data-v="b">▲ ${12+(S.liked.b?1:0)}</button><span>Reply</span></div></div>
   </div>${tabbar('feed')}`;},
  cam(){return `<div class="cam"><div class="gps"><span>📍 W Galer St, Queen Anne</span><span>Photo</span></div><div class="vf">${house(0,'100%','100%',{photo:true})}</div>
   <button class="close" data-go="feed">Cancel</button><button class="shut" data-act="shoot" aria-label="Take photo" id="shutter"></button><div class="flash" id="flash"></div>
@@ -306,12 +306,12 @@ const V = {
   <div class="legend" style="bottom:118px;left:16px"><span><i class="dot" style="background:var(--brand)"></i>4+ stars</span><span><i class="dot" style="background:var(--coral)"></i>Hot this week</span><span><i class="dot" style="background:#9aa5a0"></i>Unrated</span></div><button class="mapcard" data-act="openFromMap">${house(3,96,68)}<div><div class="addr" style="font-size:14px">500 block of W Highland Dr</div><div class="facts">Victorian · 5 bd · 3.5 ba</div><div class="sc">★ ${avgStr(HOMES[1]).avg} · ${avgStr(HOMES[1]).n} ratings</div></div></button></div></div>${tabbar('map')}`;},
  profile(){return `<div class="view"><div class="topbar">${LOGO}<span style="color:var(--muted);font-size:12px">Settings</span></div>
   <div class="avatar">${I.homeFill}</div><div class="handle">${S.handle}</div><div class="anon">Anonymous · surfing Queen Anne since Nov 2026</div>
-  <div class="stats"><div class="stat"><b>${S.karma.toLocaleString()}</b><span>karma</span></div><div class="stat"><b>${S.rated}</b><span>homes rated</span></div><div class="stat"><b>${S.takes}</b><span>takes</span></div></div>
+  <div class="stats"><div class="stat"><b>${S.karma.toLocaleString()}</b><span>karma</span></div><div class="stat"><b>${S.rated}</b><span>homes rated</span></div><div class="stat"><b>${S.comments}</b><span>comments</span></div></div>
   <div class="sec-t">Badges</div>
   <div class="badges"><div class="bd"><div class="medal" style="background:var(--brand)">CS</div>Couch Surfer</div><div class="bd"><div class="medal" style="background:var(--coral)">SW</div>Sidewalk Scout</div><div class="bd locked"><div class="medal" style="background:var(--gold)">PW</div>Price Whisperer</div></div>
   <div class="sec-t">Recent</div>
   ${Object.entries(S.my).slice(-3).reverse().map(([k,v])=>`<div class="act">Rated ${HOMES[k].a} <span>${'★'.repeat(v)}</span></div>`).join('')}
-  <div class="act">Take on W Highland Dr got upvotes <span>+48</span></div>
+  <div class="act">Comment on W Highland Dr got upvotes <span>+48</span></div>
   <div class="act">Rated 300 block of W Galer St <span>★★★★★</span></div></div>${tabbar('profile')}`;}
 };
 function esc(t){return t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -331,10 +331,10 @@ const ACT = {
   openHome:()=>{S.open=S.idx;go('home');},
   openFromMap:()=>{S.open=1;go('home');},
   pin:v=>{S.open=+v;go('home');},
-  prompt:v=>{const t=$('#takeInput');t.value=v;t.focus();},
-  post:()=>{const t=$('#takeInput').value.trim();if(!t)return;if(BAD.test(t)){S.blocked=true;render();$('#takeInput').value=t;return;}S.blocked=false;S.posted.unshift({text:t});S.takes++;bump(10);toast('+10 karma · take posted');},
-  edit:()=>{if(!S.posted[0])return;S.posted[0].text+=' (and the window boxes!)';S.posted[0].edited=true;render();toast('Take edited');},
-  del:()=>{S.posted.shift();S.takes--;render();toast('Take deleted');},
+  prompt:v=>{const t=$('#commentInput');t.value=v;t.focus();},
+  post:()=>{const t=$('#commentInput').value.trim();if(!t)return;if(BAD.test(t)){S.blocked=true;render();$('#commentInput').value=t;return;}S.blocked=false;S.posted.unshift({text:t});S.comments++;bump(10);toast('+10 karma · comment posted');},
+  edit:()=>{if(!S.posted[0])return;S.posted[0].text+=' (and the window boxes!)';S.posted[0].edited=true;render();toast('Comment edited');},
+  del:()=>{S.posted.shift();S.comments--;render();toast('Comment deleted');},
   like:v=>{S.liked[v]=!S.liked[v];render();},
   shoot:()=>{const f=$('#flash');f.classList.remove('go');void f.offsetWidth;f.classList.add('go');setTimeout(()=>{S.snapped=true;render();},350);},
   camRate:v=>{S.camStars=+v;render();},
@@ -357,7 +357,7 @@ async function tapOn(sel, nth=0){
   await sleep(550); tap.classList.remove('press'); void tap.offsetWidth; tap.classList.add('press'); await sleep(180); el.click(); await sleep(350);
 }
 function say(t,b){cap.innerHTML=`<b>${b}</b>${t}`;}
-async function typeInto(text){const t=$('#takeInput');t.value='';for(const ch of text){t.value+=ch;await sleep(28);}}
+async function typeInto(text){const t=$('#commentInput');t.value='';for(const ch of text){t.value+=ch;await sleep(28);}}
 async function demo(){
   const btn=$('#play'); btn.disabled=true; btn.querySelector('span').textContent='Playing…';
   S=fresh(); render(); showPhone();
@@ -366,21 +366,21 @@ async function demo(){
   say('Friday night stroll or couch scroll: one house at a time. Tap stars to rate.','Surf'); await sleep(1300);
   await tapOn('.star',3); await sleep(900); await tapOn('#nextBtn');
   await tapOn('.star',4); await sleep(800);
-  say('Open a home to see its average, photos and threaded takes.','Home page'); await tapOn('[data-act="openHome"]'); await sleep(1200);
-  say('A take about the people who live there gets stopped before it posts.','Moderation'); await tapOn('#takeInput');
+  say('Open a home to see its average, photos and threaded comments.','Home page'); await tapOn('[data-act="openHome"]'); await sleep(1200);
+  say('A comment about the people who live there gets stopped before it posts.','Moderation'); await tapOn('#commentInput');
   await typeInto('The family that lives here never mows'); await tapOn('#postBtn'); await sleep(1800);
-  say('Keep it about the house, and it posts. You can edit or delete it later.','Takes'); await tapOn('[data-act="prompt"]',0);
+  say('Keep it about the house, and it posts. You can edit or delete it later.','Comments'); await tapOn('[data-act="prompt"]',0);
   await typeInto('Best feature: that turret and the wraparound porch'); await tapOn('#postBtn'); await sleep(400); await tapOn('[data-act="edit"]'); await sleep(1200);
   await tapOn('[data-act="like"]',0); await sleep(700);
   say('Walking past something cute? Snap it. Location matches the house and the photo is screened.','Snap a house'); await tapOn('[data-go="cam"]'); await sleep(900);
   await tapOn('#shutter'); await sleep(900); await tapOn('.star',4); await sleep(500); await tapOn('#camPost'); await sleep(1300);
   say('Browse every Queen Anne home on the map. Tap a pin to open it.','Map'); await tapOn('[data-go="map"]'); await sleep(1600);
-  say('Karma goes up with every rating, take and upvote. Badges come later.','Profile'); await tapOn('[data-go="profile"]'); await sleep(2200);
+  say('Karma goes up with every rating, comment and upvote. Badges come later.','Profile'); await tapOn('[data-go="profile"]'); await sleep(2200);
   tap.classList.remove('show'); say('Tap around yourself, or press Play again.','Done');
   btn.disabled=false; btn.querySelector('span').textContent='Play demo';
 }
 $('#play').onclick=demo;
-$('#reset').onclick=()=>{S=fresh();render();say('Pick a handle, rate a few homes, open one, post a take, or tap the camera.','Try it');};
+$('#reset').onclick=()=>{S=fresh();render();say('Pick a handle, rate a few homes, open one, post a comment, or tap the camera.','Try it');};
 
 // ---- web view ----
 function webHTML(){
