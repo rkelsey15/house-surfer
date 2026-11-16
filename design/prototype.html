@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>House Surfer Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f1ec; --surface:#ffffff; --ink:#1d2321; --muted:#68716d; --line:#e3e0d8;
+  --brand:#0f766e; --brand-soft:#d7efeb; --coral:#e8664a; --coral-soft:#fbe3dc; --gold:#d19a1c;
+  --map:#e8eee6; --road:#ffffff; --water:#cfe3ea; --park:#d3e6cc; --frame:#1c1f1e;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141816; --surface:#1e2422; --ink:#eef1ef; --muted:#9aa5a0; --line:#2f3734;
+    --brand:#2fb5a7; --brand-soft:#173b37; --coral:#f08467; --coral-soft:#3b231d; --gold:#e8b443;
+    --map:#1f2a26; --road:#2c3633; --water:#1d3540; --park:#22362a; --frame:#000;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141816; --surface:#1e2422; --ink:#eef1ef; --muted:#9aa5a0; --line:#2f3734;
+  --brand:#2fb5a7; --brand-soft:#173b37; --coral:#f08467; --coral-soft:#3b231d; --gold:#e8b443;
+  --map:#1f2a26; --road:#2c3633; --water:#1d3540; --park:#22362a; --frame:#000;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;font-size:14px;line-height:1.4;padding:28px 16px 56px}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{max-width:1180px;margin:0 auto}
+.tag{display:inline-block;font-size:12px;font-weight:600;color:var(--brand);background:var(--brand-soft);border-radius:999px;padding:3px 10px;margin-bottom:10px}
+h1{font-size:28px;letter-spacing:-.02em}
+.lede{color:var(--muted);max-width:640px;margin-top:6px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:20px 0 24px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;padding:8px 16px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--brand);color:#fff}
+.play{border:0;background:var(--coral);color:#fff;font-weight:700;border-radius:12px;padding:9px 18px;display:inline-flex;gap:8px;align-items:center}
+.play[disabled]{opacity:.6}
+.stage{display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap}
+.side{flex:1;min-width:260px;max-width:420px}
+.caption{min-height:84px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.caption b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--coral);margin-bottom:4px}
+.flow{margin-top:16px;list-style:none;counter-reset:s}
+.flow li{counter-increment:s;padding:8px 0 8px 34px;position:relative;color:var(--muted);border-bottom:1px solid var(--line)}
+.flow li::before{content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:11.5px;font-weight:600}
+.flow li.now{color:var(--ink);font-weight:600}
+.flow li.now::before{background:var(--brand);border-color:var(--brand);color:#fff}
+.hint{color:var(--muted);font-size:12.5px;margin-top:12px}
+
+/* iPhone frame */
+.iphone{width:375px;max-width:100%;aspect-ratio:375/812;background:var(--frame);border-radius:56px;padding:12px;position:relative;flex:none;box-shadow:0 20px 50px rgba(0,0,0,.18)}
+.iphone::before{content:"";position:absolute;right:-3px;top:180px;width:3px;height:90px;border-radius:2px;background:var(--frame)}
+.screen{position:relative;width:100%;height:100%;background:var(--surface);border-radius:44px;overflow:hidden}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:118px;height:34px;border-radius:20px;background:#000;z-index:20}
+.sb{height:52px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 30px 6px;font-size:14px;font-weight:600;position:relative;z-index:5}
+.homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:130px;height:5px;border-radius:3px;background:var(--ink);opacity:.85;z-index:20}
+.view{position:absolute;top:52px;bottom:84px;left:0;right:0;overflow-y:auto;scrollbar-width:none;padding:0 16px 16px}
+.view::-webkit-scrollbar{display:none}
+.view.full{bottom:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:4px 0 10px}
+.logo{display:flex;align-items:center;gap:7px;font-weight:700;font-size:17px;letter-spacing:-.01em}
+.logo-mark{width:26px;height:26px;border-radius:8px;background:var(--brand);display:grid;place-items:center}
+.karma{font-size:12px;font-weight:700;background:var(--coral-soft);color:var(--coral);border-radius:999px;padding:5px 10px;transition:transform .2s}
+.karma.bump{transform:scale(1.18)}
+.tabbar{position:absolute;bottom:0;left:0;right:0;height:84px;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;background:var(--surface);font-size:10.5px;color:var(--muted);z-index:6}
+.tabbar button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--muted);width:62px;font-size:10.5px}
+.tabbar button.on{color:var(--brand);font-weight:700}
+.tabbar .snap{width:52px;height:52px;border-radius:18px;background:var(--brand);color:#fff;display:grid;place-items:center;margin-top:-6px}
+.ico{width:22px;height:22px}
+
+.card{border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.art{display:block;width:100%}
+.info{padding:12px 14px 14px}
+.addr{font-weight:700;font-size:16px}
+.facts{color:var(--muted);font-size:12.5px;margin-top:2px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:var(--muted);background:none}
+.chip.hot{border-color:transparent;background:var(--coral-soft);color:var(--coral);font-weight:600}
+.chip.on{border-color:transparent;background:var(--brand-soft);color:var(--brand);font-weight:600}
+.q{font-size:13px;font-weight:600;text-align:center;margin-top:12px}
+.stars{display:flex;justify-content:center;gap:6px;margin-top:6px}
+.star{border:0;background:none;width:40px;height:40px;display:grid;place-items:center;color:var(--line)}
+.star svg{width:34px;height:34px;transition:transform .15s}
+.star.on{color:var(--gold)}
+.star.on svg{transform:scale(1.08)}
+.row-btns{display:flex;justify-content:space-between;gap:8px;margin-top:12px}
+.btn{font-weight:700;font-size:13px;border-radius:12px;padding:10px 14px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.full{width:100%}
+.peek{height:10px;margin:0 16px;border:1px solid var(--line);border-top:0;border-radius:0 0 18px 18px}
+.back{border:0;background:none;color:var(--muted);font-size:13px;padding:4px 0 8px}
+.score{display:flex;align-items:center;gap:12px;margin-top:12px;padding:10px 12px;border-radius:14px;background:var(--brand-soft)}
+.score b{font-size:28px;color:var(--brand);line-height:1}
+.score .s{color:var(--gold);font-size:13px;letter-spacing:1px}
+.score span{font-size:12px;color:var(--muted)}
+.sec-t{font-weight:700;font-size:15px;margin-top:16px}
+.take{padding:10px 0;border-bottom:1px solid var(--line)}
+.take .who{font-size:12px;color:var(--muted)}
+.take .who b{color:var(--ink)}
+.take p{margin-top:3px;font-size:13.5px}
+.take .meta{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:5px}
+.take .meta button{border:0;background:none;color:var(--muted);font-size:12px}
+.take .meta button.liked{color:var(--brand);font-weight:700}
+.take.reply{margin-left:18px;border-left:2px solid var(--line);padding-left:10px;border-bottom:0}
+.take.mine{animation:pop .35s ease}
+@keyframes pop{from{background:var(--brand-soft)}to{background:transparent}}
+.badge{display:inline-block;font-size:9.5px;font-weight:800;color:var(--gold);border:1px solid var(--gold);border-radius:6px;padding:0 5px;margin-left:4px;vertical-align:1px}
+.compose{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:10px}
+.compose textarea{width:100%;border:0;background:none;resize:none;font:inherit;color:var(--ink);height:44px;outline:none;margin-top:8px}
+.compose .bar{display:flex;justify-content:flex-end}
+.blocked{margin-top:8px;background:var(--coral-soft);color:var(--coral);border-radius:10px;padding:8px 10px;font-size:12.5px}
+.photo-strip{display:flex;gap:6px;margin-top:8px}
+.photo-strip .ph{flex:1;border-radius:10px;overflow:hidden;position:relative}
+.photo-strip .ph span{position:absolute;left:6px;bottom:4px;font-size:10px;color:#fff;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+
+.hero{text-align:center;padding:30px 4px 0}
+.hero h3{font-size:24px;letter-spacing:-.02em;margin-top:18px}
+.hero p{color:var(--muted);font-size:13.5px;margin-top:6px}
+.opt{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:8px;font-weight:700;width:100%;background:none;text-align:left}
+.opt.sel{border-color:var(--brand);background:var(--brand-soft)}
+.radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--line)}
+.opt.sel .radio{border:5px solid var(--brand)}
+.rules{margin:16px 0 0 18px;font-size:12.5px;color:var(--muted)}
+.rules li{margin-top:3px}
+
+.avatar{width:68px;height:68px;border-radius:22px;background:var(--brand-soft);display:grid;place-items:center;margin:6px auto 0;color:var(--brand)}
+.handle{text-align:center;font-weight:800;font-size:19px;margin-top:8px}
+.anon{text-align:center;color:var(--muted);font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.stat{border:1px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center}
+.stat b{display:block;font-size:19px}
+.stat span{font-size:11px;color:var(--muted)}
+.badges{display:flex;gap:8px;margin-top:8px}
+.bd{flex:1;border:1px solid var(--line);border-radius:14px;padding:8px 4px;text-align:center;font-size:11px}
+.medal{width:32px;height:32px;border-radius:50%;margin:0 auto 4px;display:grid;place-items:center;font-weight:800;color:#fff;font-size:12px}
+.bd.locked{opacity:.4}
+.act{display:flex;justify-content:space-between;font-size:12.5px;padding:9px 0;border-bottom:1px solid var(--line)}
+.act span{color:var(--muted)}
+
+.cam{position:absolute;inset:0;background:#000;color:#fff}
+.cam .vf{position:absolute;top:96px;left:0;right:0;height:440px;overflow:hidden}
+.cam .vf svg{width:100%;height:100%}
+.cam .gps{position:absolute;top:60px;left:16px;right:16px;display:flex;justify-content:space-between;font-size:12.5px}
+.cam .gps span{background:rgba(255,255,255,.15);border-radius:999px;padding:4px 10px}
+.cam .shut{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);width:74px;height:74px;border-radius:50%;border:4px solid #fff;background:none}
+.cam .shut::after{content:"";position:absolute;inset:5px;border-radius:50%;background:#fff}
+.cam .close{position:absolute;bottom:92px;left:28px;border:0;background:none;color:#fff;font-weight:600}
+.cam .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+.cam .flash.go{animation:fl .4s}
+@keyframes fl{0%{opacity:.9}100%{opacity:0}}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);color:var(--ink);border-radius:26px 26px 0 0;padding:18px 18px 34px;transform:translateY(100%);transition:transform .35s ease}
+.sheet.up{transform:none}
+.match{font-size:12px;color:var(--brand);font-weight:700}
+
+.mapv{position:absolute;inset:0}
+.mapv svg{width:100%;height:100%;display:block}
+.mapsearch{position:absolute;top:8px;left:16px;right:16px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;color:var(--muted);font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.mapchips{position:absolute;top:58px;left:16px;right:16px;display:flex;gap:6px}
+.mapchips .chip{background:var(--surface)}
+.mapcard{position:absolute;left:16px;right:16px;bottom:14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px;display:grid;grid-template-columns:96px 1fr;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);text-align:left}
+.mapcard svg{border-radius:12px}
+.toast{position:absolute;top:60px;left:50%;transform:translate(-50%,-20px);background:var(--ink);color:var(--surface);border-radius:999px;padding:8px 14px;font-size:12.5px;font-weight:700;opacity:0;transition:all .3s;z-index:30;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.tap{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(232,102,74,.35);border:2px solid var(--coral);pointer-events:none;z-index:40;opacity:0;transition:left .45s ease,top .45s ease}
+.tap.show{opacity:1}
+.tap.press{animation:press .35s}
+@keyframes press{50%{transform:scale(.7)}}
+
+/* web */
+.desk{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.desk-top{display:flex;align-items:center;gap:16px;padding:12px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.search{flex:1;min-width:180px;max-width:420px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;color:var(--muted)}
+.desk-main{display:grid;grid-template-columns:minmax(280px,400px) 1fr;height:560px}
+.list{border-right:1px solid var(--line);overflow:auto;padding:14px}
+.list-h{display:flex;justify-content:space-between;align-items:baseline}
+.lcard{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:10px;border:1px solid var(--line);border-radius:14px;margin-top:10px;width:100%;background:none;text-align:left}
+.lcard.on{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand)}
+.lcard svg{border-radius:10px}
+.sc{font-size:12.5px;color:var(--brand);font-weight:700;margin-top:4px}
+.mapwrap{position:relative;background:var(--map)}
+.mapwrap>svg{width:100%;height:100%;display:block}
+.legend{position:absolute;left:14px;bottom:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px;font-size:11.5px;display:flex;gap:12px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+footer{color:var(--muted);font-size:12px;margin-top:36px}
+[hidden]{display:none!important}
+@media (max-width:760px){
+  .desk-main{grid-template-columns:1fr;height:auto}
+  .mapwrap{height:360px}
+  .list{border-right:0;border-bottom:1px solid var(--line)}
+  .iphone{border-radius:48px;padding:10px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="tag">Clickable prototype · sample data</span>
+  <h1>House Surfer</h1>
+  <p class="lede">Rate houses on a walk with friends or from the couch. Tap through the phone yourself, or press Play for a guided 40-second demo.</p>
+  <div class="controls">
+    <div class="seg" role="tablist"><button id="vPhone" class="on">Phone</button><button id="vWeb">Web</button></div>
+    <button class="play" id="play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg><span>Play demo</span></button>
+    <button class="btn" id="reset">Restart</button>
+    <div class="seg"><button id="tLight">Light</button><button id="tDark">Dark</button></div>
+  </div>
+
+  <div class="stage" id="phoneStage">
+    <div class="iphone"><div class="screen" id="screen"><div class="island"></div><div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div><div id="app"></div><div class="homebar"></div><div class="toast" id="toast"></div><div class="tap" id="tap"></div></div></div>
+    <div class="side">
+      <div class="caption" id="caption"><b>Try it</b>Pick a handle, rate a few homes, open one, post a take, or tap the camera to rate a house you're walking past.</div>
+      <ol class="flow" id="flow">
+        <li data-s="signup">Pick an anonymous handle</li>
+        <li data-s="feed">Surf the feed and rate 1 to 5 stars</li>
+        <li data-s="home">Open a home, read and post takes</li>
+        <li data-s="cam">Snap a house you're walking past</li>
+        <li data-s="map">Find homes on the map</li>
+        <li data-s="profile">See your karma and badges</li>
+      </ol>
+      <p class="hint">Tip: try posting a take that mentions the people who live there to see the moderation screen.</p>
+    </div>
+  </div>
+  <div id="webStage" hidden></div>
+  <footer>House Surfer is an original concept prototype for a portfolio case study. All homes, ratings, handles and takes are made up. Homes are illustrations until a user adds a photo.</footer>
+</div>
+
+<script>
+const PAL = {wall:['#f2c4a8','#bcd8cf','#f4e1a6','#c9d3ea','#e8b9b9','#d6e4c3'], roof:['#5a3e36','#38524c','#7a4b2b','#3c4766','#6b3a3a','#4f5b3a']};
+function house(i, w, h, opt={}){
+  const wall=PAL.wall[i%6], roof=PAL.roof[(i+2)%6], sky=opt.photo?'#a9c7d8':'#dcebf2';
+  const v=[
+    `<polygon points="60,70 150,22 240,70" fill="${roof}"/><rect x="74" y="70" width="152" height="80" fill="${wall}"/><rect x="134" y="104" width="30" height="46" fill="${roof}" opacity=".85"/><rect x="90" y="88" width="30" height="24" fill="#fff" opacity=".85"/><rect x="180" y="88" width="30" height="24" fill="#fff" opacity=".85"/><circle cx="150" cy="52" r="8" fill="#fff" opacity=".8"/>`,
+    `<polygon points="50,78 150,36 250,78" fill="${roof}"/><rect x="64" y="78" width="172" height="72" fill="${wall}"/><rect x="64" y="112" width="172" height="6" fill="${roof}" opacity=".6"/><rect x="72" y="118" width="8" height="32" fill="#fff"/><rect x="220" y="118" width="8" height="32" fill="#fff"/><rect x="138" y="118" width="26" height="32" fill="${roof}"/><rect x="92" y="86" width="40" height="20" fill="#fff" opacity=".85"/><rect x="170" y="86" width="40" height="20" fill="#fff" opacity=".85"/>`,
+    `<rect x="70" y="40" width="160" height="110" fill="${wall}"/><rect x="62" y="34" width="176" height="10" fill="${roof}"/><rect x="84" y="56" width="70" height="40" fill="#fff" opacity=".85"/><rect x="170" y="56" width="44" height="94" fill="${roof}" opacity=".8"/><rect x="84" y="108" width="70" height="26" fill="#fff" opacity=".85"/>`,
+    `<polygon points="150,44 200,74 100,74" fill="${roof}"/><rect x="106" y="74" width="88" height="76" fill="${wall}"/><polygon points="214,24 236,58 192,58" fill="${roof}"/><rect x="196" y="58" width="36" height="92" fill="${wall}"/><rect x="204" y="70" width="20" height="24" fill="#fff" opacity=".85"/><rect x="118" y="88" width="24" height="26" fill="#fff" opacity=".85"/><rect x="156" y="112" width="24" height="38" fill="${roof}"/><rect x="66" y="96" width="40" height="54" fill="${wall}" opacity=".85"/><polygon points="62,96 86,80 110,96" fill="${roof}"/>`
+  ];
+  const grain = opt.photo ? `<rect width="300" height="170" fill="url(#vig${i})"/>` : '';
+  const defs = opt.photo ? `<defs><radialGradient id="vig${i}"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></radialGradient></defs>` : '';
+  return `<svg class="art" viewBox="0 0 300 170" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${defs}<rect width="300" height="170" fill="${sky}"/><circle cx="262" cy="30" r="12" fill="#fff" opacity=".9"/><rect y="150" width="300" height="20" fill="#9cc58f"/><rect y="160" width="300" height="10" fill="#c9c4b8"/><circle cx="34" cy="132" r="22" fill="#7fae74"/><circle cx="276" cy="136" r="18" fill="#7fae74"/>${v[i%4]}${grain}</svg>`;
+}
+const I = {
+  star:`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg>`,
+  feed:`<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M9 17h6"/></svg>`,
+  map:`<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>`,
+  cam:`<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5"/></svg>`,
+  top:`<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>`,
+  me:`<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>`,
+  homeFill:`<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg>`
+};
+const LOGO = `<div class="logo"><div class="logo-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"><path d="M3 12 12 5l9 7"/><path d="M2 19c3-2 5-2 7 0s4 2 6 0 4-2 7 0"/></svg></div>House Surfer</div>`;
+
+const HOMES = [
+  {i:1, a:'2400 block of Warren Ave N', t:'Craftsman', f:'3 bd · 2 ba · 1,840 sq ft · built 1912', avg:4.3, n:41},
+  {i:3, a:'500 block of W Highland Dr', t:'Victorian', f:'5 bd · 3.5 ba · 3,920 sq ft · built 1901', avg:4.6, n:127, hot:true},
+  {i:0, a:'300 block of W Galer St', t:'Cottage', f:'2 bd · 1 ba · 1,120 sq ft · built 1924', avg:4.1, n:33},
+  {i:2, a:'1800 block of 5th Ave W', t:'Modern', f:'4 bd · 3 ba · 2,650 sq ft · built 2019', avg:0, n:0}
+];
+const fresh = () => ({screen:'signup', handle:'CedarSurfer42', idx:0, my:{}, karma:1284, rated:212, takes:18, open:1, liked:{}, blocked:false, posted:[], snapped:false, camStars:0, demo:false});
+let S = fresh();
+const BAD = /\b(he|she|they|guy|lady|owner|owners|family|kids|neighbor|neighbors|lives|living|people|man|woman|tenant)\b/i;
+
+const $ = s => document.querySelector(s);
+const app = $('#app');
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1500);}
+function bump(n){S.karma+=n;const k=document.querySelector('.karma');render();const k2=document.querySelector('.karma');if(k2){k2.classList.add('bump');setTimeout(()=>k2.classList.remove('bump'),220);}}
+function starsHTML(sel, act){return `<div class="stars">${[1,2,3,4,5].map(n=>`<button class="star ${n<=sel?'on':''}" data-act="${act}" data-v="${n}" aria-label="${n} stars">${I.star}</button>`).join('')}</div>`;}
+function avgStr(h){const mine=S.my[HOMES.indexOf(h)];let n=h.n,avg=h.avg;if(mine){avg=(avg*n+mine)/(n+1);n++;}return n?{avg:avg.toFixed(1),n}:{avg:'–',n:0};}
+function tabbar(on){return `<div class="tabbar">${[['feed','Surf','feed'],['map','Map','map'],['cam','','cam'],['top','Top','feed'],['me','Profile','profile']].map(([k,l,go])=>k==='cam'?`<button data-go="cam" aria-label="Snap a house"><span class="snap">${I.cam}</span></button>`:`<button class="${go===on&&k!=='top'?'on':''}" data-go="${go}">${I[k]}${l}</button>`).join('')}</div>`;}
+
+const V = {
+ signup(){return `<div class="view full"><div class="hero">${LOGO.replace('class="logo"','class="logo" style="justify-content:center"')}<h3>Pick your surfer name</h3><p>You stay anonymous. People only ever see this handle.</p></div>
+  ${['CedarSurfer42','GableGazer7','PorchPerch88'].map(h=>`<button class="opt ${S.handle===h?'sel':''}" data-act="handle" data-v="${h}">${h}<span class="radio"></span></button>`).join('')}
+  <ul class="rules"><li>Talk about the house, never the people in it.</li><li>No names, schedules or plate numbers.</li><li>Every take and photo is screened before it posts.</li></ul>
+  <button class="btn pri full" style="margin-top:18px" data-go="feed" id="start">Start surfing</button></div>`;},
+ feed(){const h=HOMES[S.idx], mine=S.my[S.idx]||0, a=avgStr(h);
+  return `<div class="view"><div class="topbar">${LOGO}<span class="karma">${S.karma.toLocaleString()} karma</span></div>
+  <div class="card">${house(h.i,'100%',210)}<div class="info"><div class="addr">${h.a}</div><div class="facts">${h.t} · ${h.f}</div>
+  <div class="chips">${h.hot?'<span class="chip hot">Trending on Queen Anne</span>':''}<span class="chip">${a.n?`★ ${a.avg} · ${a.n} ratings`:'Not rated yet · be first'}</span></div>
+  <div class="q">${mine?'Your rating · tap to change':'Rate this house'}</div>${starsHTML(mine,'rate')}
+  <div class="row-btns"><button class="btn" data-act="next">Skip</button><button class="btn" data-act="openHome">Takes</button><button class="btn pri" data-act="next" id="nextBtn">Next home</button></div></div></div><div class="peek"></div></div>${tabbar('feed')}`;},
+ home(){const idx=S.open,h=HOMES[idx],a=avgStr(h);
+  const mineTakes=S.posted.map(p=>`<div class="take mine"><div class="who"><b>${S.handle}</b> · just now${p.edited?' · edited':''}</div><p>${esc(p.text)}</p><div class="meta"><span>▲ 1</span><button data-act="edit">Edit</button><button data-act="del">Delete</button></div></div>`).join('');
+  return `<div class="view"><button class="back" data-go="feed">‹ Back</button>
+  ${house(h.i,'100%',150).replace('class="art"','class="art" style="border-radius:18px"')}
+  <div class="photo-strip"><div class="ph">${house(h.i,'100%',54,{photo:true})}<span>Photo · MossyRoof3</span></div><div class="ph">${house(h.i+1,'100%',54,{photo:true})}<span>Photo · you?</span></div></div>
+  <div class="addr" style="margin-top:10px">${h.a}</div><div class="facts">${h.t} · ${h.f}</div>
+  <div class="score"><b>${a.avg}</b><div><div class="s">★★★★★</div><span>${a.n} ratings · #3 on Queen Anne</span></div></div>
+  <div class="q" style="text-align:left">Your rating</div>${starsHTML(S.my[idx]||0,'rateHome').replace('justify-content:center','')}
+  <div class="sec-t">Takes</div>
+  <div class="compose"><div class="chips" style="margin-top:0"><button class="chip on" data-act="prompt" data-v="Best feature: ">Best feature?</button><button class="chip" data-act="prompt" data-v="I'd change ">What would you change?</button></div>
+   <textarea id="takeInput" placeholder="Say something about the house…"></textarea>
+   ${S.blocked?`<div class="blocked"><b>Not posted.</b> Talk about the house, not the people who live there.</div>`:''}
+   <div class="bar"><button class="btn pri" data-act="post" id="postBtn">Post take</button></div></div>
+  ${mineTakes}
+  <div class="take"><div class="who"><b>GableGazer7</b><span class="badge">TOP 5%</span> · 2d</div><p>That turret is doing all the heavy lifting and I respect it.</p><div class="meta"><button class="${S.liked.a?'liked':''}" data-act="like" data-v="a">▲ ${48+(S.liked.a?1:0)}</button><span>Reply</span></div></div>
+  <div class="take reply"><div class="who"><b>MossyRoof3</b> · 1d</div><p>The wraparound porch would be my whole personality.</p><div class="meta"><button class="${S.liked.b?'liked':''}" data-act="like" data-v="b">▲ ${12+(S.liked.b?1:0)}</button><span>Reply</span></div></div>
+  </div>${tabbar('feed')}`;},
+ cam(){return `<div class="cam"><div class="gps"><span>📍 W Galer St, Queen Anne</span><span>Photo</span></div><div class="vf">${house(0,'100%','100%',{photo:true})}</div>
+  <button class="close" data-go="feed">Cancel</button><button class="shut" data-act="shoot" aria-label="Take photo" id="shutter"></button><div class="flash" id="flash"></div>
+  <div class="sheet ${S.snapped?'up':''}" id="sheet"><button class="back" data-go="feed" style="float:right;padding:0">Cancel</button><div class="match">✓ Matched by location · screened, no people or plates</div><div class="addr" style="margin-top:4px">300 block of W Galer St</div><div class="facts">Cottage · 2 bd · 1 ba · built 1924</div>
+  <div class="q">How's this one?</div>${starsHTML(S.camStars,'camRate')}
+  <button class="btn pri full" style="margin-top:12px" data-act="camPost" id="camPost">Post photo and rating</button></div></div>`;},
+ map(){const pins=[[140,210,'b',2],[90,300,'b',1],[250,330,'b',0],[300,190,'g',3],[180,400,'c',null],[60,160,'g',null],[290,450,'b',null],[210,270,'b',null],[110,500,'g',null],[320,380,'c',null]];
+  const c={b:'var(--brand)',c:'var(--coral)',g:'#9aa5a0'};
+  return `<div class="view" style="padding:0;bottom:84px"><div class="mapv"><svg viewBox="0 0 351 620" preserveAspectRatio="xMidYMid slice"><rect width="351" height="620" fill="var(--map)"/><path d="M0 560 C80 540 140 600 220 620 L0 620Z" fill="var(--water)"/><rect x="190" y="300" width="90" height="60" rx="10" fill="var(--park)"/><g stroke="var(--road)" stroke-width="7" fill="none">${[40,100,160,220,280,340].map(x=>`<path d="M${x} 0V620"/>`).join('')}${[120,180,240,300,360,420,480,540].map(y=>`<path d="M0 ${y}H351"/>`).join('')}</g><path d="M0 330 C100 320 160 250 351 260" stroke="var(--road)" stroke-width="12" fill="none"/><text x="235" y="335" text-anchor="middle" font-size="11" fill="var(--muted)">Kerry Park</text>
+  ${pins.map(([x,y,k,h])=>`<circle cx="${x}" cy="${y}" r="${h===1?15:10}" fill="${c[k]}" stroke="var(--surface)" stroke-width="3" ${h!==null?`data-act="pin" data-v="${h}" style="cursor:pointer"`:''}/>`).join('')}<text x="90" y="304" text-anchor="middle" font-size="10" font-weight="700" fill="#fff" pointer-events="none">4.6</text></svg>
+  <div class="mapsearch">Search Queen Anne streets</div><div class="mapchips"><span class="chip on">All homes</span><span class="chip">Top rated</span><span class="chip">Unrated</span></div>
+  <div class="legend" style="bottom:118px;left:16px"><span><i class="dot" style="background:var(--brand)"></i>4+ stars</span><span><i class="dot" style="background:var(--coral)"></i>Hot this week</span><span><i class="dot" style="background:#9aa5a0"></i>Unrated</span></div><button class="mapcard" data-act="openFromMap">${house(3,96,68)}<div><div class="addr" style="font-size:14px">500 block of W Highland Dr</div><div class="facts">Victorian · 5 bd · 3.5 ba</div><div class="sc">★ ${avgStr(HOMES[1]).avg} · ${avgStr(HOMES[1]).n} ratings</div></div></button></div></div>${tabbar('map')}`;},
+ profile(){return `<div class="view"><div class="topbar">${LOGO}<span style="color:var(--muted);font-size:12px">Settings</span></div>
+  <div class="avatar">${I.homeFill}</div><div class="handle">${S.handle}</div><div class="anon">Anonymous · surfing Queen Anne since Nov 2026</div>
+  <div class="stats"><div class="stat"><b>${S.karma.toLocaleString()}</b><span>karma</span></div><div class="stat"><b>${S.rated}</b><span>homes rated</span></div><div class="stat"><b>${S.takes}</b><span>takes</span></div></div>
+  <div class="sec-t">Badges</div>
+  <div class="badges"><div class="bd"><div class="medal" style="background:var(--brand)">CS</div>Couch Surfer</div><div class="bd"><div class="medal" style="background:var(--coral)">SW</div>Sidewalk Scout</div><div class="bd locked"><div class="medal" style="background:var(--gold)">PW</div>Price Whisperer</div></div>
+  <div class="sec-t">Recent</div>
+  ${Object.entries(S.my).slice(-3).reverse().map(([k,v])=>`<div class="act">Rated ${HOMES[k].a} <span>${'★'.repeat(v)}</span></div>`).join('')}
+  <div class="act">Take on W Highland Dr got upvotes <span>+48</span></div>
+  <div class="act">Rated 300 block of W Galer St <span>★★★★★</span></div></div>${tabbar('profile')}`;}
+};
+function esc(t){return t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+let lastScreen=null;
+function render(){
+  const old=app.querySelector('.view'), keep=(old&&lastScreen===S.screen)?old.scrollTop:0;
+  app.innerHTML = V[S.screen]();
+  const nv=app.querySelector('.view'); if(nv&&keep) nv.scrollTop=keep; lastScreen=S.screen;
+  document.querySelectorAll('#flow li').forEach(li=>li.classList.toggle('now', li.dataset.s===S.screen));
+}
+function go(s){S.screen=s;if(s!=='cam'){S.snapped=false;S.camStars=0;}if(s!=='home')S.blocked=false;render();}
+const ACT = {
+  handle:v=>{S.handle=v;render();},
+  rate:v=>{const first=!S.my[S.idx];S.my[S.idx]=+v;if(first){S.rated++;bump(5);toast('+5 karma · rating saved');}else{render();toast('Rating updated');}},
+  rateHome:v=>{const first=!S.my[S.open];S.my[S.open]=+v;if(first){S.rated++;bump(5);toast('+5 karma');}else{render();toast('Rating updated');}},
+  next:()=>{S.idx=(S.idx+1)%HOMES.length;render();},
+  openHome:()=>{S.open=S.idx;go('home');},
+  openFromMap:()=>{S.open=1;go('home');},
+  pin:v=>{S.open=+v;go('home');},
+  prompt:v=>{const t=$('#takeInput');t.value=v;t.focus();},
+  post:()=>{const t=$('#takeInput').value.trim();if(!t)return;if(BAD.test(t)){S.blocked=true;render();$('#takeInput').value=t;return;}S.blocked=false;S.posted.unshift({text:t});S.takes++;bump(10);toast('+10 karma · take posted');},
+  edit:()=>{if(!S.posted[0])return;S.posted[0].text+=' (and the window boxes!)';S.posted[0].edited=true;render();toast('Take edited');},
+  del:()=>{S.posted.shift();S.takes--;render();toast('Take deleted');},
+  like:v=>{S.liked[v]=!S.liked[v];render();},
+  shoot:()=>{const f=$('#flash');f.classList.remove('go');void f.offsetWidth;f.classList.add('go');setTimeout(()=>{S.snapped=true;render();},350);},
+  camRate:v=>{S.camStars=+v;render();},
+  camPost:()=>{if(!S.camStars){toast('Pick a star rating first');return;}S.my[2]=S.camStars;S.rated++;S.karma+=15;go('feed');toast('+15 karma · photo and rating posted');}
+};
+app.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]'); if(g){go(g.dataset.go);return;}
+  const a=e.target.closest('[data-act]'); if(a&&ACT[a.dataset.act])ACT[a.dataset.act](a.dataset.v);
+});
+render();
+
+// ---- guided demo ----
+const tap=$('#tap'), cap=$('#caption');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function tapOn(sel, nth=0){
+  const els=document.querySelectorAll(sel); const el=els[nth]; if(!el) return;
+  const vw=el.closest('.view'); if(vw){const vr=vw.getBoundingClientRect(),er=el.getBoundingClientRect(); if(er.top<vr.top||er.bottom>vr.bottom){vw.scrollTo({top:vw.scrollTop+er.top-vr.top-vr.height/2+er.height/2,behavior:'smooth'}); await sleep(450);}}
+  const sr=$('#screen').getBoundingClientRect(), r=el.getBoundingClientRect();
+  tap.classList.add('show'); tap.style.left=(r.left-sr.left+r.width/2)+'px'; tap.style.top=(r.top-sr.top+r.height/2)+'px';
+  await sleep(550); tap.classList.remove('press'); void tap.offsetWidth; tap.classList.add('press'); await sleep(180); el.click(); await sleep(350);
+}
+function say(t,b){cap.innerHTML=`<b>${b}</b>${t}`;}
+async function typeInto(text){const t=$('#takeInput');t.value='';for(const ch of text){t.value+=ch;await sleep(28);}}
+async function demo(){
+  const btn=$('#play'); btn.disabled=true; btn.querySelector('span').textContent='Playing…';
+  S=fresh(); render(); showPhone();
+  say('New users pick a generated handle. Nobody sees a real name.','Sign up'); await sleep(1400);
+  await tapOn('.opt',2); await sleep(500); await tapOn('#start');
+  say('Friday night stroll or couch scroll: one house at a time. Tap stars to rate.','Surf'); await sleep(1300);
+  await tapOn('.star',3); await sleep(900); await tapOn('#nextBtn');
+  await tapOn('.star',4); await sleep(800);
+  say('Open a home to see its average, photos and threaded takes.','Home page'); await tapOn('[data-act="openHome"]'); await sleep(1200);
+  say('A take about the people who live there gets stopped before it posts.','Moderation'); await tapOn('#takeInput');
+  await typeInto('The family that lives here never mows'); await tapOn('#postBtn'); await sleep(1800);
+  say('Keep it about the house, and it posts. You can edit or delete it later.','Takes'); await tapOn('[data-act="prompt"]',0);
+  await typeInto('Best feature: that turret and the wraparound porch'); await tapOn('#postBtn'); await sleep(400); await tapOn('[data-act="edit"]'); await sleep(1200);
+  await tapOn('[data-act="like"]',0); await sleep(700);
+  say('Walking past something cute? Snap it. Location matches the house and the photo is screened.','Snap a house'); await tapOn('[data-go="cam"]'); await sleep(900);
+  await tapOn('#shutter'); await sleep(900); await tapOn('.star',4); await sleep(500); await tapOn('#camPost'); await sleep(1300);
+  say('Browse every Queen Anne home on the map. Tap a pin to open it.','Map'); await tapOn('[data-go="map"]'); await sleep(1600);
+  say('Karma goes up with every rating, take and upvote. Badges come later.','Profile'); await tapOn('[data-go="profile"]'); await sleep(2200);
+  tap.classList.remove('show'); say('Tap around yourself, or press Play again.','Done');
+  btn.disabled=false; btn.querySelector('span').textContent='Play demo';
+}
+$('#play').onclick=demo;
+$('#reset').onclick=()=>{S=fresh();render();say('Pick a handle, rate a few homes, open one, post a take, or tap the camera.','Try it');};
+
+// ---- web view ----
+function webHTML(){
+  const pins=[[420,170,'b'],[300,250,'c'],[520,290,'b'],[610,150,'g'],[380,360,'c'],[700,330,'b'],[250,140,'g'],[560,420,'c'],[460,240,'b'],[660,230,'g'],[340,450,'b'],[760,420,'c'],[200,330,'g'],[820,200,'b']];
+  const pc={b:'var(--brand)',c:'var(--coral)',g:'#9aa5a0'};
+  return `<div class="desk"><div class="desk-top">${LOGO}<div class="search">Search Queen Anne streets</div><div class="chips" style="margin:0"><span class="chip on">All homes</span><span class="chip">Top rated</span><span class="chip">Unrated</span><span class="chip">Houses only</span></div><span class="karma" style="margin-left:auto">${S.handle} · ${S.karma.toLocaleString()}</span></div>
+  <div class="desk-main"><div class="list"><div class="list-h"><b style="font-size:16px">Queen Anne</b><span class="facts">Sample: 4 of ~8,000 houses</span></div>
+  ${HOMES.map((h,k)=>{const a=avgStr(h);return `<div class="lcard ${k===1?'on':''}">${house(h.i,104,72)}<div><div class="addr" style="font-size:14px">${h.a}</div><div class="facts">${h.t} · ${h.f.split(' · ').slice(0,2).join(' · ')}</div><div class="sc">${a.n?`★ ${a.avg} · ${a.n} ratings`:'Not rated yet · be first'}</div></div></div>`;}).join('')}</div>
+  <div class="mapwrap"><svg viewBox="0 0 900 560" preserveAspectRatio="xMidYMid slice"><rect width="900" height="560" fill="var(--map)"/><path d="M0 470 C120 450 160 520 300 560 L0 560Z" fill="var(--water)"/><rect x="430" y="300" width="120" height="80" rx="10" fill="var(--park)"/><g stroke="var(--road)" stroke-width="7" fill="none">${[60,120,190,260,330,400,470,540,610,680,750,820].map(x=>`<path d="M${x} 0V560"/>`).join('')}${[50,110,180,250,320,390,460,520].map(y=>`<path d="M0 ${y}H900"/>`).join('')}</g><path d="M0 290 C200 280 300 200 470 210 S700 300 900 270" stroke="var(--road)" stroke-width="13" fill="none"/><text x="490" y="345" text-anchor="middle" font-size="12" fill="var(--muted)">Kerry Park</text>
+  ${pins.map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="11" fill="${pc[c]}" stroke="var(--surface)" stroke-width="3"/>`).join('')}<circle cx="560" cy="190" r="15" fill="var(--brand)" stroke="var(--surface)" stroke-width="3"/><text x="560" y="194" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">4.6</text></svg>
+  <div class="legend"><span><i class="dot" style="background:var(--brand)"></i>Rated 4+</span><span><i class="dot" style="background:var(--coral)"></i>Hot this week</span><span><i class="dot" style="background:#9aa5a0"></i>Unrated</span></div></div></div></div>
+  <p class="hint">Web is the browse-at-home layout: list on the left, map on the right. Rating and posting work the same as on the phone.</p>`;
+}
+function showPhone(){$('#vPhone').classList.add('on');$('#vWeb').classList.remove('on');$('#phoneStage').hidden=false;$('#webStage').hidden=true;}
+$('#vPhone').onclick=showPhone;
+$('#vWeb').onclick=()=>{$('#vWeb').classList.add('on');$('#vPhone').classList.remove('on');$('#phoneStage').hidden=true;const w=$('#webStage');w.hidden=false;w.innerHTML=webHTML();};
+function setTheme(t){document.documentElement.dataset.theme=t;$('#tLight').classList.toggle('on',t==='light');$('#tDark').classList.toggle('on',t==='dark');try{localStorage.setItem('hs-theme',t);}catch(e){}}
+let saved=null;try{saved=localStorage.getItem('hs-theme');}catch(e){}
+setTheme(saved||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+$('#tLight').onclick=()=>setTheme('light');$('#tDark').onclick=()=>setTheme('dark');
+if(location.hash.includes('dark'))setTheme('dark');
+if(location.hash.includes('autoplay')) setTimeout(demo,600);
+</script>
+</body>
+</html>
