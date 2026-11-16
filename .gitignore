@@ -1,0 +1,5 @@
+node_modules
+dist
+.DS_Store
+# Big county files downloaded by the data pipeline (re-created by `npm run data`)
+data/raw

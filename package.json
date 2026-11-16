@@ -1,0 +1,13 @@
+{
+  "name": "house-surfer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "data": "node scripts/build-homes.mjs"
+  },
+  "devDependencies": {
+    "adm-zip": "^0.6.1",
+    "csv-parse": "^7.0.3"
+  }
+}
