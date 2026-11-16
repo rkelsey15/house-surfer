@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
 import App from './App.jsx'
+import { CommentsProvider } from './lib/CommentsContext.jsx'
 import { HomesProvider } from './lib/HomesContext.jsx'
 import { ProfileProvider } from './lib/ProfileContext.jsx'
 import { RatingsProvider } from './lib/RatingsContext.jsx'
@@ -15,9 +16,11 @@ createRoot(document.getElementById('root')).render(
       <ProfileProvider>
         <HomesProvider>
           <RatingsProvider>
-          <HashRouter>
-            <App />
-          </HashRouter>
+          <CommentsProvider>
+            <HashRouter>
+              <App />
+            </HashRouter>
+          </CommentsProvider>
         </RatingsProvider>
         </HomesProvider>
       </ProfileProvider>

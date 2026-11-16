@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import HouseArt from '../components/HouseArt.jsx'
 import StarRating from '../components/StarRating.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
@@ -16,14 +17,26 @@ function buildQueue(homes, rated) {
   return list
 }
 
+// Remembered while the app is open, so coming back from a home page (Back)
+// keeps your place in the feed instead of reshuffling it.
+const session = { homes: null, queue: [], pos: 0 }
+
 export default function Surf() {
   const { homes, status, error } = useHomes()
   const { ratings, rate, count } = useRatings()
-  const [pos, setPos] = useState(0)
+  const navigate = useNavigate()
+  const [pos, setPosState] = useState(() => session.pos)
+  const setPos = (n) => {
+    session.pos = typeof n === 'function' ? n(session.pos) : n
+    setPosState(session.pos)
+  }
 
   // Built once when homes load. Rating a home must not reshuffle the queue,
   // so `ratings` is read here on purpose without being a dependency.
-  const queue = useMemo(() => buildQueue(homes, ratings), [homes]) // eslint-disable-line react-hooks/exhaustive-deps
+  const queue = useMemo(() => {
+    if (session.homes !== homes) Object.assign(session, { homes, queue: buildQueue(homes, ratings), pos: 0 })
+    return session.queue
+  }, [homes]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (status === 'loading') return <p className="muted center">Loading homes…</p>
   if (status === 'error') return <p className="blocked">Could not load homes: {error}</p>
@@ -58,7 +71,7 @@ export default function Surf() {
 
       <div className="feed-actions">
         <button className="btn" onClick={next}>Skip</button>
-        <button className="btn" disabled title="Comments arrive in step 4">Comments</button>
+        <button className="btn" onClick={() => navigate('/home/' + home.id)}>Comments</button>
         <button className="btn pri" onClick={next} disabled={!mine}>Next</button>
       </div>
       <p className="muted center note">{count} home{count === 1 ? '' : 's'} rated so far</p>

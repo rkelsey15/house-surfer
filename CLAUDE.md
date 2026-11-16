@@ -31,7 +31,7 @@ In the portfolio case study it's pitched as "Zillow Surfer", a concept for Zillo
 
 ## Progress
 
-Last updated: Nov 15, 2026. Repo: https://github.com/rkelsey15/house-surfer (branch `main`). Update this section at the end of every step.
+Last updated: Nov 15, 2026 (after step 4). Repo: https://github.com/rkelsey15/house-surfer (branch `main`). Update this section at the end of every step.
 
 ### Steps done
 
@@ -42,8 +42,8 @@ Last updated: Nov 15, 2026. Repo: https://github.com/rkelsey15/house-surfer (bra
 ### Steps left (in order)
 
 - [x] **3. Feed.** `src/screens/Surf.jsx`: shuffled queue of unrated homes, 1 to 5 stars, Skip / Next (Next needs a rating). Ratings live in `src/lib/RatingsContext.jsx` (`useRatings()`, key `hs.ratings`, `{homeId: {stars, at}}`). Karma pill and Profile now show real karma (+5 per rating) and homes rated. The Comments button is disabled until step 4.
-- [ ] 4. **(next)** Home page (average, your rating, threaded comments, likes, edit/delete)
-- [ ] 5. Map and list (Leaflet)
+- [x] **4. Home page.** `src/screens/HomePage.jsx`, route `/#/home/:id`, opened from the Surf screen's Comments button. Shows the average and count, your editable rating, threaded comments (replies one level deep, 280 characters max), likes, and edit (marked "edited") and delete for your own. Comments live in `src/lib/CommentsContext.jsx` (`useComments()`, keys `hs.comments` and `hs.likes`). Karma is now +5 per rating and +10 per comment. Sample comments and ratings come from `src/lib/sampleData.js` (made up, generated from the home id, never saved). The Surf feed now remembers its place when you come Back from a home page.
+- [ ] 5. **(next)** Map and list (Leaflet). Reuse `HouseArt` on the map card and list, and link to `/home/:id`.
 - [ ] 6. Snap a house (3 nearest homes)
 - [ ] 7. Moderation (rule-based block on comments about people)
 - [ ] 8. Profile (karma, homes rated, comments, activity, locked badges)
@@ -65,9 +65,10 @@ Step numbers match the "V1 scope" list above.
 
 ### Loose ends to wire up later
 
-- Karma (pill in `src/App.jsx`, stats on `src/screens/Profile.jsx`) counts ratings only so far; add comments (+10) and likes (+1) in steps 4 to 8. Profile "comments" is still a hard-coded 0.
+- Likes received (+1 karma) can't happen in single-player (you can't like your own comments), so karma is ratings + comments until V2. `KARMA_PER_LIKE` exists in `CommentsContext.jsx` for later.
+- `src/lib/moderation.js` `checkComment()` is a placeholder that lets everything through. Step 7 fills it in; the comment box already shows its message.
+- Profile "recent activity" and Top screen should use `useComments()` and `useRatings()`.
 - The `/map`, `/snap` and `/top` routes in `src/App.jsx` are `ComingSoon` placeholders.
-- Seed sample comments (clearly marked as sample data in code) when the home page is built.
 
 ## V1 scope (build this now)
 

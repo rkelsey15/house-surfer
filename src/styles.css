@@ -226,3 +226,25 @@ h1 { font-size: 24px; letter-spacing: -0.02em; }
 .feed-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 14px; }
 .feed-actions .btn { padding: 12px 8px; }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ---------- Home page ---------- */
+.back { border: 0; background: none; color: var(--muted); font-size: 14px; padding: 4px 0 10px; }
+.avg { text-align: center; font-size: 16px; margin-top: 14px; }
+.avg b { font-size: 26px; }
+.star-glyph { color: var(--gold); font-size: 22px; }
+.small { font-size: 12px; }
+.composer { margin: 8px 0; }
+.composer textarea { width: 100%; min-height: 64px; resize: vertical; padding: 10px 12px; font: inherit; font-size: 14px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.composer-bar { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+.composer-bar .small { margin-right: auto; }
+.composer .blocked { margin-top: 6px; }
+.comment { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.comment .who { font-size: 12px; color: var(--muted); }
+.comment .who b { color: var(--ink); }
+.comment p { margin-top: 3px; font-size: 13.5px; overflow-wrap: anywhere; }
+.comment .meta { display: flex; gap: 14px; font-size: 12px; color: var(--muted); margin-top: 5px; }
+.comment .meta button { border: 0; background: none; color: var(--muted); font-size: 12px; padding: 2px 0; }
+.comment .meta button.liked { color: var(--brand); font-weight: 700; }
+.comment .meta button:disabled { opacity: .5; cursor: default; }
+.comment.reply { margin-left: 18px; border-left: 2px solid var(--line); padding-left: 10px; border-bottom: 0; }
+.sample-tag { margin-left: 6px; padding: 0 6px; border-radius: 6px; background: var(--brand-soft); color: var(--brand); font-size: 10.5px; }
