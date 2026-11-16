@@ -7,3 +7,7 @@ Rate houses on a walk with friends or from the couch. A mobile-first social app 
 - Demo video: [design/demo.mp4](design/demo.mp4)
 
 Home data comes from free King County public records. All ratings, comments and handles in demos are sample data. One rule: talk about the house, never the people who live there.
+
+## Deploying
+
+Pushing to `main` publishes the site to https://rkelsey15.github.io/house-surfer/ through `.github/workflows/deploy.yml`. One-time setup: in the repo go to Settings > Pages and set Source to "GitHub Actions".
