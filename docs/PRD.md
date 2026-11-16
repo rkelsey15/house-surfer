@@ -108,7 +108,7 @@ P0 ships in V1 (the proof of concept), P1 in V2, and P2 in V3 or later. See Mile
 | P0 | Comments | Post a comment on a home; threaded replies; like a comment |
 | P0 | Comments | Edit (marked "edited") or delete your own comments |
 | P0 | Feed | One home at a time, rate then next; mobile-first layout |
-| P0 | Map | Map with pins (green 4+ stars, orange hot this week, gray unrated) and a list view on web |
+| P0 | Map | Map with pins (gray unrated, slate blue under 3.5, green 3.5 to 4.4, gold 4.5+ with 3+ ratings; flame badge for hot this week; purple with a crown for the top home of the week) and a list view on web |
 | P0 | Search and filter | Search by street; filter top rated, unrated, style tags |
 | P0 | Photos | Upload a sidewalk photo; first approved photo becomes the cover; illustration until then |
 | P0 | Safety | Every comment and photo is screened before posting; report button |

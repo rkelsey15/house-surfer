@@ -1,16 +1,36 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CircleMarker, MapContainer, TileLayer, useMap, useMapEvents } from 'react-leaflet'
+import L from 'leaflet'
+import { CircleMarker, MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import HouseArt from '../components/HouseArt.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
-import { pinKind, TOP_RATED_MIN, useHomeStats } from '../lib/homeStats.js'
+import { pinKind, useHomeStats } from '../lib/homeStats.js'
 import { factsLine, typeLine } from '../lib/format.js'
 
 // Pin colors. Fixed hex values so they read on both the light and dark map.
-// Green = 4+ stars, orange = hot this week, gray = unrated.
-// Rated homes under 4 stars get gold so they don't look unrated.
-const PIN_COLORS = { top: '#2e9e6b', hot: '#e8764a', rated: '#d9a21b', unrated: '#9aa5a0' }
+// gray = unrated, slate blue = under 3.5, green = 3.5 to 4.4,
+// gold = 4.5+ with 3+ ratings, purple = top home of the week.
+const PIN_COLORS = { unrated: '#9aa5a0', low: '#5b7aa8', mid: '#2e9e6b', high: '#d9a21b', week: '#8e5bd0' }
+
+// Badges drawn on top of a pin: a small flame for hot homes, a crown for the
+// top home of the week. Canvas pins can't hold icons, so these are small
+// markers placed over them. Cached per size.
+const FLAME = '<svg viewBox="0 0 24 24"><path d="M12 2c1 3.5 5 5.5 5 11a5 5 0 0 1-10 0c0-2 1-3.4 2-4.4.2 1.4.8 2.2 1.6 2.6C10 8 10.4 5 12 2z" fill="#ff6a2b" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>'
+const CROWN = '<svg viewBox="0 0 24 24"><path d="M3 18 2 7l5.5 4.5L12 4l4.5 7.5L22 7l-1 11z" fill="#f5c518" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>'
+const iconCache = new Map()
+function badgeIcon(kind, size) {
+  const key = kind + size
+  if (!iconCache.has(key)) {
+    iconCache.set(key, L.divIcon({
+      className: 'badge-icon',
+      html: kind === 'crown' ? CROWN : FLAME,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size + 1],
+    }))
+  }
+  return iconCache.get(key)
+}
 
 const STYLES = ['Victorian era', 'Craftsman era', 'Pre-war', 'Mid-century', 'Late century', 'Modern']
 const FILTERS = [
@@ -64,7 +84,7 @@ function MapController({ view, focus, searchHomes, onZoom }) {
   }, [focus, map])
   useEffect(() => {
     if (searchHomes.length) {
-      map.fitBounds(searchHomes.map((h) => [h.lat, h.lng]), { padding: [30, 30], maxZoom: 17 })
+      map.fitBounds(searchHomes.map((h) => [h.lat, h.lng]), { padding: [30, 30], maxZoom: 17, animate: false })
     }
   }, [searchHomes, map])
   return null
@@ -107,7 +127,7 @@ export default function MapScreen() {
       if (!s) return false
       if (q && !h.address.toLowerCase().includes(q)) return false
       if (ui.style !== 'all' && h.style !== ui.style) return false
-      if (ui.filter === 'top') return s.avg !== null && s.avg >= TOP_RATED_MIN
+      if (ui.filter === 'top') return ['high', 'week'].includes(pinKind(s))
       if (ui.filter === 'unrated') return s.count === 0
       return true
     })
@@ -120,9 +140,23 @@ export default function MapScreen() {
   // The map re-fits only when the search text changes, not on every rating.
   const filteredRef = useRef(filtered)
   filteredRef.current = filtered
+  // Wait until typing pauses, then fit once. (Leaflet drops overlapping zoom
+  // animations, so fitting on every keystroke can leave the map in the wrong place.)
+  // Coming back from a home page does not re-fit: the saved position wins.
+  const [fitQuery, setFitQuery] = useState('')
+  const lastFit = useRef(ui.query)
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (ui.query !== lastFit.current) {
+        lastFit.current = ui.query
+        setFitQuery(ui.query)
+      }
+    }, 350)
+    return () => clearTimeout(t)
+  }, [ui.query])
   const searchHomes = useMemo(
-    () => (ui.query.trim() ? filteredRef.current.slice(0, 500) : []),
-    [ui.query, homes], // eslint-disable-line react-hooks/exhaustive-deps
+    () => (fitQuery.trim() ? filteredRef.current.slice(0, 500) : []),
+    [fitQuery, homes], // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   useEffect(() => setShown(LIST_PAGE), [ui.query, ui.filter, ui.style])
@@ -202,6 +236,21 @@ export default function MapScreen() {
           {filtered.map((h) => (
             <Pin key={h.id} home={h} kind={pinKind(stats.get(h.id))} radius={pinRadius(zoom)} onSelect={select} />
           ))}
+          {zoom >= 15 &&
+            filtered.map((h) => {
+              const s = stats.get(h.id)
+              if (!s.hot && !s.week) return null
+              const size = s.week ? 26 : zoom >= 17 ? 18 : 14
+              return (
+                <Marker
+                  key={'b' + h.id}
+                  position={[h.lat, h.lng]}
+                  icon={badgeIcon(s.week ? 'crown' : 'flame', size)}
+                  interactive={false}
+                  keyboard={false}
+                />
+              )
+            })}
           {selectedHome && (
             <CircleMarker
               center={[selectedHome.lat, selectedHome.lng]}
@@ -213,10 +262,12 @@ export default function MapScreen() {
         </MapContainer>
 
         <div className="legend">
-          <span><i className="dot" style={{ background: PIN_COLORS.top }} />4+ stars</span>
-          <span><i className="dot" style={{ background: PIN_COLORS.hot }} />Hot this week</span>
-          <span><i className="dot" style={{ background: PIN_COLORS.rated }} />Under 4</span>
           <span><i className="dot" style={{ background: PIN_COLORS.unrated }} />Unrated</span>
+          <span><i className="dot" style={{ background: PIN_COLORS.low }} />Under 3.5</span>
+          <span><i className="dot" style={{ background: PIN_COLORS.mid }} />3.5 to 4.4</span>
+          <span><i className="dot" style={{ background: PIN_COLORS.high }} />4.5+ (3+ ratings)</span>
+          <span><i className="legend-badge" dangerouslySetInnerHTML={{ __html: FLAME }} />Hot this week</span>
+          <span><i className="legend-badge" dangerouslySetInnerHTML={{ __html: CROWN }} />Top of the week</span>
         </div>
 
         {selectedHome && (

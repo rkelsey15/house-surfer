@@ -310,3 +310,7 @@ select.chip { background: var(--surface); }
   .viewseg { display: none; }
   .mapcard { left: auto; width: 380px; }
 }
+.badge-icon { background: none; border: 0; pointer-events: none; }
+.badge-icon svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .35)); }
+.legend-badge { width: 13px; height: 13px; display: inline-block; }
+.legend-badge svg { width: 100%; height: 100%; display: block; }

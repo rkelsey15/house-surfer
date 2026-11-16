@@ -68,6 +68,14 @@ export function sampleLikes(homeId) {
   return rows
 }
 
+// How many of a home's sample ratings came in during the last 7 days.
+// Made up and stable per home; most homes have none.
+export function sampleRecentRatings(homeId) {
+  if (!sampleRating(homeId).count) return 0
+  const h = hash(`w${homeId}`)
+  return h % 30 === 0 ? 2 : h % 12 === 0 ? 1 : 0
+}
+
 // Sample star ratings so the average isn't just your own: a count and a sum
 // that stay the same for a given home. Some homes have none.
 export function sampleRating(homeId) {
