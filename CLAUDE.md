@@ -14,13 +14,13 @@ Ryan is a product and program manager building this as a portfolio project. He i
 
 ## What we're building
 
-House Surfer: a mobile-first social app for rating houses. You swipe through homes in a neighborhood, give them 1 to 5 stars, and leave short "takes" that others like and reply to. It's Yelp-style ratings with Reddit-style threads, for houses. The full spec is in `docs/PRD.md`. The clickable design prototype is `design/prototype.html` (open it in a browser and press Play demo); match its look and flows.
+House Surfer: a mobile-first social app for rating houses. You swipe through homes in a neighborhood, give them 1 to 5 stars, and leave short "comments" that others like and reply to. It's Yelp-style ratings with Reddit-style threads, for houses. The full spec is in `docs/PRD.md`. The clickable design prototype is `design/prototype.html` (open it in a browser and press Play demo); match its look and flows.
 
 In the portfolio case study it's pitched as "Zillow Surfer", a concept for Zillow. **The app itself is always named House Surfer** and must never use Zillow's or Redfin's name, logo, colors or data.
 
 ## Product rules (do not break these)
 
-1. **Talk about the house, never the people who live there.** Block takes that mention residents, owners, tenants, families, neighbors or anyone's behavior. Never show owner or resident names, even though they're in county records.
+1. **Talk about the house, never the people who live there.** Block comments that mention residents, owners, tenants, families, neighbors or anyone's behavior. Never show owner or resident names, even though they're in county records.
 2. Show addresses at block level only ("2400 block of Warren Ave N").
 3. Users are anonymous: a generated handle (like "CedarSurfer42"), no real names.
 4. Only free, public data. No scraping Zillow, Redfin or listing sites. No listing photos.
@@ -41,12 +41,12 @@ Last updated: Nov 15, 2026. Repo: https://github.com/rkelsey15/house-surfer (bra
 
 ### Steps left (in order)
 
-- [x] **3. Feed.** `src/screens/Surf.jsx`: shuffled queue of unrated homes, 1 to 5 stars, Skip / Next (Next needs a rating). Ratings live in `src/lib/RatingsContext.jsx` (`useRatings()`, key `hs.ratings`, `{homeId: {stars, at}}`). Karma pill and Profile now show real karma (+5 per rating) and homes rated. The Takes button is disabled until step 4.
-- [ ] 4. **(next)** Home page (average, your rating, threaded takes, likes, edit/delete)
+- [x] **3. Feed.** `src/screens/Surf.jsx`: shuffled queue of unrated homes, 1 to 5 stars, Skip / Next (Next needs a rating). Ratings live in `src/lib/RatingsContext.jsx` (`useRatings()`, key `hs.ratings`, `{homeId: {stars, at}}`). Karma pill and Profile now show real karma (+5 per rating) and homes rated. The Comments button is disabled until step 4.
+- [ ] 4. **(next)** Home page (average, your rating, threaded comments, likes, edit/delete)
 - [ ] 5. Map and list (Leaflet)
 - [ ] 6. Snap a house (3 nearest homes)
-- [ ] 7. Moderation (rule-based block on takes about people)
-- [ ] 8. Profile (karma, homes rated, takes, activity, locked badges)
+- [ ] 7. Moderation (rule-based block on comments about people)
+- [ ] 8. Profile (karma, homes rated, comments, activity, locked badges)
 - [ ] 9. Event logging and `/stats`
 - [ ] 10. Deploy to GitHub Pages (Ryan must set Settings > Pages > Source to "GitHub Actions" once)
 
@@ -55,18 +55,19 @@ Step numbers match the "V1 scope" list above.
 ### Decisions made
 
 - **Townhouses:** kept in `homes.json` (type `Townhouse`), hidden in V1 by the feature flag `showTownhouses` in `src/config.js` (default `false`). The flag is applied in one place, `src/lib/HomesContext.jsx`, so always get homes from `useHomes()`, never fetch `homes.json` directly.
+- **Naming:** user posts are called "comments" in the app and in this file (renamed from "takes" on Nov 15, 2026). `docs/PRD.md`, `README.md` and `design/prototype.html` still say "takes"; read those as comments, and use "comments" in code, keys and screen text.
 - **Style is a rough era tag** (Victorian era, Craftsman era, Pre-war, Mid-century, Late century, Modern) from year built, because county data has no architectural style.
 - **Privacy in the data:** pin locations are fuzzed 25 to 50 m by the pipeline and the exact point is never saved; ids are hashes, not parcel numbers; only the last sale *year* is kept (no prices, no names); numbers under 100 show as "0–99 block".
-- **Storage:** everything saved in the browser uses keys starting with `hs.` through `src/lib/storage.js` (safe if storage is blocked). Existing keys: `hs.profile` (handle and join date), `hs.theme`. Use the same pattern (`useStoredState`) for ratings, takes and events.
+- **Storage:** everything saved in the browser uses keys starting with `hs.` through `src/lib/storage.js` (safe if storage is blocked). Existing keys: `hs.profile` (handle and join date), `hs.theme`. Use the same pattern (`useStoredState`) for ratings, comments and events.
 - **Routing:** `HashRouter` (URLs look like `/#/map`) so GitHub Pages works without server rules. The future `/stats` page is `/#/stats`.
 - **Git identity:** commits are `Ryan Kelsey <333146552+rkelsey15@users.noreply.github.com>` (his GitHub noreply address). Never use his personal email. On Nov 15, 2026 all commits were rewritten to this address and force-pushed (Ryan approved); everything was pushed.
 - **Testing so far:** no automated test suite. Each step was checked by driving the built app in headless Edge (puppeteer-core, kept outside the repo) and looking at screenshots in light and dark mode. Do the same for new screens.
 
 ### Loose ends to wire up later
 
-- Karma (pill in `src/App.jsx`, stats on `src/screens/Profile.jsx`) counts ratings only so far; add takes (+10) and likes (+1) in steps 4 to 8. Profile "takes" is still a hard-coded 0.
+- Karma (pill in `src/App.jsx`, stats on `src/screens/Profile.jsx`) counts ratings only so far; add comments (+10) and likes (+1) in steps 4 to 8. Profile "comments" is still a hard-coded 0.
 - The `/map`, `/snap` and `/top` routes in `src/App.jsx` are `ComingSoon` placeholders.
-- Seed sample takes (clearly marked as sample data in code) when the home page is built.
+- Seed sample comments (clearly marked as sample data in code) when the home page is built.
 
 ## V1 scope (build this now)
 
@@ -74,12 +75,12 @@ V1 is single-player: no accounts or server. Everything saves in the browser (loc
 
 1. **Data pipeline** (Node script in `scripts/`): download King County Assessor data (residential building, parcel and real property sales files) and King County GIS parcel locations; keep Queen Anne (Seattle) houses only; output `public/data/homes.json` with id, block-level address, lat/lng, beds, baths, sq ft, year built, style/type tag, last sale year. Confirm the real file and field names first; they weren't verified during planning. Expect about 8,000 homes; tell Ryan the actual count.
 2. **App shell**: handle picker with house rules, bottom tab bar (Surf, Map, camera, Top, Profile), light/dark theme.
-3. **Feed**: one home at a time, 1 to 5 stars, Skip / Takes / Next.
-4. **Home page**: average and count, your rating (editable), threaded takes, likes, edit and delete your own takes (show "edited").
+3. **Feed**: one home at a time, 1 to 5 stars, Skip / Comments / Next.
+4. **Home page**: average and count, your rating (editable), threaded comments, likes, edit and delete your own comments (show "edited").
 5. **Map and list**: Leaflet with OpenStreetMap tiles (with attribution). Pins: green = 4+ stars, orange = hot this week, gray = unrated. Search by street, filters (top rated, unrated, style).
 6. **Snap a house**: take or pick a photo, match the nearest home by location (let the user confirm), rate it. Store the photo in the browser (IndexedDB). Homes with no photo show an illustration.
-7. **Moderation (V1)**: a rule-based check that blocks takes about people, with the message "Talk about the house, not the people who live there." (Claude-based moderation comes in V2.)
-8. **Profile**: handle, karma (+5 per rating, +10 per take, +1 per like received), homes rated, takes, recent activity, badges as locked placeholders.
+7. **Moderation (V1)**: a rule-based check that blocks comments about people, with the message "Talk about the house, not the people who live there." (Claude-based moderation comes in V2.)
+8. **Profile**: handle, karma (+5 per rating, +10 per comment, +1 per like received), homes rated, comments, recent activity, badges as locked placeholders.
 9. **Event logging**: record every event listed in the PRD's Success metrics section to localStorage, plus a simple `/stats` page with daily counts.
 10. **Deploy**: GitHub Pages through a GitHub Actions workflow. Ryan must set Settings > Pages > Source to "GitHub Actions" once; walk him through it.
 
@@ -88,7 +89,7 @@ V1 is single-player: no accounts or server. Everything saves in the browser (loc
 - Vite + React (JavaScript is fine; keep it simple and readable).
 - Leaflet (react-leaflet) for the map.
 - No backend in V1. Set Vite `base` to `/house-surfer/` for GitHub Pages.
-- Seed a handful of sample takes so the app doesn't feel empty, clearly marked as sample data in code.
+- Seed a handful of sample comments so the app doesn't feel empty, clearly marked as sample data in code.
 
 ## Later (don't build yet)
 

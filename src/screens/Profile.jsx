@@ -5,7 +5,7 @@ import { useRatings } from '../lib/RatingsContext.jsx'
 
 const monthYear = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 
-// Shell version of the profile. Karma, homes rated, takes, activity and
+// Shell version of the profile. Karma, homes rated, comments, activity and
 // badges are filled in during later steps.
 export default function Profile() {
   const { profile, clearProfile } = useProfile()
@@ -22,7 +22,7 @@ export default function Profile() {
       <div className="stats">
         <div className="stat"><b>{karmaFromRatings}</b><span>karma</span></div>
         <div className="stat"><b>{count}</b><span>homes rated</span></div>
-        <div className="stat"><b>0</b><span>takes</span></div>
+        <div className="stat"><b>0</b><span>comments</span></div>
       </div>
 
       <h2 className="sec-t">Settings</h2>

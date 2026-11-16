@@ -49,7 +49,7 @@ export default function Signup() {
       <ul className="rules">
         <li>Talk about the house, never the people in it.</li>
         <li>No names, schedules or plate numbers.</li>
-        <li>Every take and photo is screened before it posts.</li>
+        <li>Every comment and photo is screened before it posts.</li>
       </ul>
 
       <button className="btn pri full start" onClick={() => saveProfile(picked)}>

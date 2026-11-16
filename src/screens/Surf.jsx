@@ -58,7 +58,7 @@ export default function Surf() {
 
       <div className="feed-actions">
         <button className="btn" onClick={next}>Skip</button>
-        <button className="btn" disabled title="Takes arrive in step 4">Takes</button>
+        <button className="btn" disabled title="Comments arrive in step 4">Comments</button>
         <button className="btn pri" onClick={next} disabled={!mine}>Next</button>
       </div>
       <p className="muted center note">{count} home{count === 1 ? '' : 's'} rated so far</p>

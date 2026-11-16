@@ -19,7 +19,7 @@ export default function App() {
     <div className="app">
       <header className="appbar">
         <Logo />
-        {/* Karma so far: ratings only. Takes and likes join in later steps. */}
+        {/* Karma so far: ratings only. Comments and likes join in later steps. */}
         <span className="karma">{karmaFromRatings} karma</span>
       </header>
 
