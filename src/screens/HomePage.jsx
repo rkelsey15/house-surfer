@@ -8,9 +8,7 @@ import { useProfile } from '../lib/ProfileContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
 import { factsLine, typeLine } from '../lib/format.js'
 import { checkComment } from '../lib/moderation.js'
-import { sampleComments, sampleRating } from '../lib/sampleData.js'
-
-const DAY = 86400000
+import { isSample, sampleComments, sampleLikes, sampleRating } from '../lib/sampleData.js'
 
 function timeAgo(iso) {
   const mins = Math.floor((Date.now() - new Date(iso).getTime()) / 60000)
@@ -58,24 +56,22 @@ function Composer({ initial = '', placeholder, button, onSubmit, onCancel, autoF
   )
 }
 
-function CommentView({ c, isReply, replying, onReply, editing, onEdit, actions }) {
+function CommentView({ c, isReply, likeCount, liked, replying, onReply, editing, onEdit, actions }) {
   const { profile } = useProfile()
-  const { likes, toggleLike } = useComments()
-  const mine = !c.sample && c.handle === profile.handle
-  const liked = !!likes[c.id]
-  const likeCount = (c.sampleLikes ?? 0) + (liked ? 1 : 0)
-  const when = c.sample ? `${c.daysAgo}d` : timeAgo(c.at)
+  const { toggleLike } = useComments()
+  const sample = isSample(c)
+  const mine = !sample && c.user === profile.handle
 
   return (
     <div className={`comment${isReply ? ' reply' : ''}`}>
       <div className="who">
-        <b>{c.handle}</b>
-        {c.sample && <span className="sample-tag" title="Made-up sample comment">sample</span>}
-        {' · '}{when}{c.editedAt ? ' · edited' : ''}
+        <b>{c.user}</b>
+        {sample && <span className="sample-tag" title="Made-up sample comment">sample</span>}
+        {' · '}{timeAgo(c.created_at)}{c.edited_at ? ' · edited' : ''}
       </div>
       {editing ? (
         <Composer
-          initial={c.text}
+          initial={c.body}
           placeholder="Edit your comment"
           button="Save"
           autoFocus
@@ -83,7 +79,7 @@ function CommentView({ c, isReply, replying, onReply, editing, onEdit, actions }
           onCancel={actions.cancel}
         />
       ) : (
-        <p>{c.text}</p>
+        <p>{c.body}</p>
       )}
       {!editing && (
         <div className="meta">
@@ -103,7 +99,7 @@ function CommentView({ c, isReply, replying, onReply, editing, onEdit, actions }
       )}
       {replying && (
         <Composer
-          placeholder={`Reply to ${c.handle}`}
+          placeholder={`Reply to ${c.user}`}
           button="Reply"
           autoFocus
           onSubmit={(t) => actions.postReply(c, t)}
@@ -119,23 +115,29 @@ export default function HomePage() {
   const navigate = useNavigate()
   const { homes, status } = useHomes()
   const { ratings, rate } = useRatings()
-  const { comments, addComment, editComment, deleteComment } = useComments()
+  const { comments, likes, addComment, editComment, deleteComment } = useComments()
   const [replyTo, setReplyTo] = useState(null)
   const [editId, setEditId] = useState(null)
 
+  const { profile } = useProfile()
   const home = homes.find((h) => h.id === id)
 
   // Sample comments plus yours, grouped into threads (top comment + replies).
   const threads = useMemo(() => {
-    const all = [...sampleComments(id), ...comments.filter((c) => c.homeId === id)]
-    const ageOf = (c) => (c.sample ? Date.now() - c.daysAgo * DAY : new Date(c.at).getTime())
-    const live = (c) => !c.deleted
+    const all = [...sampleComments(id), ...comments.filter((c) => c.home_id === id)]
+    const byTime = (a, b) => a.created_at.localeCompare(b.created_at)
     return all
-      .filter((c) => !c.parentId)
-      .map((top) => ({ top, replies: all.filter((r) => r.parentId === top.id && live(r)).sort((a, b) => ageOf(a) - ageOf(b)) }))
-      .filter((t) => live(t.top) || t.replies.length > 0)
-      .sort((a, b) => ageOf(b.top) - ageOf(a.top))
+      .filter((c) => !c.parent_id)
+      .map((top) => ({ top, replies: all.filter((r) => r.parent_id === top.id).sort(byTime) }))
+      .sort((a, b) => byTime(b.top, a.top))
   }, [id, comments])
+
+  // Like counts are computed from the likes rows (sample rows + yours).
+  const likeRows = useMemo(() => [...sampleLikes(id), ...likes], [id, likes])
+  const likeProps = (c) => ({
+    likeCount: likeRows.filter((l) => l.comment_id === c.id).length,
+    liked: likeRows.some((l) => l.comment_id === c.id && l.user === profile.handle),
+  })
 
   if (status === 'loading') return <p className="muted center">Loading…</p>
   if (!home) {
@@ -163,7 +165,7 @@ export default function HomePage() {
       cancel()
     },
     postReply: (parent, text) => {
-      addComment(id, text, parent.parentId ?? parent.id)
+      addComment(id, text, parent.parent_id ?? parent.id)
       cancel()
     },
     remove: (cid) => {
@@ -175,6 +177,7 @@ export default function HomePage() {
     c,
     isReply,
     actions,
+    ...likeProps(c),
     replying: replyTo === c.id,
     editing: editId === c.id,
     onReply: () => {
@@ -221,11 +224,7 @@ export default function HomePage() {
       {threads.length === 0 && <p className="muted center note">No comments yet. Say something about the house.</p>}
       {threads.map(({ top, replies }) => (
         <div key={top.id}>
-          {top.deleted ? (
-            <div className="comment"><p className="muted">[deleted]</p></div>
-          ) : (
-            <CommentView {...commentProps(top, false)} />
-          )}
+          <CommentView {...commentProps(top, false)} />
           {replies.map((r) => (
             <CommentView key={r.id} {...commentProps(r, true)} />
           ))}

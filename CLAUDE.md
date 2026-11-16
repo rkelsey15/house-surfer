@@ -42,7 +42,7 @@ Last updated: Nov 15, 2026 (after step 4). Repo: https://github.com/rkelsey15/ho
 ### Steps left (in order)
 
 - [x] **3. Feed.** `src/screens/Surf.jsx`: shuffled queue of unrated homes, 1 to 5 stars, Skip / Next (Next needs a rating). Ratings live in `src/lib/RatingsContext.jsx` (`useRatings()`, key `hs.ratings`, `{homeId: {stars, at}}`). Karma pill and Profile now show real karma (+5 per rating) and homes rated. The Comments button is disabled until step 4.
-- [x] **4. Home page.** `src/screens/HomePage.jsx`, route `/#/home/:id`, opened from the Surf screen's Comments button. Shows the average and count, your editable rating, threaded comments (replies one level deep, 280 characters max), likes, and edit (marked "edited") and delete for your own. Comments live in `src/lib/CommentsContext.jsx` (`useComments()`, keys `hs.comments` and `hs.likes`). Karma is now +5 per rating and +10 per comment. Sample comments and ratings come from `src/lib/sampleData.js` (made up, generated from the home id, never saved). The Surf feed now remembers its place when you come Back from a home page.
+- [x] **4. Home page.** `src/screens/HomePage.jsx`, route `/#/home/:id`, opened from the Surf screen's Comments button. Shows the average and count, your editable rating, threaded comments (replies one level deep, 280 characters max), likes, and edit (marked "edited") and delete for your own. Comments live in `src/lib/CommentsContext.jsx` (`useComments()`), stored as three tables shaped like the V2 database: `hs.comments` (id, home_id, parent_id, user, body, created_at, edited_at), `hs.comment_edits` (comment_id, old_body, edited_at) and `hs.likes` (comment_id, user, created_at; one per user per comment). Like counts and karma are computed from these rows, never stored. Deleting a comment also removes its replies, edits and likes (like ON DELETE CASCADE). Karma is +5 per rating, +10 per comment, +1 per like received. Sample comments and ratings come from `src/lib/sampleData.js` (made up, generated from the home id, never saved). The Surf feed now remembers its place when you come Back from a home page.
 - [ ] 5. **(next)** Map and list (Leaflet). Reuse `HouseArt` on the map card and list, and link to `/home/:id`.
 - [ ] 6. Snap a house (3 nearest homes)
 - [ ] 7. Moderation (rule-based block on comments about people)
@@ -65,7 +65,7 @@ Step numbers match the "V1 scope" list above.
 
 ### Loose ends to wire up later
 
-- Likes received (+1 karma) can't happen in single-player (you can't like your own comments), so karma is ratings + comments until V2. `KARMA_PER_LIKE` exists in `CommentsContext.jsx` for later.
+- Likes received (+1 karma) are computed already but stay 0 in single-player (you can't like your own comments) until V2. Sample comments have made-up like rows; a like you give a sample comment is saved with that sample id, so V2 needs to ignore or drop those.
 - `src/lib/moderation.js` `checkComment()` is a placeholder that lets everything through. Step 7 fills it in; the comment box already shows its message.
 - Profile "recent activity" and Top screen should use `useComments()` and `useRatings()`.
 - The `/map`, `/snap` and `/top` routes in `src/App.jsx` are `ComingSoon` placeholders.

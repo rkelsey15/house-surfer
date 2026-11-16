@@ -25,22 +25,47 @@ const SAMPLE_THREADS = [
 ]
 
 // About half of homes get sample comments (1 or 2 threads).
-export function sampleComments(homeId) {
+function pickThreads(homeId) {
   const h = hash(homeId)
   if (h % 2 === 1) return []
   const first = (h >>> 1) % SAMPLE_THREADS.length
   const picks = [first]
   if ((h >>> 5) % 3 === 0) picks.push((first + 2) % SAMPLE_THREADS.length)
+  return picks
+}
+
+export function sampleComments(homeId) {
+  const picks = pickThreads(homeId)
   const out = []
+  const row = (id, parent_id, t) => ({
+    id, home_id: homeId, parent_id, user: t.handle, body: t.text,
+    created_at: new Date(Date.now() - t.daysAgo * 86400000).toISOString(), edited_at: null,
+  })
   picks.forEach((p, i) => {
     const t = SAMPLE_THREADS[p]
     const id = `sample-${homeId}-${i}`
-    out.push({ id, homeId, parentId: null, handle: t.handle, text: t.text, daysAgo: t.daysAgo, sampleLikes: t.likes, sample: true })
-    t.replies.forEach((r, j) =>
-      out.push({ id: `${id}-r${j}`, homeId, parentId: id, handle: r.handle, text: r.text, daysAgo: r.daysAgo, sampleLikes: r.likes, sample: true }),
-    )
+    out.push(row(id, null, t))
+    t.replies.forEach((r, j) => out.push(row(`${id}-r${j}`, id, r)))
   })
   return out
+}
+
+export const isSample = (comment) => comment.id.startsWith('sample-')
+
+// Sample likes as real-shaped rows (made-up users), so like counts are
+// computed the same way for sample and real comments.
+export function sampleLikes(homeId) {
+  const picks = pickThreads(homeId)
+  const rows = []
+  const add = (id, n) => {
+    for (let k = 0; k < n; k++) rows.push({ comment_id: id, user: `sample-user-${k}`, created_at: new Date().toISOString() })
+  }
+  picks.forEach((p, i) => {
+    const id = `sample-${homeId}-${i}`
+    add(id, SAMPLE_THREADS[p].likes)
+    SAMPLE_THREADS[p].replies.forEach((r, j) => add(`${id}-r${j}`, r.likes))
+  })
+  return rows
 }
 
 // Sample star ratings so the average isn't just your own: a count and a sum

@@ -2,8 +2,12 @@ import { useCallback, useState } from 'react'
 import { readJSON, writeJSON } from './storage.js'
 
 // Like useState, but the value is also saved in localStorage under `key`.
-export function useStoredState(key, initial) {
-  const [value, setValue] = useState(() => readJSON(key, initial))
+// `migrate` (optional) converts older saved data to the current shape on load.
+export function useStoredState(key, initial, migrate) {
+  const [value, setValue] = useState(() => {
+    const saved = readJSON(key, initial)
+    return migrate ? migrate(saved) : saved
+  })
   const set = useCallback(
     (next) => {
       setValue((prev) => {
