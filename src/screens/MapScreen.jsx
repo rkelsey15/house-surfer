@@ -11,7 +11,22 @@ import { factsLine, typeLine } from '../lib/format.js'
 // Pin colors. Fixed hex values so they read on both the light and dark map.
 // gray = unrated, slate blue = under 3.5, green = 3.5 to 4.4,
 // gold = 4.5+ with 3+ ratings, purple = top home of the week.
-const PIN_COLORS = { unrated: '#9aa5a0', low: '#5b7aa8', mid: '#2e9e6b', high: '#d9a21b', week: '#8e5bd0' }
+const PIN_COLORS = { unrated: '#8a9591', low: '#2f7fd0', mid: '#2e9e6b', high: '#f2c200', week: '#8e5bd0' }
+
+// How each kind of pin is drawn:
+//   unrated = small hollow gray circle (outline only)
+//   gold    = true yellow-gold with a dark outline so it can't pass for orange
+//   others  = solid color with a white outline
+function pinStyle(kind, radius, big = false) {
+  const ring = big ? 1.5 : 1
+  if (kind === 'unrated') {
+    return { radius: Math.max(2, Math.round(radius * 0.75)), pathOptions: { color: PIN_COLORS.unrated, weight: radius > 5 ? 2 : 1.5, fill: false, opacity: 1 } }
+  }
+  if (kind === 'high') {
+    return { radius, pathOptions: { color: '#4a3b00', weight: ring * 1.5, fillColor: PIN_COLORS.high, fillOpacity: 1 } }
+  }
+  return { radius, pathOptions: { color: '#ffffff', weight: radius > 5 ? 2 * ring : ring, fillColor: PIN_COLORS[kind], fillOpacity: 0.95 } }
+}
 
 // Badges drawn on top of a pin: a small flame for hot homes, a crown for the
 // top home of the week. Canvas pins can't hold icons, so these are small
@@ -52,11 +67,12 @@ const ratingText = (stat) => (stat.count ? `★ ${stat.avg.toFixed(1)} · ${stat
 
 // One pin. Memoized so changing the selection redraws only what changed.
 const Pin = memo(function Pin({ home, kind, radius, onSelect }) {
+  const style = pinStyle(kind, radius)
   return (
     <CircleMarker
       center={[home.lat, home.lng]}
-      radius={radius}
-      pathOptions={{ color: '#ffffff', weight: radius > 5 ? 2 : 1, fillColor: PIN_COLORS[kind], fillOpacity: 0.95 }}
+      radius={style.radius}
+      pathOptions={style.pathOptions}
       eventHandlers={{ click: () => onSelect(home.id) }}
     />
   )
@@ -254,18 +270,17 @@ export default function MapScreen() {
           {selectedHome && (
             <CircleMarker
               center={[selectedHome.lat, selectedHome.lng]}
-              radius={pinRadius(zoom) + 4}
               interactive={false}
-              pathOptions={{ color: '#ffffff', weight: 3, fillColor: PIN_COLORS[pinKind(selStat)], fillOpacity: 1 }}
+              {...pinStyle(pinKind(selStat), pinRadius(zoom) + 4, true)}
             />
           )}
         </MapContainer>
 
         <div className="legend">
-          <span><i className="dot" style={{ background: PIN_COLORS.unrated }} />Unrated</span>
+          <span><i className="dot hollow" style={{ borderColor: PIN_COLORS.unrated }} />Unrated</span>
           <span><i className="dot" style={{ background: PIN_COLORS.low }} />Under 3.5</span>
           <span><i className="dot" style={{ background: PIN_COLORS.mid }} />3.5 to 4.4</span>
-          <span><i className="dot" style={{ background: PIN_COLORS.high }} />4.5+ (3+ ratings)</span>
+          <span><i className="dot ringed" style={{ background: PIN_COLORS.high }} />4.5+ (3+ ratings)</span>
           <span><i className="legend-badge" dangerouslySetInnerHTML={{ __html: FLAME }} />Hot this week</span>
           <span><i className="legend-badge" dangerouslySetInnerHTML={{ __html: CROWN }} />Top of the week</span>
         </div>
