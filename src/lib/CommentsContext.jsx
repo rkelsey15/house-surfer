@@ -7,7 +7,7 @@ import { readJSON } from './storage.js'
 // so they can move to Supabase without reshaping. Columns are snake_case on
 // purpose.
 //
-//   hs.comments       [{ id, home_id, parent_id | null, user, body, created_at, edited_at | null }]
+//   hs.comments       [{ id, home_id, parent_id | null, user, body, created_at, edited_at | null, deleted_at | null }]
 //   hs.comment_edits  [{ comment_id, old_body, edited_at }]        one row per edit (history)
 //   hs.likes          [{ comment_id, user, created_at }]           one per user per comment
 //
@@ -15,8 +15,8 @@ import { readJSON } from './storage.js'
 // reply attaches to the top comment. Like counts and karma are never stored;
 // they are computed from these rows.
 //
-// Deleting a comment removes its replies, edit history and likes too (like
-// ON DELETE CASCADE in the database).
+// Deleting sets deleted_at; the row, its edit history and its likes are kept.
+// The screen shows "[deleted]" if the comment has replies and hides it if not.
 //
 // Sample comments from other "people" (sampleData.js) are never stored here.
 const CommentsContext = createContext(null)
@@ -28,16 +28,17 @@ export const MAX_COMMENT_LENGTH = 280
 const newId = () => `c-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`
 const now = () => new Date().toISOString()
 
-// One-time conversion of the earlier saved format (camelCase fields, likes as
-// an object) into the table shape. Runs only when old data is found.
+// Converts older saved data to the current table shape: the first format
+// (camelCase fields, likes as an object) and rows from before deleted_at.
 function migrateComments(rows) {
-  if (!rows.some((c) => 'homeId' in c)) return rows
-  return rows
-    .filter((c) => !c.deleted)
-    .map((c) => ({
-      id: c.id, home_id: c.homeId, parent_id: c.parentId ?? null, user: c.handle,
-      body: c.text, created_at: c.at, edited_at: c.editedAt ?? null,
-    }))
+  return rows.map((c) =>
+    'homeId' in c
+      ? {
+          id: c.id, home_id: c.homeId, parent_id: c.parentId ?? null, user: c.handle,
+          body: c.text, created_at: c.at, edited_at: c.editedAt ?? null, deleted_at: c.deleted ? c.at : null,
+        }
+      : { ...c, deleted_at: c.deleted_at ?? null },
+  )
 }
 function migrateLikes(likes, user) {
   if (Array.isArray(likes)) return likes
@@ -55,7 +56,7 @@ export function CommentsProvider({ children }) {
     (home_id, body, parent_id = null) => {
       setComments((prev) => [
         ...prev,
-        { id: newId(), home_id, parent_id, user: me ?? 'Surfer', body, created_at: now(), edited_at: null },
+        { id: newId(), home_id, parent_id, user: me ?? 'Surfer', body, created_at: now(), edited_at: null, deleted_at: null },
       ])
     },
     [setComments, me],
@@ -66,7 +67,7 @@ export function CommentsProvider({ children }) {
     (id, body) => {
       const at = now()
       const old = comments.find((c) => c.id === id)
-      if (!old || old.body === body) return
+      if (!old || old.deleted_at || old.body === body) return
       setEdits((prev) => [...prev, { comment_id: id, old_body: old.body, edited_at: at }])
       setComments((prev) => prev.map((c) => (c.id === id ? { ...c, body, edited_at: at } : c)))
     },
@@ -75,12 +76,9 @@ export function CommentsProvider({ children }) {
 
   const deleteComment = useCallback(
     (id) => {
-      const gone = new Set([id, ...comments.filter((c) => c.parent_id === id).map((c) => c.id)])
-      setComments((prev) => prev.filter((c) => !gone.has(c.id)))
-      setEdits((prev) => prev.filter((e) => !gone.has(e.comment_id)))
-      setLikes((prev) => prev.filter((l) => !gone.has(l.comment_id)))
+      setComments((prev) => prev.map((c) => (c.id === id && !c.deleted_at ? { ...c, deleted_at: now() } : c)))
     },
-    [comments, setComments, setEdits, setLikes],
+    [setComments],
   )
 
   // One like per user per comment: liking again removes it.
@@ -97,7 +95,8 @@ export function CommentsProvider({ children }) {
   )
 
   const value = useMemo(() => {
-    const mine = comments.filter((c) => c.user === me)
+    // Deleted comments stop earning karma (their rows and likes are kept).
+    const mine = comments.filter((c) => c.user === me && !c.deleted_at)
     const myIds = new Set(mine.map((c) => c.id))
     // Likes received on my comments from other people (liking your own is blocked).
     const likesReceived = likes.filter((l) => myIds.has(l.comment_id) && l.user !== me).length

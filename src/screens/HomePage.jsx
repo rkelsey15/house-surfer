@@ -62,6 +62,15 @@ function CommentView({ c, isReply, likeCount, liked, replying, onReply, editing,
   const sample = isSample(c)
   const mine = !sample && c.user === profile.handle
 
+  // Deleted comments that still have replies show only a placeholder.
+  if (c.deleted_at) {
+    return (
+      <div className="comment">
+        <p className="muted">[deleted]</p>
+      </div>
+    )
+  }
+
   return (
     <div className={`comment${isReply ? ' reply' : ''}`}>
       <div className="who">
@@ -128,7 +137,9 @@ export default function HomePage() {
     const byTime = (a, b) => a.created_at.localeCompare(b.created_at)
     return all
       .filter((c) => !c.parent_id)
-      .map((top) => ({ top, replies: all.filter((r) => r.parent_id === top.id).sort(byTime) }))
+      .map((top) => ({ top, replies: all.filter((r) => r.parent_id === top.id && !r.deleted_at).sort(byTime) }))
+      // A deleted comment stays as "[deleted]" only while it still has replies.
+      .filter((t) => !t.top.deleted_at || t.replies.length > 0)
       .sort((a, b) => byTime(b.top, a.top))
   }, [id, comments])
 
