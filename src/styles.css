@@ -216,3 +216,13 @@ h1 { font-size: 24px; letter-spacing: -0.02em; }
   .appbar { padding: 0 20px; justify-content: flex-start; gap: 14px; }
   .main { padding-bottom: 40px; }
 }
+
+/* ---------- Feed ---------- */
+.rate-label { text-align: center; font-weight: 600; font-size: 14px; margin: 16px 0 6px; }
+.stars { display: flex; justify-content: center; gap: 4px; }
+.star { border: 0; background: none; padding: 4px; width: 52px; height: 52px; color: var(--muted); opacity: .45; }
+.star svg { width: 100%; height: 100%; fill: currentColor; }
+.star.on { color: var(--gold); opacity: 1; }
+.feed-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 14px; }
+.feed-actions .btn { padding: 12px 8px; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }

@@ -4,6 +4,7 @@ import { HashRouter } from 'react-router-dom'
 import App from './App.jsx'
 import { HomesProvider } from './lib/HomesContext.jsx'
 import { ProfileProvider } from './lib/ProfileContext.jsx'
+import { RatingsProvider } from './lib/RatingsContext.jsx'
 import { ThemeProvider } from './lib/ThemeContext.jsx'
 import './styles.css'
 
@@ -13,9 +14,11 @@ createRoot(document.getElementById('root')).render(
     <ThemeProvider>
       <ProfileProvider>
         <HomesProvider>
+          <RatingsProvider>
           <HashRouter>
             <App />
           </HashRouter>
+        </RatingsProvider>
         </HomesProvider>
       </ProfileProvider>
     </ThemeProvider>

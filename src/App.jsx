@@ -6,9 +6,11 @@ import Profile from './screens/Profile.jsx'
 import Signup from './screens/Signup.jsx'
 import Surf from './screens/Surf.jsx'
 import { useProfile } from './lib/ProfileContext.jsx'
+import { useRatings } from './lib/RatingsContext.jsx'
 
 export default function App() {
   const { profile } = useProfile()
+  const { karmaFromRatings } = useRatings()
 
   // No handle yet: show the sign-up screen with no tab bar.
   if (!profile) return <Signup />
@@ -17,8 +19,8 @@ export default function App() {
     <div className="app">
       <header className="appbar">
         <Logo />
-        {/* Wired to real karma in a later step. */}
-        <span className="karma">0 karma</span>
+        {/* Karma so far: ratings only. Takes and likes join in later steps. */}
+        <span className="karma">{karmaFromRatings} karma</span>
       </header>
 
       <main className="main">

@@ -41,8 +41,8 @@ Last updated: Nov 15, 2026. Repo: https://github.com/rkelsey15/house-surfer (bra
 
 ### Steps left (in order)
 
-- [ ] **3. Feed** (next). Replace the placeholder in `src/screens/Surf.jsx`: one home at a time, 1 to 5 stars, Skip / Takes / Next, ratings saved in localStorage.
-- [ ] 4. Home page (average, your rating, threaded takes, likes, edit/delete)
+- [x] **3. Feed.** `src/screens/Surf.jsx`: shuffled queue of unrated homes, 1 to 5 stars, Skip / Next (Next needs a rating). Ratings live in `src/lib/RatingsContext.jsx` (`useRatings()`, key `hs.ratings`, `{homeId: {stars, at}}`). Karma pill and Profile now show real karma (+5 per rating) and homes rated. The Takes button is disabled until step 4.
+- [ ] 4. **(next)** Home page (average, your rating, threaded takes, likes, edit/delete)
 - [ ] 5. Map and list (Leaflet)
 - [ ] 6. Snap a house (3 nearest homes)
 - [ ] 7. Moderation (rule-based block on takes about people)
@@ -59,12 +59,12 @@ Step numbers match the "V1 scope" list above.
 - **Privacy in the data:** pin locations are fuzzed 25 to 50 m by the pipeline and the exact point is never saved; ids are hashes, not parcel numbers; only the last sale *year* is kept (no prices, no names); numbers under 100 show as "0–99 block".
 - **Storage:** everything saved in the browser uses keys starting with `hs.` through `src/lib/storage.js` (safe if storage is blocked). Existing keys: `hs.profile` (handle and join date), `hs.theme`. Use the same pattern (`useStoredState`) for ratings, takes and events.
 - **Routing:** `HashRouter` (URLs look like `/#/map`) so GitHub Pages works without server rules. The future `/stats` page is `/#/stats`.
-- **Git identity:** commits are `Ryan Kelsey <rkelsey15@users.noreply.github.com>`. Never use his personal email. On Nov 15, 2026 the Initial commit was rewritten to use it and force-pushed (Ryan approved); everything is pushed.
+- **Git identity:** commits are `Ryan Kelsey <333146552+rkelsey15@users.noreply.github.com>` (his GitHub noreply address). Never use his personal email. On Nov 15, 2026 all commits were rewritten to this address and force-pushed (Ryan approved); everything was pushed.
 - **Testing so far:** no automated test suite. Each step was checked by driving the built app in headless Edge (puppeteer-core, kept outside the repo) and looking at screenshots in light and dark mode. Do the same for new screens.
 
 ### Loose ends to wire up later
 
-- The karma pill in `src/App.jsx` and the zeros on `src/screens/Profile.jsx` are hard-coded until ratings and takes exist (steps 3 to 8).
+- Karma (pill in `src/App.jsx`, stats on `src/screens/Profile.jsx`) counts ratings only so far; add takes (+10) and likes (+1) in steps 4 to 8. Profile "takes" is still a hard-coded 0.
 - The `/map`, `/snap` and `/top` routes in `src/App.jsx` are `ComingSoon` placeholders.
 - Seed sample takes (clearly marked as sample data in code) when the home page is built.
 
