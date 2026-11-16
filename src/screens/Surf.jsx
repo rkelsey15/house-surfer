@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import HouseArt from '../components/HouseArt.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { factsLine, typeLine } from '../lib/format.js'
 
@@ -18,7 +19,7 @@ export default function Surf() {
   return (
     <div>
       <div className="card">
-        <div className="art-placeholder" aria-hidden="true" />
+        <HouseArt home={home} />
         <div className="info">
           <div className="addr">{home.address}</div>
           <div className="facts">{typeLine(home)}</div>
