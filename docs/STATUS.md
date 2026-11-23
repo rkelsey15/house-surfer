@@ -5,7 +5,7 @@ Last updated: Nov 22, 2026 · Live: https://rkelsey15.github.io/house-surfer/ ·
 ## Phase
 **Phase 5: Build, demo-complete push.** House Surfer is now a portfolio **demo**, not a live app (see DECISIONS.md): anyone with the link can play in about 60 seconds, with nothing but the browser. The plan and acceptance criteria are in `docs/02-user-stories.md`; we build one section at a time and pause for review after each.
 
-Local commits are **not pushed yet**. The live site still shows the build from before this push.
+Sections 1 to 3 are pushed (Nov 22). Section 4 (Snap a house) is committed locally and **not pushed yet**, so the live site does not have it. An iPhone test needs the push first, because camera and location only work on the https site.
 
 ## Demo-complete plan
 | # | Section | State |
@@ -13,8 +13,8 @@ Local commits are **not pushed yet**. The live site still shows the build from b
 | 1 | Demo framing: banner, Reset demo | **Done** |
 | 2 | "Try this" guide | **Done** |
 | 3 | Moderation (rule-based) | **Done** (44 tests, `npm test`) |
-| 4 | Snap a house, lite | Next |
-| 5 | Top screen | To do |
+| 4 | Snap a house, lite | **Done on laptop and phone-size tests; waiting for a real iPhone test** |
+| 5 | Top screen | Next |
 | 6 | Profile: my comments, activity, locked badges | To do |
 | 7 | Event logging and `/stats` | Started: `comment_blocked` is logged; the rest and the page are to do |
 | 8 | "Sample" tag on seeded comments | Looks done already (tag shows in screenshots); confirm at the end |
@@ -27,6 +27,7 @@ Local commits are **not pushed yet**. The live site still shows the build from b
 - Surf feed, home page with threaded comments and likes, map and list with pins, search and filters
 - Demo framing: dismissible banner (a floating pill at bottom-left on laptops), "Reset demo" on Profile with a confirm step; clears only `hs.` keys
 - "Try this" checklist on the feed (rate 3, comment, see moderation, view the map); collapses on phones; reopens from Profile
+- Snap a house (`/snap`): take or pick a photo on phones, upload or "Use a sample photo" on laptops; pick the house from the 5 nearest (if location is allowed) or by address search; shrunk to 1200 px on a canvas (drops GPS data); "No people or license plates" confirm; saved in IndexedDB on this device; the first photo becomes the home's cover; extra photos show in a strip; Reset demo deletes them
 - Moderation: `src/lib/moderation.js` with word lists in `src/lib/moderation-words.js`. Blocks comments about people and insults on new comments, replies and edits. Handles spacing ("o w n e r s"), number swaps ("n3ighbors") and repeated letters, keeps "family room" and "neighborhood" working
 - `src/lib/events.js`: event log in `hs.events` (capped at 2,000, fails quietly)
 - Deploy: GitHub Pages via Actions on every push to `main`
@@ -34,7 +35,7 @@ Local commits are **not pushed yet**. The live site still shows the build from b
 ## Left vs the PRD
 | Item | State |
 | --- | --- |
-| Snap a house (photo, 5 nearest homes, IndexedDB, sample photo) | Next |
+| Snap a house (photo, 5 nearest homes, IndexedDB, sample photo) | Built; needs a real iPhone Safari check |
 | Top screen (`/top` is a placeholder) | To do |
 | Profile: comments, recent activity, locked badges | Partly done (karma and homes rated work) |
 | Event logging and `/stats` | Partly done |
@@ -58,5 +59,8 @@ Local commits are **not pushed yet**. The live site still shows the build from b
 ## Known loose ends
 - Likes received stay 0 in single-player; sample-comment likes must be dropped in V2
 - Moderation is rules only: it misses clever wording and can block a harmless comment (for example "man cave", "the people's choice"). Stated up front in the case study; V2 adds an AI check
-- Reset demo does not clear saved photos yet, because photos arrive in section 4 (AC 4.12)
-- Tests: `npm test` covers moderation only. Everything else is checked by hand in headless Edge at phone (390 px) and laptop (1280 px) sizes
+- Snap a house has only been tested in headless Edge (with a fake camera file and fake location), not on a real iPhone. Things only a real phone can show: the camera sheet, the location prompt, HEIC photos from the library
+- Photos are not screened by software, only by the visitor's "no people or license plates" confirm. V2 adds an AI photo check
+- The sample photo is a drawing made in code (labeled "Sample drawing"), not a real photograph
+- Snap covers show on the feed, home page and list, but map pins and Top do not use photos
+- Tests: `npm test` covers moderation and the Snap helpers (shrink size, nearest 5, address search). Everything else is checked by hand in headless Edge at phone (390 px) and laptop (1280 px) sizes
