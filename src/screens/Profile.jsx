@@ -8,7 +8,7 @@ import { useComments } from '../lib/CommentsContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { usePhotos } from '../lib/PhotosContext.jsx'
-import { myComments, recentActivity, relativeTime } from '../lib/profileLists.js'
+import { LOCKED_BADGES, myComments, recentActivity, relativeTime } from '../lib/profileLists.js'
 
 const VERB = { rated: 'Rated', commented: 'Commented on', liked: 'Liked a comment on', snapped: 'Snapped' }
 import { resetDemo } from '../lib/demo.js'
@@ -85,6 +85,22 @@ export default function Profile() {
         </ul>
       )}
 
+      <h2 className="sec-t">Badges</h2>
+      <p className="muted small">Coming soon. No badge unlocks in the demo.</p>
+      <ul className="badge-grid plist">
+        {LOCKED_BADGES.map((b) => (
+          <li key={b.id} className="badge-lock">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Locked">
+              <rect x="5" y="11" width="14" height="10" rx="2" />
+              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+            </svg>
+            <b>{b.name}</b>
+            <span>{b.how}</span>
+            <span className="soon">Coming soon</span>
+          </li>
+        ))}
+      </ul>
+
       <h2 className="sec-t">Settings</h2>
       <div className="setting">
         <span>Theme</span>
@@ -95,7 +111,7 @@ export default function Profile() {
         <span className="muted small">{profile.handle} · locked</span>
       </div>
 
-      <h2 className="sec-t">Demo</h2>
+      <h2 className="sec-t demo-sec">Demo</h2>
       <div className="setting">
         <span>Try this guide</span>
         <button
