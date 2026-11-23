@@ -1,11 +1,13 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useMemo, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useGuide } from '../lib/GuideContext.jsx'
 import ThemeSwitch from '../components/ThemeSwitch.jsx'
 import { HouseFillIcon } from '../components/Icons.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
 import { useComments } from '../lib/CommentsContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
+import { useHomes } from '../lib/HomesContext.jsx'
+import { myComments } from '../lib/profileLists.js'
 import { resetDemo } from '../lib/demo.js'
 
 const monthYear = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
@@ -15,7 +17,10 @@ const monthYear = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 's
 export default function Profile() {
   const { profile } = useProfile()
   const { count, karmaFromRatings } = useRatings()
-  const { count: commentCount, karmaFromComments } = useComments()
+  const { comments, count: commentCount, karmaFromComments } = useComments()
+  const { homes } = useHomes()
+  const homeById = useMemo(() => new Map(homes.map((h) => [h.id, h])), [homes])
+  const mine = useMemo(() => myComments(comments, profile.handle), [comments, profile.handle])
   const [confirming, setConfirming] = useState(false)
   const { reopen } = useGuide()
   const navigate = useNavigate()
@@ -33,6 +38,24 @@ export default function Profile() {
         <div className="stat"><b>{count}</b><span>homes rated</span></div>
         <div className="stat"><b>{commentCount}</b><span>comments</span></div>
       </div>
+
+      <h2 className="sec-t">My comments</h2>
+      {mine.length === 0 ? (
+        <p className="muted center note">
+          You haven't left a comment yet. <Link to="/">Surf the feed</Link> and say something about a house.
+        </p>
+      ) : (
+        <ul className="plist">
+          {mine.map((c) => (
+            <li key={c.id}>
+              <Link to={'/home/' + c.home_id} className="pitem">
+                <span className="addr">{homeById.get(c.home_id)?.address ?? 'A home'}</span>
+                <span className="pbody">{c.body}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <h2 className="sec-t">Settings</h2>
       <div className="setting">
