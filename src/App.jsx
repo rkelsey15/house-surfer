@@ -42,6 +42,9 @@ export default function App() {
 
   return (
     <div className="app">
+      <button className="skip" onClick={() => document.getElementById("main")?.focus()}>
+        Skip to content
+      </button>
       <DemoBanner />
       <header className="appbar">
         <Logo />
@@ -49,7 +52,10 @@ export default function App() {
         <span className="karma">{karmaFromRatings + karmaFromComments} karma</span>
       </header>
 
-      <main className="main">
+      {/* The tab bar comes before the page in the code, so Tab order matches what you see on laptops (tabs at the top). */}
+      <TabBar />
+
+      <main className="main" id="main" tabIndex={-1}>
         <Routes>
           <Route path="/" element={<Surf />} />
           <Route path="/home/:id" element={<HomePage />} />
@@ -61,8 +67,6 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-
-      <TabBar />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import L from 'leaflet'
-import { CircleMarker, MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
+import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import HomeCover from '../components/HomeCover.jsx'
 import { useGuide } from '../lib/GuideContext.jsx'
@@ -9,25 +9,35 @@ import { useHomes } from '../lib/HomesContext.jsx'
 import { pinKind, useHomeStats } from '../lib/homeStats.js'
 import { FLAME, CROWN } from '../lib/badges.js'
 import { factsLine, ratingText, typeLine } from '../lib/format.js'
+import { prefersReducedMotion } from '../lib/a11y.js'
+import { LEGEND, PIN_COLORS, pinShape, pinStyle, shapePoints } from '../lib/pins.js'
 
-// Pin colors. Fixed hex values so they read on both the light and dark map.
-// gray = unrated, slate blue = under 3.5, green = 3.5 to 4.4,
-// gold = 4.5+ with 3+ ratings, purple = top home of the week.
-const PIN_COLORS = { unrated: '#8a9591', low: '#2f7fd0', mid: '#2e9e6b', high: '#f2c200', week: '#8e5bd0' }
+// A pin that can be a circle, square, diamond or star (see lib/pins.js), drawn on
+// Leaflet's canvas like the round pins were. Leaflet only draws circles on its
+// own, so this takes over the drawing step. Click and tap hit-testing still use
+// the circle of the same radius (plus the canvas's tolerance).
+const ShapeMarker = L.CircleMarker.extend({
+  _updatePath() {
+    const renderer = this._renderer
+    const ctx = renderer._ctx
+    if (!ctx || !renderer._drawing || this._empty()) return
+    const p = this._point
+    const r = Math.max(Math.round(this._radius), 1)
+    const shape = this.options.shape
+    ctx.beginPath()
+    if (shape === 'square' || shape === 'diamond' || shape === 'star') {
+      shapePoints(shape, r).forEach(([x, y], i) => (i ? ctx.lineTo(p.x + x, p.y + y) : ctx.moveTo(p.x + x, p.y + y)))
+      ctx.closePath()
+    } else {
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2)
+    }
+    renderer._fillStroke(ctx, this)
+  },
+})
 
-// How each kind of pin is drawn:
-//   unrated = small hollow gray circle (outline only)
-//   gold    = true yellow-gold with a dark outline so it can't pass for orange
-//   others  = solid color with a white outline
-function pinStyle(kind, radius, big = false) {
-  const ring = big ? 1.5 : 1
-  if (kind === 'unrated') {
-    return { radius: Math.max(2, Math.round(radius * 0.75)), pathOptions: { color: PIN_COLORS.unrated, weight: radius > 5 ? 2 : 1.5, fill: false, opacity: 1 } }
-  }
-  if (kind === 'high') {
-    return { radius, pathOptions: { color: '#4a3b00', weight: ring * 1.5, fillColor: PIN_COLORS.high, fillOpacity: 1 } }
-  }
-  return { radius, pathOptions: { color: '#ffffff', weight: radius > 5 ? 2 * ring : ring, fillColor: PIN_COLORS[kind], fillOpacity: 0.95 } }
+const shapeMarker = (home, kind, radius, extra, big) => {
+  const { radius: r, ...style } = pinStyle(kind, radius, big)
+  return new ShapeMarker([home.lat, home.lng], { shape: pinShape(kind), radius: r, opacity: 1, ...style, ...extra })
 }
 
 // Badges drawn on top of a pin: a small flame for hot homes, a crown for the
@@ -63,25 +73,47 @@ const session = {
   map: { center: QUEEN_ANNE, zoom: 15 },
 }
 
-// One pin. Memoized so changing the selection redraws only what changed.
-const Pin = memo(function Pin({ home, kind, radius, onSelect }) {
-  const style = pinStyle(kind, radius)
-  return (
-    <CircleMarker
-      center={[home.lat, home.lng]}
-      radius={style.radius}
-      pathOptions={style.pathOptions}
-      eventHandlers={{ click: () => onSelect(home.id) }}
-    />
-  )
-})
+// All the pins as one Leaflet layer, redrawn when the homes, ratings or zoom change.
+// A wider click tolerance makes the small pins easier to hit (the List view is the
+// full alternative for anyone who can't use the map).
+function PinLayer({ homes, stats, radius, onSelect }) {
+  const map = useMap()
+  const onSelectRef = useRef(onSelect)
+  onSelectRef.current = onSelect
+  useEffect(() => {
+    const renderer = L.canvas({ tolerance: 10 })
+    const group = L.layerGroup()
+    for (const h of homes) {
+      const marker = shapeMarker(h, pinKind(stats.get(h.id)), radius, { renderer })
+      marker.on('click', () => onSelectRef.current(h.id))
+      group.addLayer(marker)
+    }
+    group.addTo(map)
+    return () => {
+      group.remove()
+      renderer.remove()
+    }
+  }, [map, homes, stats, radius])
+  return null
+}
+
+// The ring that marks the selected home (not clickable).
+function SelectedPin({ home, kind, radius }) {
+  const map = useMap()
+  useEffect(() => {
+    if (!home) return undefined
+    const marker = shapeMarker(home, kind, radius + 4, { interactive: false }, true).addTo(map)
+    return () => marker.remove()
+  }, [map, home, kind, radius])
+  return null
+}
 
 // Pins are small when zoomed out (5,000+ of them) and grow as you zoom in.
 const pinRadius = (zoom) => (zoom <= 14 ? 3 : zoom === 15 ? 4 : zoom === 16 ? 6 : 8)
 
 // Moves the map when asked: refresh size after the Map/List switch, fly to a
 // home picked from the list, fit the results of a street search.
-function MapController({ view, focus, searchHomes, onZoom }) {
+function MapController({ view, focus, searchHomes, onZoom, reduced }) {
   const map = useMap()
   useMapEvents({
     zoomend: () => onZoom(map.getZoom()),
@@ -94,7 +126,7 @@ function MapController({ view, focus, searchHomes, onZoom }) {
     map.invalidateSize()
   }, [view, map])
   useEffect(() => {
-    if (focus) map.setView([focus.lat, focus.lng], Math.max(map.getZoom(), 17))
+    if (focus) map.setView([focus.lat, focus.lng], Math.max(map.getZoom(), 17), { animate: !reduced })
   }, [focus, map])
   useEffect(() => {
     if (searchHomes.length) {
@@ -121,6 +153,48 @@ function ListItem({ home, stat, selected, onShow, source }) {
   )
 }
 
+// One pin drawn small for the legend, from the same shapes the map uses.
+function PinIcon({ kind }) {
+  const shape = pinShape(kind)
+  const c = 9
+  const fill = shape === 'circle-hollow' ? 'none' : PIN_COLORS[kind]
+  const stroke = shape === 'circle-hollow' ? PIN_COLORS[kind] : 'var(--ink)'
+  const common = { fill, stroke, strokeWidth: shape === 'circle-hollow' ? 2 : 1, strokeLinejoin: 'round' }
+  return (
+    <svg className="legend-pin" viewBox="0 0 18 18" aria-hidden="true">
+      {shapePoints(shape, 5.5).length ? (
+        <polygon points={shapePoints(shape, 5.5).map(([x, y]) => `${c + x},${c + y}`).join(' ')} {...common} />
+      ) : (
+        <circle cx={c} cy={c} r={shape === 'circle-hollow' ? 4 : 5.5} {...common} />
+      )}
+    </svg>
+  )
+}
+
+// Small map key. Pins differ by shape as well as color. Closed by default on phones
+// so it doesn't cover the map; it is a real button, so keyboard and screen readers can open it.
+function MapLegend() {
+  const [open, setOpen] = useState(() => window.matchMedia('(min-width: 600px)').matches)
+  return (
+    <section className="legend" aria-label="Map legend">
+      <button className="legend-toggle" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        Legend <span aria-hidden="true">{open ? '▴' : '▾'}</span>
+      </button>
+      {open && (
+        <ul>
+          {LEGEND.map((row) => (
+            <li key={row.label}>
+              {row.kind && <PinIcon kind={row.kind} />}
+              {row.badge && <i className="legend-badge" aria-hidden="true" dangerouslySetInnerHTML={{ __html: row.badge === 'crown' ? CROWN : FLAME }} />}
+              {row.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
+
 export default function MapScreen() {
   const { markDone } = useGuide()
   useEffect(() => markDone('map'), [markDone])
@@ -130,6 +204,7 @@ export default function MapScreen() {
   const [focus, setFocus] = useState(null)
   const [zoom, setZoom] = useState(session.map.zoom)
   const [shown, setShown] = useState(LIST_PAGE)
+  const reduced = prefersReducedMotion()
   const patch = (p) => setUi((u) => ({ ...u, ...p }))
   useEffect(() => {
     session.ui = ui
@@ -234,13 +309,16 @@ export default function MapScreen() {
         </div>
       </div>
 
-      <div className="mapwrap">
+      <div className="mapwrap" role="region" aria-label="Map of homes. The List view has the same homes.">
         <MapContainer
           center={session.map.center}
           zoom={session.map.zoom}
           minZoom={12}
           maxZoom={19}
           preferCanvas
+          zoomAnimation={!reduced}
+          fadeAnimation={!reduced}
+          markerZoomAnimation={!reduced}
           className="leaflet-host"
         >
           <TileLayer
@@ -248,10 +326,8 @@ export default function MapScreen() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             maxNativeZoom={19}
           />
-          <MapController view={ui.view} focus={focus} searchHomes={searchHomes} onZoom={setZoom} />
-          {filtered.map((h) => (
-            <Pin key={h.id} home={h} kind={pinKind(stats.get(h.id))} radius={pinRadius(zoom)} onSelect={select} />
-          ))}
+          <MapController view={ui.view} focus={focus} searchHomes={searchHomes} onZoom={setZoom} reduced={reduced} />
+          <PinLayer homes={filtered} stats={stats} radius={pinRadius(zoom)} onSelect={select} />
           {zoom >= 15 &&
             filtered.map((h) => {
               const s = stats.get(h.id)
@@ -267,23 +343,10 @@ export default function MapScreen() {
                 />
               )
             })}
-          {selectedHome && (
-            <CircleMarker
-              center={[selectedHome.lat, selectedHome.lng]}
-              interactive={false}
-              {...pinStyle(pinKind(selStat), pinRadius(zoom) + 4, true)}
-            />
-          )}
+          <SelectedPin home={selectedHome} kind={selStat ? pinKind(selStat) : 'unrated'} radius={pinRadius(zoom)} />
         </MapContainer>
 
-        <div className="legend">
-          <span><i className="dot hollow" style={{ borderColor: PIN_COLORS.unrated }} />Unrated</span>
-          <span><i className="dot" style={{ background: PIN_COLORS.low }} />Under 3.5</span>
-          <span><i className="dot" style={{ background: PIN_COLORS.mid }} />3.5 to 4.4</span>
-          <span><i className="dot ringed" style={{ background: PIN_COLORS.high }} />4.5+ (3+ ratings)</span>
-          <span><i className="legend-badge" dangerouslySetInnerHTML={{ __html: FLAME }} />Hot this week</span>
-          <span><i className="legend-badge" dangerouslySetInnerHTML={{ __html: CROWN }} />Top of the week</span>
-        </div>
+        <MapLegend />
 
         {selectedHome && (
           <div className="mapcard">
@@ -296,7 +359,7 @@ export default function MapScreen() {
                 <div className="sc">{ratingText(selStat)}</div>
               </div>
             </Link>
-            <button className="mapcard-x" aria-label="Close" onClick={() => patch({ selected: null })}>×</button>
+            <button className="mapcard-x" aria-label="Close home card" onClick={() => patch({ selected: null })}><span aria-hidden="true">×</span></button>
           </div>
         )}
       </div>
