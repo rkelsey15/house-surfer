@@ -5,7 +5,9 @@ Last updated: Nov 22, 2026 · Live: https://rkelsey15.github.io/house-surfer/ ·
 ## Phase
 **Phase 5: Build, demo-complete push.** House Surfer is now a portfolio **demo**, not a live app (see DECISIONS.md): anyone with the link can play in about 60 seconds, with nothing but the browser. The plan and acceptance criteria are in `docs/02-user-stories.md`; we build one section at a time and pause for review after each.
 
-Sections 1 to 7 are pushed (Nov 22). Section 7 (event logging and /stats) is pushed.
+Sections 1 to 7 are pushed (Nov 22).
+
+**New order (Nov 22): UI polish (Part A, then Part B), then the case study, then PRD Appendix G last.**
 
 **Pending: iPhone Safari test of Snap a house.** Ryan can't test on a phone yet. Everything about Snap was checked in headless Edge (phone and laptop sizes, fake camera file, fake location), but the camera sheet, the location prompt and HEIC library photos still need a real iPhone. Test steps were given on Nov 22; the live site already has the build.
 
@@ -20,7 +22,9 @@ Sections 1 to 7 are pushed (Nov 22). Section 7 (event logging and /stats) is pus
 | 6 | Profile: my comments, activity, locked badges | **Done** (awaiting review) |
 | 7 | Event logging and `/stats` | **Done** (awaiting review) |
 | 8 | "Sample" tag on seeded comments | Looks done already (tag shows in screenshots); confirm at the end |
-| D1 | PRD Appendix G, "Path to a real launch" | To do (docs only) |
+| P | UI polish: Part A (accessibility basics + the 5 ideas), then Part B | **Next, in progress (Nov 22)** |
+| CS | Case study | After polish |
+| D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
 | D2 | Five UI polish ideas | Listed below; refine at the end |
 
 ## Built so far

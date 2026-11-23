@@ -6,7 +6,7 @@
   --bg: #f3f1ec;
   --surface: #ffffff;
   --ink: #1d2321;
-  --muted: #68716d;
+  --muted: #5a635f;
   --line: #e3e0d8;
   --brand: #0f766e;
   --brand-soft: #d7efeb;
@@ -14,7 +14,9 @@
   --coral-soft: #fbe3dc;
   --danger: #b8391f;
   --on-danger: #ffffff;
-  --gold: #d19a1c;
+  --gold: #a87400;
+  --gold-text: #8a5a00;
+  --control-line: #7a807d;
   --map: #e8eee6;
   --sky: #dcebf2;
   --on-brand: #ffffff;
@@ -34,6 +36,8 @@
     --danger: #f08467;
     --on-danger: #0b1513;
     --gold: #e8b443;
+    --gold-text: #e8b443;
+    --control-line: #72807b;
     --map: #1f2a26;
     --sky: #1d3540;
     --on-brand: #0b1513;
@@ -53,6 +57,8 @@
   --danger: #f08467;
   --on-danger: #0b1513;
   --gold: #e8b443;
+  --gold-text: #e8b443;
+  --control-line: #72807b;
   --map: #1f2a26;
   --sky: #1d3540;
   --on-brand: #0b1513;
@@ -96,7 +102,7 @@ h1 { font-size: 24px; letter-spacing: -0.02em; }
 }
 .logo { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
 .logo-mark { width: 26px; height: 26px; border-radius: 8px; background: var(--brand); display: grid; place-items: center; }
-.karma { font-size: 12px; font-weight: 700; background: var(--coral-soft); color: var(--coral); border-radius: 999px; padding: 5px 10px; }
+.karma { font-size: 12px; font-weight: 700; background: var(--coral-soft); color: var(--danger); border-radius: 999px; padding: 5px 10px; }
 
 /* ---------- Demo banner ---------- */
 .demo-banner {
@@ -333,7 +339,7 @@ select.chip { background: var(--surface); }
 .lcard-link { display: grid; grid-template-columns: 104px 1fr; gap: 12px; color: inherit; text-decoration: none; align-items: center; }
 .lcard-art, .mapcard-art { overflow: hidden; border-radius: 12px; }
 .lcard .addr, .mapcard .addr { font-size: 14px; }
-.sc { font-size: 12.5px; font-weight: 600; color: var(--gold); margin-top: 3px; }
+.sc { font-size: 12.5px; font-weight: 600; color: var(--gold-text); margin-top: 3px; }
 .lcard-show { padding: 6px 0; font-size: 12px; }
 
 .legend { position: absolute; z-index: 500; left: 56px; top: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 6px 10px; font-size: 11px; display: flex; gap: 10px; flex-wrap: wrap; max-width: calc(100% - 68px); }
