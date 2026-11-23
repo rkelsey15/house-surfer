@@ -7,6 +7,7 @@ import HomePage from './screens/HomePage.jsx'
 import MapScreen from './screens/MapScreen.jsx'
 import Profile from './screens/Profile.jsx'
 import Signup from './screens/Signup.jsx'
+import Snap from './screens/Snap.jsx'
 import Surf from './screens/Surf.jsx'
 import { useProfile } from './lib/ProfileContext.jsx'
 import { useComments } from './lib/CommentsContext.jsx'
@@ -41,7 +42,7 @@ export default function App() {
           <Route path="/" element={<Surf />} />
           <Route path="/home/:id" element={<HomePage />} />
           <Route path="/map" element={<MapScreen />} />
-          <Route path="/snap" element={<ComingSoon title="Snap a house">Take a photo, pick from the 3 nearest homes and rate it. Arrives in step 6.</ComingSoon>} />
+          <Route path="/snap" element={<Snap />} />
           <Route path="/top" element={<ComingSoon title="Top homes">The top-rated homes on Queen Anne will show up here.</ComingSoon>} />
           <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<Navigate to="/" replace />} />
