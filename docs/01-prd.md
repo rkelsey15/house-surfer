@@ -140,6 +140,27 @@ The product rule is simple: **talk about the house, never the people who live th
 
 **Privacy:** users are anonymous. The app stores an opaque user id and a generated handle, never a real name, email in public view, or contact list. Users can delete their comments and photos at any time.
 
+### Accessibility
+
+**Target: WCAG 2.2 level AA** (the standard most legal and procurement checks use). Rule 6 already requires light and dark mode on every screen; this section adds what makes the app usable without a mouse, without perfect vision and without sound. The basics get built in the UI polish pass. Until an audit is done, the app is not claimed to meet the standard.
+
+| Area | Requirement | Why |
+| --- | --- | --- |
+| Map and list | The list view is a full equal to the map: anything you can do from a pin (find a home, see its rating, open it) you can do from the list | A map is hard or impossible to use with a screen reader, a keyboard or a shaky hand |
+| Pins | Pin tiers differ by **shape or icon, not only color** (for example hollow circle, filled circle, diamond, star, flame, crown). Today's flame and crown already do; gold, green and blue differ only by color | About 1 in 12 men have a color vision difference; color alone fails WCAG 1.4.1 |
+| Stars | Each star button reads out as "Rate 4 of 5 stars"; the chosen rating is announced ("You rated this 4 of 5") | A row of unlabeled star icons is silent to a screen reader |
+| Buttons and icons | Every icon-only button has a text label (Like, Reply, Close, Snap a house); toggles say whether they are on | Same reason |
+| House drawings | Each drawing gets a short text description built from the data ("Illustration of a two-story Craftsman-era house, built 1924") | Drawings carry meaning; a blank image tells a screen reader user nothing |
+| Keyboard | Every action works with the keyboard in a sensible order, with a **visible focus ring** in light and dark mode, and no keyboard traps (the map must be escapable) | Needed by keyboard and switch users, and by many laptop visitors |
+| Tap targets | At least **44 px** wide and tall (WCAG 2.2 requires 24 px; 44 px is the safer mobile standard) | Thumbs, tremors and small phones |
+| Motion | Respect the device's "reduce motion" setting: no sliding or bouncing animation when it is on | Motion can cause nausea or dizziness |
+| Text and color | Text at least 4.5:1 contrast, controls and borders at least 3:1, in both themes; text still works at 200% zoom and 320 px wide; errors say what is wrong in words, not only color | Basic readability. Two contrast bugs (the reset button and the blocked-comment message) were already caught and fixed this way |
+| Demo video | Captions on the demo video, plus a text summary of the walkthrough | Needed for deaf and hard-of-hearing viewers, and for people watching on mute |
+
+**How we will check:** automated checks (a browser accessibility scanner) for the easy 30 to 40 percent, then by hand: keyboard only, a screen reader (VoiceOver on iPhone, NVDA on Windows), 200% zoom, and a contrast check in both themes. The result goes in the case study, including what is not yet fixed.
+
+**Future feature: "Hear this house."** A button that reads a short spoken summary built from the home's data ("A three-bedroom, two-bath Craftsman-era house built in 1924, rated 4.2 from 12 ratings, with 5 comments"), using the browser's built-in speech. It helps people who can't see the drawing and people who like audio. It is generated from public data only and never mentions residents.
+
 ## Mockups
 
 Mobile first, with a web layout for browsing at home. All homes, handles and comments are sample data. The clickable prototype and a 44-second demo video are in the project files (`zillow-surfer/prototype.html`, `zillow-surfer/house-surfer-demo.mp4`).
@@ -279,6 +300,7 @@ Level of effort assumes building with Claude: **S** = under one working session,
 | Personalized "homes to rate next" from your ratings, comments and badges (V5) | L |
 | Business rules, such as rating 20 homes before you can post comments | S |
 | Rename karma to something house-themed | S |
+| "Hear this house": a spoken summary built from the home's data (see Accessibility) | S |
 | "Guess the price" game on recently sold homes | M |
 | Native iPhone and Android apps | L |
 

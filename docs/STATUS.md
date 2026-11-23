@@ -3,35 +3,60 @@
 Last updated: Nov 22, 2026 · Live: https://rkelsey15.github.io/house-surfer/ · Repo: rkelsey15/house-surfer (`main`)
 
 ## Phase
-**Phase 5: Build** (V1, single-player, data saved in the browser). Phase 1 PRD exists (`docs/01-prd.md`).
-Phases 2 to 4 were never written as separate docs: no `02-user-stories.md`, `03-architecture.md` or `04-plan.md`. The PRD and the old `docs/system-design.png` cover part of that.
+**Phase 5: Build, demo-complete push.** House Surfer is now a portfolio **demo**, not a live app (see DECISIONS.md): anyone with the link can play in about 60 seconds, with nothing but the browser. The plan and acceptance criteria are in `docs/02-user-stories.md`; we build one section at a time and pause for review after each.
 
-## Built (PRD V1 steps 1 to 5 and 10)
-- Data pipeline: `npm run data` writes `public/data/homes.json`, 5,391 Queen Anne houses (6,720 with townhouses, which are hidden by a flag)
-- App shell: handle picker with house rules (handle locked after sign-up), tab bar, Auto/Light/Dark theme
-- Surf feed: 1 to 5 stars, Skip / Next, karma pill
-- Home page: average, your rating, threaded comments (one level of replies), likes, edit and soft delete
-- Map and list: Leaflet pins, flame and crown badges, search, filters, phone and desktop layouts
+Local commits are **not pushed yet**. The live site still shows the build from before this push.
+
+## Demo-complete plan
+| # | Section | State |
+| --- | --- | --- |
+| 1 | Demo framing: banner, Reset demo | **Done** |
+| 2 | "Try this" guide | **Done** |
+| 3 | Moderation (rule-based) | **Done** (44 tests, `npm test`) |
+| 4 | Snap a house, lite | Next |
+| 5 | Top screen | To do |
+| 6 | Profile: my comments, activity, locked badges | To do |
+| 7 | Event logging and `/stats` | Started: `comment_blocked` is logged; the rest and the page are to do |
+| 8 | "Sample" tag on seeded comments | Looks done already (tag shows in screenshots); confirm at the end |
+| D1 | PRD Appendix G, "Path to a real launch" | To do (docs only) |
+| D2 | Five UI polish ideas | Listed below; refine at the end |
+
+## Built so far
+- Data pipeline: `npm run data` writes `public/data/homes.json`, 5,391 Queen Anne houses (6,720 with townhouses, hidden by a flag)
+- App shell: handle picker with house rules, tab bar, Auto/Light/Dark theme
+- Surf feed, home page with threaded comments and likes, map and list with pins, search and filters
+- Demo framing: dismissible banner (a floating pill at bottom-left on laptops), "Reset demo" on Profile with a confirm step; clears only `hs.` keys
+- "Try this" checklist on the feed (rate 3, comment, see moderation, view the map); collapses on phones; reopens from Profile
+- Moderation: `src/lib/moderation.js` with word lists in `src/lib/moderation-words.js`. Blocks comments about people and insults on new comments, replies and edits. Handles spacing ("o w n e r s"), number swaps ("n3ighbors") and repeated letters, keeps "family room" and "neighborhood" working
+- `src/lib/events.js`: event log in `hs.events` (capped at 2,000, fails quietly)
 - Deploy: GitHub Pages via Actions on every push to `main`
 
 ## Left vs the PRD
 | Item | State |
 | --- | --- |
-| 6. Snap a house (photo, 3 nearest homes, IndexedDB) | **Next** |
-| 7. Moderation (`checkComment()` is a placeholder that allows everything) | To do |
-| 8. Profile: comments, recent activity, locked badges (karma and homes rated already work) | Partly done |
-| 9. Event logging and `/stats` page | To do |
+| Snap a house (photo, 5 nearest homes, IndexedDB, sample photo) | Next |
 | Top screen (`/top` is a placeholder) | To do |
-| Seed photos and a demo video, case study, README polish | To do |
+| Profile: comments, recent activity, locked badges | Partly done (karma and homes rated work) |
+| Event logging and `/stats` | Partly done |
+| Accessibility basics (PRD Accessibility section) | Planned for the UI polish pass |
+| Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
+
+## UI polish ideas (for a later pass)
+1. **Bigger tap targets:** the close buttons on the demo note and "Try this" card are about 28 px; bring every control to 44 px, and make the tiny ▾ on "Try this" larger.
+2. **Pins that differ by shape, not only color:** hollow circle, filled circle, diamond and so on, so color-blind visitors can read the map (PRD Accessibility).
+3. **Screen-reader labels:** stars read "Rate 4 of 5 stars", icon buttons get names, house drawings get a one-line description.
+4. **Quieter demo note on laptops:** the bottom-left pill covers a little of the list; shrink it to an "i" icon after a few seconds.
+5. **Better blocked-comment moment:** move focus to the message so screen readers read it, and add a short "Why?" line that explains the house rule.
 
 ## Open questions
 - What should karma be called? (Curb Cred, Bricks, Keys)
 - Which badges make the first set?
-- Stop at the live single-player link, or go on to real logins for friends?
 - Which neighborhood is second?
-- Phases 2 to 4 (stories, architecture, plan): write them now, or skip since V1 is mostly built?
+- Moderation word lists are a starter set. Does Ryan want to review `src/lib/moderation-words.js` before the demo goes out?
 
 ## Known loose ends
 - Likes received stay 0 in single-player; sample-comment likes must be dropped in V2
-- No automated tests; each step was checked in headless Edge with screenshots
+- Moderation is rules only: it misses clever wording and can block a harmless comment (for example "man cave", "the people's choice"). Stated up front in the case study; V2 adds an AI check
+- Reset demo does not clear saved photos yet, because photos arrive in section 4 (AC 4.12)
+- Tests: `npm test` covers moderation only. Everything else is checked by hand in headless Edge at phone (390 px) and laptop (1280 px) sizes
