@@ -21,6 +21,20 @@ export function writeJSON(key, value) {
   }
 }
 
+// Remove every key House Surfer owns ("hs." prefix) and nothing else.
+export function clearAllData() {
+  try {
+    const mine = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key && key.startsWith('hs.')) mine.push(key)
+    }
+    mine.forEach((key) => localStorage.removeItem(key))
+  } catch {
+    // Ignore.
+  }
+}
+
 export function removeKey(key) {
   try {
     localStorage.removeItem(key)

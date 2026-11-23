@@ -234,6 +234,11 @@ h1 { font-size: 24px; letter-spacing: -0.02em; }
 .stat b { display: block; font-size: 19px; }
 .stat span { font-size: 11px; color: var(--muted); }
 .sec-t { font-weight: 700; font-size: 15px; margin-top: 20px; }
+.reset-confirm { padding: 12px 14px; margin-top: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.reset-confirm p { font-weight: 600; }
+.reset-actions { display: flex; gap: 8px; margin-top: 10px; }
+.reset-actions .btn { flex: 1; }
+.btn.danger { background: var(--coral); border-color: var(--coral); color: var(--on-brand); }
 .setting { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
 
 /* ---------- Wide screens: tabs move into the top bar ---------- */

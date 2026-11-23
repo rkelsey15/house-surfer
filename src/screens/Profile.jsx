@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import ThemeSwitch from '../components/ThemeSwitch.jsx'
 import { HouseFillIcon } from '../components/Icons.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
 import { useComments } from '../lib/CommentsContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
+import { resetDemo } from '../lib/demo.js'
 
 const monthYear = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 
@@ -12,6 +14,7 @@ export default function Profile() {
   const { profile } = useProfile()
   const { count, karmaFromRatings } = useRatings()
   const { count: commentCount, karmaFromComments } = useComments()
+  const [confirming, setConfirming] = useState(false)
 
   return (
     <div>
@@ -40,10 +43,25 @@ export default function Profile() {
       <h2 className="sec-t">Demo</h2>
       <div className="setting">
         <span>Start over</span>
-        <button className="btn" onClick={() => {}}>
-          Reset demo
-        </button>
+        {!confirming && (
+          <button className="btn" onClick={() => setConfirming(true)}>
+            Reset demo
+          </button>
+        )}
       </div>
+      {confirming && (
+        <div className="reset-confirm" role="alertdialog" aria-label="Reset demo">
+          <p>Clear all your demo data on this device?</p>
+          <div className="reset-actions">
+            <button className="btn" onClick={() => setConfirming(false)}>
+              Cancel
+            </button>
+            <button className="btn danger" onClick={resetDemo}>
+              Yes, reset
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
