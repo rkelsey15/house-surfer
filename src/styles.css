@@ -445,3 +445,15 @@ select.chip { background: var(--surface); }
 .soon { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
 .badge-grid li { margin: 0; }
 .demo-sec { margin-top: 28px; padding-top: 4px; border-top: 2px solid var(--line); }
+
+/* ---------- Stats ---------- */
+.demo-data { display: inline-block; margin: 4px 0 0; padding: 6px 12px; border-radius: 999px; background: var(--brand-soft); color: var(--ink); font-size: 13px; font-weight: 700; }
+.ns-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+.ns { display: flex; flex-direction: column; gap: 2px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); font-size: 12px; }
+.ns.on { border-color: var(--brand); }
+.ns b { font-size: 26px; }
+.daily-list { margin-top: 8px; }
+.daily { border-bottom: 1px solid var(--line); }
+.daily summary { display: flex; justify-content: space-between; align-items: center; min-height: 44px; cursor: pointer; font-size: 14px; }
+.daily ul { list-style: none; margin: 0 0 8px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 4px; }
+.daily li { display: flex; justify-content: space-between; padding: 4px 8px; border-radius: 8px; background: var(--surface); font-size: 12px; }

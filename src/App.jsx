@@ -8,6 +8,7 @@ import MapScreen from './screens/MapScreen.jsx'
 import Profile from './screens/Profile.jsx'
 import Signup from './screens/Signup.jsx'
 import Snap from './screens/Snap.jsx'
+import Stats from './screens/Stats.jsx'
 import Surf from './screens/Surf.jsx'
 import Top from './screens/Top.jsx'
 import { useProfile } from './lib/ProfileContext.jsx'
@@ -55,6 +56,7 @@ export default function App() {
           <Route path="/map" element={<MapScreen />} />
           <Route path="/snap" element={<Snap />} />
           <Route path="/top" element={<Top />} />
+          <Route path="/stats" element={<Stats />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
