@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useGuide } from '../lib/GuideContext.jsx'
 import ThemeSwitch from '../components/ThemeSwitch.jsx'
 import { HouseFillIcon } from '../components/Icons.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
@@ -15,6 +17,8 @@ export default function Profile() {
   const { count, karmaFromRatings } = useRatings()
   const { count: commentCount, karmaFromComments } = useComments()
   const [confirming, setConfirming] = useState(false)
+  const { reopen } = useGuide()
+  const navigate = useNavigate()
 
   return (
     <div>
@@ -41,6 +45,18 @@ export default function Profile() {
       </div>
 
       <h2 className="sec-t">Demo</h2>
+      <div className="setting">
+        <span>Try this guide</span>
+        <button
+          className="btn"
+          onClick={() => {
+            reopen()
+            navigate('/')
+          }}
+        >
+          Show Try this guide
+        </button>
+      </div>
       <div className="setting">
         <span>Start over</span>
         {!confirming && (
