@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import L from 'leaflet'
 import { CircleMarker, MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import HouseArt from '../components/HouseArt.jsx'
+import HomeCover from '../components/HomeCover.jsx'
 import { useGuide } from '../lib/GuideContext.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { pinKind, useHomeStats } from '../lib/homeStats.js'
@@ -111,7 +111,7 @@ function ListItem({ home, stat, selected, onShow }) {
   return (
     <div className={selected ? 'lcard on' : 'lcard'}>
       <Link to={'/home/' + home.id} className="lcard-link">
-        <div className="lcard-art"><HouseArt home={home} height={72} /></div>
+        <div className="lcard-art"><HomeCover home={home} height={72} /></div>
         <div>
           <div className="addr">{home.address}</div>
           <div className="facts">{typeLine(home)}</div>
@@ -291,7 +291,7 @@ export default function MapScreen() {
         {selectedHome && (
           <div className="mapcard">
             <Link to={'/home/' + selectedHome.id} className="mapcard-link">
-              <div className="mapcard-art"><HouseArt home={selectedHome} height={68} /></div>
+              <div className="mapcard-art"><HomeCover home={selectedHome} height={68} /></div>
               <div>
                 <div className="addr">{selectedHome.address}</div>
                 <div className="facts">{typeLine(selectedHome)}</div>

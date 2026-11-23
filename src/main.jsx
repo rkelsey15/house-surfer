@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { CommentsProvider } from './lib/CommentsContext.jsx'
 import { GuideProvider } from './lib/GuideContext.jsx'
 import { HomesProvider } from './lib/HomesContext.jsx'
+import { PhotosProvider } from './lib/PhotosContext.jsx'
 import { ProfileProvider } from './lib/ProfileContext.jsx'
 import { RatingsProvider } from './lib/RatingsContext.jsx'
 import { ThemeProvider } from './lib/ThemeContext.jsx'
@@ -16,6 +17,7 @@ createRoot(document.getElementById('root')).render(
     <ThemeProvider>
       <ProfileProvider>
         <HomesProvider>
+          <PhotosProvider>
           <RatingsProvider>
           <CommentsProvider>
             <GuideProvider>
@@ -25,6 +27,7 @@ createRoot(document.getElementById('root')).render(
           </GuideProvider>
           </CommentsProvider>
         </RatingsProvider>
+        </PhotosProvider>
         </HomesProvider>
       </ProfileProvider>
     </ThemeProvider>

@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import HouseArt from '../components/HouseArt.jsx'
+import HomeCover from '../components/HomeCover.jsx'
 import StarRating from '../components/StarRating.jsx'
 import { useComments, MAX_COMMENT_LENGTH } from '../lib/CommentsContext.jsx'
 import { useGuide } from '../lib/GuideContext.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
+import { usePhotos } from '../lib/PhotosContext.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
 import { factsLine, typeLine } from '../lib/format.js'
@@ -137,6 +138,7 @@ export default function HomePage() {
   const [editId, setEditId] = useState(null)
 
   const { profile } = useProfile()
+  const { photosFor } = usePhotos()
   const home = homes.find((h) => h.id === id)
 
   // Sample comments plus yours, grouped into threads (top comment + replies).
@@ -214,13 +216,21 @@ export default function HomePage() {
       <button className="back" onClick={() => navigate(-1)}>← Back</button>
 
       <div className="card">
-        <HouseArt home={home} />
+        <HomeCover home={home} />
         <div className="info">
           <div className="addr">{home.address}</div>
           <div className="facts">{typeLine(home)}</div>
           <div className="facts">{factsLine(home)}</div>
         </div>
       </div>
+
+      {photosFor(id).length > 1 && (
+        <div className="photo-strip" aria-label="More photos of this house, saved on this device">
+          {photosFor(id).slice(1).map((p) => (
+            <img key={p.id} src={p.url} alt="Another photo of this house, saved on this device" />
+          ))}
+        </div>
+      )}
 
       <div className="avg">
         {average ? (
