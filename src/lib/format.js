@@ -16,3 +16,7 @@ export function factsLine(home) {
 export function typeLine(home) {
   return home.type === 'Single-family' ? home.style : `${home.type} · ${home.style}`
 }
+
+// "★ 4.3 · 7 ratings" for a home's stats, or a nudge when nobody has rated it.
+export const ratingText = (stat) =>
+  stat.count ? `★ ${stat.avg.toFixed(1)} · ${stat.count} rating${stat.count === 1 ? '' : 's'}` : 'Not rated yet · be first'

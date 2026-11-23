@@ -7,7 +7,8 @@ import HomeCover from '../components/HomeCover.jsx'
 import { useGuide } from '../lib/GuideContext.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { pinKind, useHomeStats } from '../lib/homeStats.js'
-import { factsLine, typeLine } from '../lib/format.js'
+import { FLAME, CROWN } from '../lib/badges.js'
+import { factsLine, ratingText, typeLine } from '../lib/format.js'
 
 // Pin colors. Fixed hex values so they read on both the light and dark map.
 // gray = unrated, slate blue = under 3.5, green = 3.5 to 4.4,
@@ -32,8 +33,6 @@ function pinStyle(kind, radius, big = false) {
 // Badges drawn on top of a pin: a small flame for hot homes, a crown for the
 // top home of the week. Canvas pins can't hold icons, so these are small
 // markers placed over them. Cached per size.
-const FLAME = '<svg viewBox="0 0 24 24"><path d="M12 2c1 3.5 5 5.5 5 11a5 5 0 0 1-10 0c0-2 1-3.4 2-4.4.2 1.4.8 2.2 1.6 2.6C10 8 10.4 5 12 2z" fill="#ff6a2b" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>'
-const CROWN = '<svg viewBox="0 0 24 24"><path d="M3 18 2 7l5.5 4.5L12 4l4.5 7.5L22 7l-1 11z" fill="#f5c518" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>'
 const iconCache = new Map()
 function badgeIcon(kind, size) {
   const key = kind + size
@@ -63,8 +62,6 @@ const session = {
   ui: { query: '', filter: 'all', style: 'all', view: 'map', selected: null },
   map: { center: QUEEN_ANNE, zoom: 15 },
 }
-
-const ratingText = (stat) => (stat.count ? `★ ${stat.avg.toFixed(1)} · ${stat.count} rating${stat.count === 1 ? '' : 's'}` : 'Not rated yet · be first')
 
 // One pin. Memoized so changing the selection redraws only what changed.
 const Pin = memo(function Pin({ home, kind, radius, onSelect }) {
