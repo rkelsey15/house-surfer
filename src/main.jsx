@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
 import App from './App.jsx'
 import { CommentsProvider } from './lib/CommentsContext.jsx'
+import { GuideProvider } from './lib/GuideContext.jsx'
 import { HomesProvider } from './lib/HomesContext.jsx'
 import { ProfileProvider } from './lib/ProfileContext.jsx'
 import { RatingsProvider } from './lib/RatingsContext.jsx'
@@ -17,9 +18,11 @@ createRoot(document.getElementById('root')).render(
         <HomesProvider>
           <RatingsProvider>
           <CommentsProvider>
+            <GuideProvider>
             <HashRouter>
               <App />
             </HashRouter>
+          </GuideProvider>
           </CommentsProvider>
         </RatingsProvider>
         </HomesProvider>

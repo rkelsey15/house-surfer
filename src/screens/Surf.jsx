@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import HouseArt from '../components/HouseArt.jsx'
+import TryThisGuide from '../components/TryThisGuide.jsx'
 import StarRating from '../components/StarRating.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
@@ -57,6 +58,7 @@ export default function Surf() {
 
   return (
     <div>
+      <TryThisGuide />
       <div className="card" key={home.id}>
         <HouseArt home={home} />
         <div className="info">
