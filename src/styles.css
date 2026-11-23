@@ -12,6 +12,8 @@
   --brand-soft: #d7efeb;
   --coral: #e8664a;
   --coral-soft: #fbe3dc;
+  --danger: #b8391f;
+  --on-danger: #ffffff;
   --gold: #d19a1c;
   --map: #e8eee6;
   --sky: #dcebf2;
@@ -29,6 +31,8 @@
     --brand-soft: #173b37;
     --coral: #f08467;
     --coral-soft: #3b231d;
+    --danger: #f08467;
+    --on-danger: #0b1513;
     --gold: #e8b443;
     --map: #1f2a26;
     --sky: #1d3540;
@@ -46,6 +50,8 @@
   --brand-soft: #173b37;
   --coral: #f08467;
   --coral-soft: #3b231d;
+  --danger: #f08467;
+  --on-danger: #0b1513;
   --gold: #e8b443;
   --map: #1f2a26;
   --sky: #1d3540;
@@ -238,7 +244,7 @@ h1 { font-size: 24px; letter-spacing: -0.02em; }
 .reset-confirm p { font-weight: 600; }
 .reset-actions { display: flex; gap: 8px; margin-top: 10px; }
 .reset-actions .btn { flex: 1; }
-.btn.danger { background: var(--coral); border-color: var(--coral); color: var(--on-brand); }
+.btn.danger { background: var(--danger); border-color: var(--danger); color: var(--on-danger); }
 .setting { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
 
 /* ---------- Wide screens: tabs move into the top bar ---------- */
