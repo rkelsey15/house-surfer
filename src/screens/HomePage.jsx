@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import HomeCover from '../components/HomeCover.jsx'
 import StarRating from '../components/StarRating.jsx'
 import { useComments, MAX_COMMENT_LENGTH } from '../lib/CommentsContext.jsx'
@@ -130,6 +131,13 @@ function CommentView({ c, isReply, likeCount, liked, replying, onReply, editing,
 
 export default function HomePage() {
   const { id } = useParams()
+  const location = useLocation()
+  const viewed = useRef(null)
+  useEffect(() => {
+    if (viewed.current === id) return
+    viewed.current = id
+    logEvent('home_viewed', { home_id: id, source: location.state?.source ?? 'other' })
+  }, [id, location.state])
   const navigate = useNavigate()
   const { homes, status } = useHomes()
   const { ratings, rate } = useRatings()

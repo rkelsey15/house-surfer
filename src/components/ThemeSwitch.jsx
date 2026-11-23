@@ -1,4 +1,5 @@
 import { useTheme } from '../lib/ThemeContext.jsx'
+import { logEvent } from '../lib/events.js'
 
 const OPTIONS = [
   ['system', 'Auto'],
@@ -17,7 +18,10 @@ export default function ThemeSwitch() {
           role="radio"
           aria-checked={theme === value}
           className={theme === value ? 'on' : ''}
-          onClick={() => setTheme(value)}
+          onClick={() => {
+            if (value !== theme) logEvent('theme_changed', { theme: value })
+            setTheme(value)
+          }}
         >
           {label}
         </button>

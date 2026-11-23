@@ -251,7 +251,7 @@ export default function Snap() {
           <p className="snap-done" role="status">Saved on this device.</p>
           <p className="muted">It's now the cover for {home.address}. Nobody else can see it.</p>
           <div className="snap-actions">
-            <button className="btn pri full" onClick={() => navigate('/home/' + home.id)}>Rate this house</button>
+            <button className="btn pri full" onClick={() => navigate('/home/' + home.id, { state: { source: 'snap' } })}>Rate this house</button>
             <button className="btn full" onClick={startOver}>Snap another</button>
             <Link className="link-btn" to="/">Back to Surf</Link>
           </div>

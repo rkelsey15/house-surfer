@@ -104,10 +104,10 @@ function MapController({ view, focus, searchHomes, onZoom }) {
   return null
 }
 
-function ListItem({ home, stat, selected, onShow }) {
+function ListItem({ home, stat, selected, onShow, source }) {
   return (
     <div className={selected ? 'lcard on' : 'lcard'}>
-      <Link to={'/home/' + home.id} className="lcard-link">
+      <Link to={'/home/' + home.id} state={{ source }} className="lcard-link">
         <div className="lcard-art"><HomeCover home={home} height={72} /></div>
         <div>
           <div className="addr">{home.address}</div>
@@ -225,7 +225,7 @@ export default function MapScreen() {
 
         <div className="maplist">
           {filtered.slice(0, shown).map((h) => (
-            <ListItem key={h.id} home={h} stat={stats.get(h.id)} selected={h.id === ui.selected} onShow={showOnMap} />
+            <ListItem key={h.id} source={ui.query.trim() ? 'search' : 'map'} home={h} stat={stats.get(h.id)} selected={h.id === ui.selected} onShow={showOnMap} />
           ))}
           {filtered.length === 0 && <p className="muted center note">No homes match. Try a different street or filter.</p>}
           {filtered.length > shown && (
@@ -287,7 +287,7 @@ export default function MapScreen() {
 
         {selectedHome && (
           <div className="mapcard">
-            <Link to={'/home/' + selectedHome.id} className="mapcard-link">
+            <Link to={'/home/' + selectedHome.id} state={{ source: ui.query.trim() ? 'search' : 'map' }} className="mapcard-link">
               <div className="mapcard-art"><HomeCover home={selectedHome} height={68} /></div>
               <div>
                 <div className="addr">{selectedHome.address}</div>

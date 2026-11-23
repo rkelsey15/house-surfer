@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import DemoBanner from './components/DemoBanner.jsx'
 import Logo from './components/Logo.jsx'
@@ -12,11 +13,21 @@ import Top from './screens/Top.jsx'
 import { useProfile } from './lib/ProfileContext.jsx'
 import { useComments } from './lib/CommentsContext.jsx'
 import { useRatings } from './lib/RatingsContext.jsx'
+import { logEvent } from './lib/events.js'
+
+// One app_opened per page load (a module flag survives React's double effect run).
+let opened = false
 
 export default function App() {
   const { profile } = useProfile()
   const { karmaFromRatings } = useRatings()
   const { karmaFromComments } = useComments()
+
+  useEffect(() => {
+    if (opened || !profile) return
+    opened = true
+    logEvent('app_opened', { device: window.matchMedia('(pointer: coarse)').matches ? 'touch' : 'desktop' })
+  }, [profile])
 
   // No handle yet: show the sign-up screen with no tab bar.
   if (!profile) {

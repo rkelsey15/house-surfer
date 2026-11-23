@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useMemo } from 'react'
 import { useStoredState } from './useStoredState.js'
 import { useProfile } from './ProfileContext.jsx'
 import { readJSON } from './storage.js'
+import { logEvent } from './events.js'
 
 // Comments, saved in the browser as three "tables" shaped like the V2 database
 // so they can move to Supabase without reshaping. Columns are snake_case on
@@ -54,6 +55,7 @@ export function CommentsProvider({ children }) {
 
   const addComment = useCallback(
     (home_id, body, parent_id = null) => {
+      logEvent('comment_posted', { home_id, is_reply: parent_id !== null })
       setComments((prev) => [
         ...prev,
         { id: newId(), home_id, parent_id, user: me ?? 'Surfer', body, created_at: now(), edited_at: null, deleted_at: null },
@@ -68,6 +70,7 @@ export function CommentsProvider({ children }) {
       const at = now()
       const old = comments.find((c) => c.id === id)
       if (!old || old.deleted_at || old.body === body) return
+      logEvent('comment_edited', { home_id: old.home_id })
       setEdits((prev) => [...prev, { comment_id: id, old_body: old.body, edited_at: at }])
       setComments((prev) => prev.map((c) => (c.id === id ? { ...c, body, edited_at: at } : c)))
     },
@@ -76,6 +79,7 @@ export function CommentsProvider({ children }) {
 
   const deleteComment = useCallback(
     (id) => {
+      logEvent('comment_deleted', { comment_id: id })
       setComments((prev) => prev.map((c) => (c.id === id && !c.deleted_at ? { ...c, deleted_at: now() } : c)))
     },
     [setComments],
@@ -85,13 +89,14 @@ export function CommentsProvider({ children }) {
   const toggleLike = useCallback(
     (comment_id) => {
       if (!me) return
+      if (!likes.some((l) => l.comment_id === comment_id && l.user === me)) logEvent('like_given', { comment_id })
       setLikes((prev) =>
         prev.some((l) => l.comment_id === comment_id && l.user === me)
           ? prev.filter((l) => !(l.comment_id === comment_id && l.user === me))
           : [...prev, { comment_id, user: me, created_at: now() }],
       )
     },
-    [setLikes, me],
+    [setLikes, likes, me],
   )
 
   const value = useMemo(() => {
