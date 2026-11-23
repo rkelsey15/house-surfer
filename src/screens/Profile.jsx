@@ -125,6 +125,10 @@ export default function Profile() {
         </button>
       </div>
       <div className="setting">
+        <span>Product numbers</span>
+        <Link className="btn" to="/stats">View stats</Link>
+      </div>
+      <div className="setting">
         <span>Start over</span>
         {!confirming && (
           <button className="btn" onClick={() => setConfirming(true)}>
