@@ -7,7 +7,10 @@ import { useProfile } from '../lib/ProfileContext.jsx'
 import { useComments } from '../lib/CommentsContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
-import { myComments } from '../lib/profileLists.js'
+import { usePhotos } from '../lib/PhotosContext.jsx'
+import { myComments, recentActivity, relativeTime } from '../lib/profileLists.js'
+
+const VERB = { rated: 'Rated', commented: 'Commented on', liked: 'Liked a comment on', snapped: 'Snapped' }
 import { resetDemo } from '../lib/demo.js'
 
 const monthYear = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
@@ -17,10 +20,16 @@ const monthYear = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 's
 export default function Profile() {
   const { profile } = useProfile()
   const { count, karmaFromRatings } = useRatings()
-  const { comments, count: commentCount, karmaFromComments } = useComments()
+  const { comments, likes, count: commentCount, karmaFromComments } = useComments()
+  const { ratings } = useRatings()
+  const { photos } = usePhotos()
   const { homes } = useHomes()
   const homeById = useMemo(() => new Map(homes.map((h) => [h.id, h])), [homes])
   const mine = useMemo(() => myComments(comments, profile.handle), [comments, profile.handle])
+  const activity = useMemo(
+    () => recentActivity({ ratings, comments, likes, photos, me: profile.handle }),
+    [ratings, comments, likes, photos, profile.handle],
+  )
   const [confirming, setConfirming] = useState(false)
   const { reopen } = useGuide()
   const navigate = useNavigate()
@@ -51,6 +60,25 @@ export default function Profile() {
               <Link to={'/home/' + c.home_id} className="pitem">
                 <span className="addr">{homeById.get(c.home_id)?.address ?? 'A home'}</span>
                 <span className="pbody">{c.body}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <h2 className="sec-t">Recent activity</h2>
+      {activity.length === 0 ? (
+        <p className="muted center note">Rate, comment, like or snap a house and it shows up here.</p>
+      ) : (
+        <ul className="plist">
+          {activity.map((a) => (
+            <li key={a.key}>
+              <Link to={'/home/' + a.home_id} className="pitem">
+                <span className="pbody">
+                  {VERB[a.kind]}
+                  {a.kind === 'rated' ? ` ${a.stars} ${a.stars === 1 ? 'star' : 'stars'} on` : ''} {homeById.get(a.home_id)?.address ?? 'a home'}
+                </span>
+                <span className="ptime">{relativeTime(a.at)}</span>
               </Link>
             </li>
           ))}
