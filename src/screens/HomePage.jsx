@@ -8,7 +8,9 @@ import { useHomes } from '../lib/HomesContext.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
 import { factsLine, typeLine } from '../lib/format.js'
-import { checkComment } from '../lib/moderation.js'
+import { logEvent } from '../lib/events.js'
+import { moderate } from '../lib/moderation.js'
+import { BLOCK_MESSAGE } from '../lib/moderation-words.js'
 import { isSample, sampleComments, sampleLikes, sampleRating } from '../lib/sampleData.js'
 
 function timeAgo(iso) {
@@ -28,10 +30,11 @@ function Composer({ initial = '', placeholder, button, onSubmit, onCancel, autoF
   const submit = () => {
     const t = text.trim()
     if (!t) return
-    const problem = checkComment(t)
-    if (problem) {
+    const result = moderate(t)
+    if (!result.ok) {
+      logEvent('comment_blocked', { reason: result.reason })
       markDone('moderation')
-      return setError(problem)
+      return setError(BLOCK_MESSAGE)
     }
     onSubmit(t)
     setText('')
