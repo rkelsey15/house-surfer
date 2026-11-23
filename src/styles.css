@@ -425,3 +425,8 @@ select.chip { background: var(--surface); }
 .toprow-text .facts { font-size: 12px; color: var(--muted); }
 .top-score { font-size: 13px; font-weight: 700; margin-top: 3px; }
 .toprank { width: 26px; height: 26px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-weight: 700; font-size: 13px; display: grid; place-items: center; }
+.top-icon { flex: none; }
+.weekcard { display: block; border: 1.5px solid #8e5bd0; border-radius: 18px; overflow: hidden; background: var(--surface); color: inherit; text-decoration: none; }
+.weekcard-text { display: flex; flex-direction: column; gap: 1px; padding: 10px 14px 12px; }
+.weekcard-text .addr { font-size: 16px; }
+.weekcard-text .facts { font-size: 12.5px; color: var(--muted); }

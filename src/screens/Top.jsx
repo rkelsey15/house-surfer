@@ -4,7 +4,8 @@ import HomeCover from '../components/HomeCover.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { factsLine, ratingText, typeLine } from '../lib/format.js'
 import { useHomeStats } from '../lib/homeStats.js'
-import { topRated } from '../lib/top.js'
+import { CROWN, FLAME } from '../lib/badges.js'
+import { homeOfTheWeek, hotThisWeek, topRated } from '../lib/top.js'
 
 const TOP_PAGE = 10
 
@@ -21,6 +22,31 @@ function Row({ home, stat, rank }) {
         <span className="top-score">{ratingText(stat)}</span>
       </span>
     </Link>
+  )
+}
+
+// Small flame or crown icon next to a heading (the same drawings as the map badges).
+const Icon = ({ svg }) => <i className="legend-badge top-icon" aria-hidden="true" dangerouslySetInnerHTML={{ __html: svg }} />
+
+// The one crowned home, shown big at the top.
+function WeekCard({ row }) {
+  return (
+    <section className="top-section">
+      <h2 className="sec-t"><Icon svg={CROWN} />Home of the week</h2>
+      {row ? (
+        <Link to={'/home/' + row.home.id} state={{ source: 'top' }} className="weekcard">
+          <HomeCover home={row.home} height={210} />
+          <span className="weekcard-text">
+            <span className="addr">{row.home.address}</span>
+            <span className="facts">{typeLine(row.home)}</span>
+            <span className="facts">{factsLine(row.home)}</span>
+            <span className="top-score">{ratingText(row.stat)}</span>
+          </span>
+        </Link>
+      ) : (
+        <p className="muted center note">No home of the week yet. It goes to the hot home with the best rating.</p>
+      )}
+    </section>
   )
 }
 
@@ -52,6 +78,8 @@ export default function Top() {
   const { homes, status, error } = useHomes()
   const stats = useHomeStats(homes)
   const top = useMemo(() => topRated(homes, stats), [homes, stats])
+  const hot = useMemo(() => hotThisWeek(homes, stats), [homes, stats])
+  const week = useMemo(() => homeOfTheWeek(homes, stats), [homes, stats])
 
   if (status === 'loading') return <p className="muted center">Loading homes…</p>
   if (status === 'error') return <p className="blocked">Could not load homes: {error}</p>
@@ -59,6 +87,13 @@ export default function Top() {
   return (
     <div className="top-screen">
       <h1>Top homes</h1>
+      <WeekCard row={week} />
+      <Section
+        title={<><Icon svg={FLAME} />Hot this week</>}
+        note="Homes with the most ratings and comments in the last 7 days."
+        rows={hot}
+        empty="Nothing is hot yet. Rate or comment on a few homes."
+      />
       <Section
         title="Top rated"
         note="4.5 stars or more, from at least 3 ratings."
