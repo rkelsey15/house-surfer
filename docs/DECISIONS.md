@@ -43,3 +43,4 @@ Append-only. One line each: date, decision, why. Dates before Nov 15, 2026 were 
 - Nov 22, 2026: "Hot this week" is ranked by recent activity (ratings and comments in 7 days), then average. Why: the flame has a threshold but no order; "most active first" matches the Top screen's promise.
 - Nov 22, 2026: Top lists show 10 rows with "Show more" instead of all rows. Why: thousands of homes can be rated or hot in the sample data and one long page is slow and unreadable on a phone.
 - Nov 22, 2026: The iPhone test of Snap a house is pending, and work continues on the next sections. Why: Ryan can't test on a phone yet; everything else about Snap was verified in headless Edge.
+- Nov 22, 2026: "Hot this week" shows only the top 5 (no "Show more"). Why: Ryan wanted it to feel special; in the sample data 10+ homes are hot at any time.

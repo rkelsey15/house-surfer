@@ -8,6 +8,7 @@ import { CROWN, FLAME } from '../lib/badges.js'
 import { homeOfTheWeek, hotThisWeek, topRated } from '../lib/top.js'
 
 const TOP_PAGE = 10
+const HOT_LIMIT = 5
 
 // One home in a list: picture, block address, facts and rating. Opens the home page.
 function Row({ home, stat, rank }) {
@@ -78,7 +79,7 @@ export default function Top() {
   const { homes, status, error } = useHomes()
   const stats = useHomeStats(homes)
   const top = useMemo(() => topRated(homes, stats), [homes, stats])
-  const hot = useMemo(() => hotThisWeek(homes, stats), [homes, stats])
+  const hot = useMemo(() => hotThisWeek(homes, stats).slice(0, HOT_LIMIT), [homes, stats])
   const week = useMemo(() => homeOfTheWeek(homes, stats), [homes, stats])
 
   if (status === 'loading') return <p className="muted center">Loading homes…</p>
@@ -90,7 +91,7 @@ export default function Top() {
       <WeekCard row={week} />
       <Section
         title={<><Icon svg={FLAME} />Hot this week</>}
-        note="Homes with the most ratings and comments in the last 7 days."
+        note="The 5 homes with the most ratings and comments in the last 7 days."
         rows={hot}
         empty="Nothing is hot yet. Rate or comment on a few homes."
       />
