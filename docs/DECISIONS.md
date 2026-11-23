@@ -17,4 +17,5 @@ Append-only. One line each: date, decision, why. Dates before Nov 15, 2026 were 
 - Nov 15, 2026: Deploy before Snap a house. Why: phone camera and location only work on a real https site.
 - Nov 15, 2026: V2 stays a paper design, no paid database. Why: the portfolio goal is showing the thinking at $0.
 - Nov 15, 2026: Git commits use the GitHub noreply address; history was rewritten and force-pushed. Why: public repo, protect the personal email.
+- Nov 22, 2026: House Surfer is a portfolio demo, not a live app. Anyone with the link can play in about 60 seconds, with no accounts, database or paid services; everything stays in the visitor's browser. Why: lowest friction for recruiters and friends, $0 to run, and the product thinking still shows in the docs, metrics and moderation.
 - Nov 22, 2026: Adopted the PM lifecycle workflow: `docs/STATUS.md` and `docs/DECISIONS.md`, short `CLAUDE.md`. Why: keeps new sessions cheap and the project documented.
