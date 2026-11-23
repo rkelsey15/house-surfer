@@ -411,3 +411,17 @@ select.chip { background: var(--surface); }
 .cover-photo { object-fit: cover; }
 .photo-strip { display: flex; gap: 8px; overflow-x: auto; margin: 10px 0 0; }
 .photo-strip img { flex: none; width: 96px; height: 72px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); }
+
+/* ---------- Top screen ---------- */
+.top-screen h1 { margin-bottom: 4px; }
+.top-section { margin-bottom: 22px; }
+.top-section .sec-t { margin-top: 16px; display: flex; align-items: center; gap: 8px; }
+.top-section .small { margin: 2px 0 8px; }
+.toprow { display: grid; grid-template-columns: auto 96px 1fr; gap: 10px; align-items: center; padding: 8px 10px; margin-bottom: 8px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: inherit; text-decoration: none; min-height: 48px; }
+.toprow:not(:has(.toprank)) { grid-template-columns: 96px 1fr; }
+.toprow-art { overflow: hidden; border-radius: 12px; }
+.toprow-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.toprow-text .addr { font-size: 14px; }
+.toprow-text .facts { font-size: 12px; color: var(--muted); }
+.top-score { font-size: 13px; font-weight: 700; margin-top: 3px; }
+.toprank { width: 26px; height: 26px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-weight: 700; font-size: 13px; display: grid; place-items: center; }

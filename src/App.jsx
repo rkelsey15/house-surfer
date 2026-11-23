@@ -2,13 +2,13 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import DemoBanner from './components/DemoBanner.jsx'
 import Logo from './components/Logo.jsx'
 import TabBar from './components/TabBar.jsx'
-import ComingSoon from './screens/ComingSoon.jsx'
 import HomePage from './screens/HomePage.jsx'
 import MapScreen from './screens/MapScreen.jsx'
 import Profile from './screens/Profile.jsx'
 import Signup from './screens/Signup.jsx'
 import Snap from './screens/Snap.jsx'
 import Surf from './screens/Surf.jsx'
+import Top from './screens/Top.jsx'
 import { useProfile } from './lib/ProfileContext.jsx'
 import { useComments } from './lib/CommentsContext.jsx'
 import { useRatings } from './lib/RatingsContext.jsx'
@@ -43,7 +43,7 @@ export default function App() {
           <Route path="/home/:id" element={<HomePage />} />
           <Route path="/map" element={<MapScreen />} />
           <Route path="/snap" element={<Snap />} />
-          <Route path="/top" element={<ComingSoon title="Top homes">The top-rated homes on Queen Anne will show up here.</ComingSoon>} />
+          <Route path="/top" element={<Top />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
