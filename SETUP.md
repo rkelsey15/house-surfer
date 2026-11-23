@@ -36,13 +36,13 @@ The folder should now hold `CLAUDE.md`, `SETUP.md`, `docs`, `design` and `README
 10. Paste this as your first message:
 
 ```
-Read CLAUDE.md and docs/PRD.md, and open design/prototype.html to see the design.
+Read CLAUDE.md and docs/01-prd.md, and open design/prototype.html to see the design.
 Give me a short V1 plan in plain English, check that Node.js and Git work,
 then start with step 1: the King County data pipeline.
 Explain each step simply before you do it.
 ```
 
-You don't need to copy our planning chat. `CLAUDE.md` and `docs/PRD.md` are that chat boiled down, and Claude Code reads `CLAUDE.md` automatically every session.
+You don't need to copy our planning chat. `CLAUDE.md` and `docs/01-prd.md` are that chat boiled down, and Claude Code reads `CLAUDE.md` automatically every session.
 
 ## Later: turn on GitHub Pages (when Claude says the app is ready)
 

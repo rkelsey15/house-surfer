@@ -108,7 +108,7 @@ P0 ships in V1 (the proof of concept), P1 in V2, and P2 in V3 or later. See Mile
 | P0 | Comments | Post a comment on a home; threaded replies; like a comment |
 | P0 | Comments | Edit (marked "edited") or delete your own comments |
 | P0 | Feed | One home at a time, rate then next; mobile-first layout |
-| P0 | Map | Map with pins (gray unrated, slate blue under 3.5, green 3.5 to 4.4, gold 4.5+ with 3+ ratings; flame badge for hot this week; purple with a crown for the top home of the week) and a list view on web |
+| P0 | Map | Map with pins (green 4+ stars, orange hot this week, gray unrated) and a list view on web |
 | P0 | Search and filter | Search by street; filter top rated, unrated, style tags |
 | P0 | Photos | Upload a sidewalk photo; first approved photo becomes the cover; illustration until then |
 | P0 | Safety | Every comment and photo is screened before posting; report button |
@@ -142,15 +142,15 @@ The product rule is simple: **talk about the house, never the people who live th
 
 ## Mockups
 
-Mobile first, with a web layout for browsing at home. All homes, handles and comments are sample data. The clickable prototype and a 44-second demo video are in `design/prototype.html` and `design/demo.mp4`.
+Mobile first, with a web layout for browsing at home. All homes, handles and comments are sample data. The clickable prototype and a 44-second demo video are in the project files (`zillow-surfer/prototype.html`, `zillow-surfer/house-surfer-demo.mp4`).
 
 **Phone:** sign up, feed, home page, snap a house, map, profile.
 
-![Phone screens](../design/phone-screens.png)
+[Image: Phone screens: sign up, feed, home page with a blocked comment, snap a house, map, profile]
 
 **Web:** list on the left, map on the right.
 
-![Web view](../design/web-view.png)
+[Image: Web view: home list beside a map of Queen Anne]
 
 ## Data
 
@@ -211,7 +211,7 @@ Queen Anne has roughly 8,000 qualifying houses; the exact count and field names 
 
 ## System design
 
-![System design](system-design.png)
+[System design diagram: see the PRD doc or docs/system-design.png]
 
 In V1 the app is a static site: GitHub Pages serves it through its CDN, and ratings and comments save on the device. V2 adds Supabase behind an API gateway, which handles load balancing for us, so there's no separate load balancer or servers to run. A small function orchestrates moderation by sending each comment and photo to Claude before it saves.
 
@@ -231,6 +231,8 @@ Level of effort assumes building with Claude: **S** = under one working session,
 
 ### V1: proof of concept (Ryan, single-player)
 
+**Status (Nov 15, 2026):** steps 1 to 5 and the deploy shipped and are live at [rkelsey15.github.io/house-surfer](https://rkelsey15.github.io/house-surfer/). Snap a house, moderation, profile and event logging are next. As-built changes are in Appendix A.
+
 | Capability | Effort |
 | --- | --- |
 | Data pipeline: King County files to `homes.json` (Queen Anne houses only) | M |
@@ -246,6 +248,8 @@ Level of effort assumes building with Claude: **S** = under one working session,
 | Hosted free on GitHub Pages | S |
 
 ### V2: friends (up to 50)
+
+**V2 is a design exercise, not a build.** This portfolio stays a free, single-player V1. V2 is fully specified in Appendix C to D (database choice, schema, APIs, security) so it's ready if the project ever needs real users, without paying for hosting now.
 
 | Capability | Effort |
 | --- | --- |
@@ -312,4 +316,154 @@ Costs are estimates for typical free and starter tiers, not quotes.
 **Links**
 
 - [Concept doc](https://claude.ai/artifact/XxbV69bzVhUDDLEtcz7mUS): earlier exploration and decision history
-- Clickable prototype and demo video: `design/prototype.html` and `design/demo.mp4`
+- Clickable prototype and demo video: `zillow-surfer/prototype.html` and `zillow-surfer/house-surfer-demo.mp4` in the project files
+
+# Appendix: technical detail
+
+The body of this PRD stays high level. This appendix plays the role of the engineering design doc: how V1 was actually built, and how V2 would be built. It's for engineers and curious reviewers.
+
+## A. What V1 shipped vs the plan
+
+V1 matched the plan, with nine changes made while reviewing each step. Each one came from looking at real output.
+
+| Area | Plan | As built | Why |
+| --- | --- | --- | --- |
+| Home count | About 8,000 | 5,391 houses (6,720 with townhouses) | The estimate was a guess; the count comes from county land-use codes inside Seattle's official Queen Anne boundary |
+| Townhouses | Not mentioned | Kept in the data, hidden by a feature flag (`showTownhouses`, off) | Houses-only launch, with townhouses ready as a one-line change |
+| Map pins | Exact location | Blurred 25 to 50 m (about half a block) | Exact pins would undo the block-level address rule; exact points are never stored |
+| Style tag | Architectural style | Era tag from year built (Victorian era, Craftsman era, Pre-war, Mid-century, Late century, Modern) | County data has no style field |
+| Pictures | Illustrations | Generated drawings that vary by era, units and home id | No listing photos allowed; users' photos come in step 6 |
+| Wording | "Takes" | "Comments" | Clearer for first-time users |
+| Replies | Threaded | One level deep in the UI; the data supports any depth | Deep threads get cramped on phones |
+| Delete | Remove the comment | Soft delete (`deleted_at`); shows "\[deleted\]" if it has replies | Keeps replies and history intact |
+| Pin colors | Green, orange, gray | Hollow gray = unrated, blue = under 3.5, green = 3.5 to 4.4, gold = 4.5+ with 3+ ratings, flame = hot, purple crown = home of the week | Gold has to be earned; red and orange read as "bad" |
+
+The app also locks the handle after sign-up, and git commits use a GitHub noreply address so no personal email is public.
+
+## B. V1 data model as built
+
+V1 has one read-only data file and a few tables kept in the visitor's browser. The browser tables use the same shape V2's database would, so moving to a server is a copy, not a redesign.
+
+**Home data (read-only file, built once by the pipeline):** `public/data/homes.json`
+
+| Field | Example | Notes |
+| --- | --- | --- |
+| id | a hash | Not the county parcel number |
+| address | 2400 block of Warren Ave N | Block level; numbers under 100 show as "0–99 block" |
+| lat, lng | 47.63, −122.35 | Blurred about half a block |
+| beds, baths, sqft, year\_built | 3, 1.75, 1,840, 1950 | From the Assessor's residential building file |
+| era | Mid-century | From year built |
+| type, units | single-family, 1 | Duplex = 2, triplex = 3, townhouse flagged |
+| last\_sale\_year | 2019 | Year only; no price, no buyer or seller names |
+
+**User data (browser storage, per visitor):**
+
+| Table | Columns | Rules |
+| --- | --- | --- |
+| ratings | home\_id, user, stars, created\_at | One per user per home; re-rating replaces it |
+| comments | id, home\_id, parent\_id, user, body, created\_at, edited\_at, deleted\_at | `parent_id` empty = top-level, otherwise a reply; 280 characters max |
+| comment\_edits | comment\_id, old\_body, edited\_at | One row per edit, so history is kept |
+| likes | comment\_id, user, created\_at | One per user per comment; can't like your own |
+| photos (step 6) | home\_id, image, created\_at | Stored in IndexedDB, the browser's larger store |
+| events (step 9) | name, home\_id, at | Feeds the metrics and the /stats page |
+
+**Computed, never stored:** average rating, like counts, karma (5 per rating + 10 per comment + 1 per like received), hot homes and the home of the week. Computing them from rows means they can't drift out of sync.
+
+## C. V2 database: SQL vs NoSQL
+
+**Decision: SQL (Postgres, hosted on Supabase).** House Surfer's data is a web of relationships (homes have ratings and comments, comments have replies, edits and likes), and its rules are about uniqueness and permissions. A relational database enforces those for free.
+
+| Need | SQL (Postgres / Supabase) | NoSQL (Firestore / MongoDB) |
+| --- | --- | --- |
+| One like per user per comment | A unique key; the database refuses a duplicate | Must be enforced in app code or by special document ids |
+| Counts (likes, ratings, comments per home) | One query with `count` and `group by` | Keep a running counter on each document and update it on every write |
+| Threads (`parent_id`) | A recursive query returns a whole thread | Fine for one level; deeper trees need extra reads |
+| "Users can only edit their own comments" | Row-level security policies in the database | Security rules, similar strength |
+| Analytics (most-commented homes, edit rate) | Plain SQL any analyst can write | Needs an export to a warehouse first |
+| Real-time updates and offline phones | Available (Supabase Realtime) | Stronger out of the box |
+| Cost at 10 to 100 users | Free tier | Free tier; pay per read later |
+
+NoSQL would win for a chat app or a feed with no joins. For ratings, threads and likes, SQL fits better, and the analytics questions in the Success metrics section become one-line queries.
+
+**V2 schema (sketch):**
+
+```sql
+create table homes (id text primary key, address_block text, lat float, lng float,
+  beds int, baths numeric, sqft int, year_built int, era text, units int);
+create table profiles (user_id uuid primary key references auth.users,
+  handle text unique not null, created_at timestamptz default now());
+create table ratings (home_id text references homes, user_id uuid references profiles,
+  stars int check (stars between 1 and 5), created_at timestamptz default now(),
+  primary key (home_id, user_id));
+create table comments (id uuid primary key default gen_random_uuid(),
+  home_id text references homes, parent_id uuid references comments,
+  user_id uuid references profiles, body text check (length(body) <= 280),
+  created_at timestamptz default now(), edited_at timestamptz, deleted_at timestamptz);
+create table comment_edits (id bigserial primary key, comment_id uuid references comments,
+  old_body text, edited_at timestamptz default now());
+create table likes (comment_id uuid references comments, user_id uuid references profiles,
+  created_at timestamptz default now(), primary key (comment_id, user_id));
+create index on comments (home_id);
+create index on comments (parent_id);
+```
+
+The composite primary keys on `ratings` and `likes` are what enforce "one per user."
+
+## D. V2 APIs and how the pieces connect
+
+The app stays a static site on GitHub Pages. It talks to Supabase over HTTPS, and Supabase generates a REST API from the tables, so there's no custom server to run. One small server function handles moderation, because it holds the Claude API key, which must never ship to the browser.
+
+| Action | Call | Who can do it |
+| --- | --- | --- |
+| Sign in | Supabase Auth: email link, Apple or Google | Anyone |
+| Load homes | Read `homes.json` from GitHub Pages (static, cached) | Anyone |
+| Load a home's ratings and comments | `GET /rest/v1/comments?home_id=eq.{id}` and a ratings summary view | Anyone |
+| Rate a home | `POST /rest/v1/ratings` (upsert) | Signed-in user, own row only |
+| Post a comment or reply | `POST /functions/v1/moderate` → Claude check → insert into `comments` | Signed-in user, rate-limited |
+| Edit a comment | Same moderation function; old text copied to `comment_edits` | The author only |
+| Delete a comment | `PATCH comments` to set `deleted_at` | The author only |
+| Like or unlike | `POST` or `DELETE /rest/v1/likes` | Signed-in user, not on own comment |
+| Upload a photo | Supabase Storage, then the moderation function checks it before it shows | Signed-in user |
+| Report | `POST /rest/v1/reports`; 3 reports auto-hide pending review | Signed-in user |
+
+**Posting a comment, step by step:**
+
+1. The app sends the text and the user's sign-in token to the `moderate` function.
+2. The function checks the rate limit, then runs the rule-based filter, then asks Claude: "Is this about the house, or about the people who live there?"
+3. If it passes, the function inserts the row. If not, the app shows "Talk about the house, not the people who live there."
+4. Other users see it on their next load (or instantly, with Supabase Realtime turned on).
+
+**Load balancing and scale:** Supabase runs the API gateway, connection pooling and load balancing as part of the service, and GitHub's CDN serves the site and `homes.json`. At 10 to 100 users, nothing here needs tuning.
+
+## E. Security and privacy details
+
+Privacy is designed into the data first. Then permissions and moderation cover what people post.
+
+| Layer | V1 (shipped or planned) | V2 design |
+| --- | --- | --- |
+| Data minimization | No owner names, sale prices or parcel numbers; block-level addresses; blurred pins | Same; `homes` stays a public, read-only file |
+| Identity | Generated handle from curated word lists, locked after sign-up | Unique handle enforced by the database; rename once every 30 days |
+| Permissions | Everything lives in the visitor's own browser | Row-level security: anyone reads; users write, edit and delete only their own rows |
+| Moderation | Rule-based filter blocks comments about residents (step 7) | Rules + Claude check in a server function; report button; auto-hide at 3 reports |
+| Abuse | Not needed for single-player | Rate limits per user (for example, 10 comments an hour) |
+| Deleted content | Soft delete; stays in the visitor's browser | Text hidden from users, kept for moderation, cleared after 30 days |
+| Secrets | None in the app | Claude API key lives only in the server function |
+| Sign-in | None | Email link, Apple or Google; two-factor in V3 |
+| Sample data | Marked "sample" on screen | Removed; likes on sample comments are dropped in the migration |
+
+## F. Decision log
+
+Newest first. Each entry is a call made by the product owner while reviewing the build.
+
+| Date | Decision | Reason |
+| --- | --- | --- |
+| Nov 15, 2026 | V2 stays a paper design; no paid database | Portfolio goal is showing the thinking, at $0 |
+| Nov 15, 2026 | Deploy before Snap a house | Phone camera and location only work on a real https site |
+| Nov 15, 2026 | Pin colors: hollow gray, blue, green, gold (3+ ratings), flame, purple crown | Earned gold; no red; easy to tell apart |
+| Nov 15, 2026 | Handles generated only, locked after sign-up | Makes slurs and real names impossible instead of filtering them |
+| Nov 15, 2026 | Soft delete with `deleted_at` | Keeps replies and history |
+| Nov 15, 2026 | Comments data model: `parent_id` threads, edit-history table, likes table | Stable ids for likes and replies; counts computed, not stored |
+| Nov 15, 2026 | "Takes" renamed to "comments" | Clarity for new users |
+| Nov 15, 2026 | Townhouses behind a feature flag | Keep the data, launch houses-only |
+| Nov 15, 2026 | Blur pins about half a block; no exact points stored | Match the block-level address rule |
+| Nov 15, 2026 | Git commits use a GitHub noreply email | Public repo; protect personal email |

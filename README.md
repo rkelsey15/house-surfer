@@ -2,7 +2,7 @@
 
 Rate houses on a walk with friends or from the couch. A mobile-first social app where you give homes 1 to 5 stars and leave short comments others can like and reply to. Built with Claude Code as a product portfolio project.
 
-- Product requirements: [docs/PRD.md](docs/PRD.md)
+- Product requirements: [docs/01-prd.md](docs/01-prd.md)
 - Clickable design prototype: [design/prototype.html](design/prototype.html) (download and open in a browser, then press Play demo)
 - Demo video: [design/demo.mp4](design/demo.mp4)
 
