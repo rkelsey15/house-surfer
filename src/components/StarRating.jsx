@@ -1,15 +1,18 @@
+import { ratedText, starLabel } from '../lib/a11y.js'
+
 // Five tappable stars. `value` is 0 (not rated) to 5.
-// Each star is a real button so it works with keyboard and screen readers.
+// Each star is a real button (Tab and Enter or Space work), named "Rate 4 of 5 stars".
+// The chosen rating is announced to screen readers, and empty stars are outlines
+// so a filled star differs by shape, not only by color.
 export default function StarRating({ value, onChange }) {
   return (
-    <div className="stars" role="radiogroup" aria-label="Your rating">
+    <div className="stars" role="group" aria-label="Your rating">
       {[1, 2, 3, 4, 5].map((n) => (
         <button
           key={n}
           type="button"
-          role="radio"
-          aria-checked={value === n}
-          aria-label={`${n} star${n > 1 ? 's' : ''}`}
+          aria-pressed={value === n}
+          aria-label={starLabel(n)}
           className={n <= value ? 'star on' : 'star'}
           onClick={() => onChange(n)}
         >
@@ -18,6 +21,7 @@ export default function StarRating({ value, onChange }) {
           </svg>
         </button>
       ))}
+      <span className="sr-only" role="status">{value ? ratedText(value) : ''}</span>
     </div>
   )
 }

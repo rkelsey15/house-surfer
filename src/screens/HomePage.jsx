@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import HomeCover from '../components/HomeCover.jsx'
 import StarRating from '../components/StarRating.jsx'
@@ -12,7 +12,7 @@ import { useRatings } from '../lib/RatingsContext.jsx'
 import { factsLine, typeLine } from '../lib/format.js'
 import { logEvent } from '../lib/events.js'
 import { moderate } from '../lib/moderation.js'
-import { BLOCK_MESSAGE } from '../lib/moderation-words.js'
+import { BLOCK_MESSAGE, WHY_MESSAGE } from '../lib/moderation-words.js'
 import { isSample, sampleComments, sampleLikes, sampleRating } from '../lib/sampleData.js'
 
 function timeAgo(iso) {
@@ -28,6 +28,13 @@ function Composer({ initial = '', placeholder, button, onSubmit, onCancel, autoF
   const [text, setText] = useState(initial)
   const [error, setError] = useState(null)
   const { markDone } = useGuide()
+  const errorRef = useRef(null)
+  const errorId = useId()
+  const [blockCount, setBlockCount] = useState(0)
+  // A blocked comment: the message is shown and focus moves to it, so a screen reader reads it.
+  useEffect(() => {
+    if (blockCount) errorRef.current?.focus()
+  }, [blockCount])
 
   const submit = () => {
     const t = text.trim()
@@ -36,6 +43,7 @@ function Composer({ initial = '', placeholder, button, onSubmit, onCancel, autoF
     if (!result.ok) {
       logEvent('comment_blocked', { reason: result.reason })
       markDone('moderation')
+      setBlockCount((n) => n + 1)
       return setError(BLOCK_MESSAGE)
     }
     onSubmit(t)
@@ -51,12 +59,19 @@ function Composer({ initial = '', placeholder, button, onSubmit, onCancel, autoF
         placeholder={placeholder}
         autoFocus={autoFocus}
         aria-label={placeholder}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
         onChange={(e) => {
           setText(e.target.value)
           setError(null)
         }}
       />
-      {error && <p className="blocked" role="alert">{error}</p>}
+      {error && (
+        <div className="blocked" id={errorId} ref={errorRef} tabIndex={-1}>
+          <p><b>{error}</b></p>
+          <p className="why">{WHY_MESSAGE}</p>
+        </div>
+      )}
       <div className="composer-bar">
         <span className="muted small">{text.length}/{MAX_COMMENT_LENGTH}</span>
         {onCancel && <button className="btn" onClick={onCancel}>Cancel</button>}
@@ -107,13 +122,13 @@ function CommentView({ c, isReply, likeCount, liked, replying, onReply, editing,
             onClick={() => toggleLike(c.id)}
             disabled={mine}
             aria-pressed={liked}
-            aria-label={`${likeCount} likes${liked ? ', liked by you' : ''}`}
+            aria-label={`Like, ${likeCount} like${likeCount === 1 ? '' : 's'}${mine ? ' (you cannot like your own comment)' : ''}`}
           >
             ▲ {likeCount}
           </button>
-          <button onClick={onReply}>Reply</button>
-          {mine && <button onClick={onEdit}>Edit</button>}
-          {mine && <button onClick={() => actions.remove(c.id)}>Delete</button>}
+          <button onClick={onReply} aria-label={`Reply to ${c.user}`}>Reply</button>
+          {mine && <button onClick={onEdit} aria-label="Edit your comment">Edit</button>}
+          {mine && <button onClick={() => actions.remove(c.id)} aria-label="Delete your comment">Delete</button>}
         </div>
       )}
       {replying && (
@@ -221,7 +236,7 @@ export default function HomePage() {
 
   return (
     <div>
-      <button className="back" onClick={() => navigate(-1)}>← Back</button>
+      <button className="back" onClick={() => navigate(-1)}><span aria-hidden="true">← </span>Back</button>
 
       <div className="card">
         <HomeCover home={home} />

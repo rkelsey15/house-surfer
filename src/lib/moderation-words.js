@@ -61,3 +61,6 @@ export const INSULT_WORDS = [
   // Slurs
   'nigger', 'nigga', 'faggot', 'fag', 'dyke', 'tranny', 'retard', 'retarded', 'spic', 'chink', 'kike',
 ]
+
+// The short "Why?" line shown under the block message. Names the house rule.
+export const WHY_MESSAGE = 'Why? House rule 1: talk about the house, never the people who live there. No names, schedules or plate numbers.'

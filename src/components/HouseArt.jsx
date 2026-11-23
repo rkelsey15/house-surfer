@@ -1,3 +1,5 @@
+import { houseAlt } from '../lib/a11y.js'
+
 // House illustrations, drawn in code (no photos, no listing images).
 // Based on the four drawings in design/prototype.html, plus one extra "ranch"
 // shape so Mid-century and Late-century homes don't borrow another era's look.
@@ -120,7 +122,8 @@ export default function HouseArt({ home, height = 210 }) {
       viewBox="0 0 300 170"
       preserveAspectRatio="xMidYMid slice"
       style={{ height }}
-      aria-hidden="true"
+      role="img"
+      aria-label={houseAlt(home)}
     >
       <rect width="300" height="170" fill="var(--sky)" />
       <circle cx={262 - (h % 3) * 24} cy="30" r="12" fill="#fff" opacity=".9" />
