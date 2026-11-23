@@ -5,7 +5,9 @@ Last updated: Nov 22, 2026 · Live: https://rkelsey15.github.io/house-surfer/ ·
 ## Phase
 **Phase 5: Build, demo-complete push.** House Surfer is now a portfolio **demo**, not a live app (see DECISIONS.md): anyone with the link can play in about 60 seconds, with nothing but the browser. The plan and acceptance criteria are in `docs/02-user-stories.md`; we build one section at a time and pause for review after each.
 
-Sections 1 to 3 are pushed (Nov 22). Section 4 (Snap a house) is committed locally and **not pushed yet**, so the live site does not have it. An iPhone test needs the push first, because camera and location only work on the https site.
+Sections 1 to 4 are pushed (Nov 22) and deployed. Section 5 (Top screen) is committed locally and **not pushed yet**.
+
+**Pending: iPhone Safari test of Snap a house.** Ryan can't test on a phone yet. Everything about Snap was checked in headless Edge (phone and laptop sizes, fake camera file, fake location), but the camera sheet, the location prompt and HEIC library photos still need a real iPhone. Test steps were given on Nov 22; the live site already has the build.
 
 ## Demo-complete plan
 | # | Section | State |
@@ -13,9 +15,9 @@ Sections 1 to 3 are pushed (Nov 22). Section 4 (Snap a house) is committed local
 | 1 | Demo framing: banner, Reset demo | **Done** |
 | 2 | "Try this" guide | **Done** |
 | 3 | Moderation (rule-based) | **Done** (44 tests, `npm test`) |
-| 4 | Snap a house, lite | **Done on laptop and phone-size tests; waiting for a real iPhone test** |
-| 5 | Top screen | Next |
-| 6 | Profile: my comments, activity, locked badges | To do |
+| 4 | Snap a house, lite | **Built and pushed; iPhone Safari test pending** |
+| 5 | Top screen | **Done** (awaiting review) |
+| 6 | Profile: my comments, activity, locked badges | Next |
 | 7 | Event logging and `/stats` | Started: `comment_blocked` is logged; the rest and the page are to do |
 | 8 | "Sample" tag on seeded comments | Looks done already (tag shows in screenshots); confirm at the end |
 | D1 | PRD Appendix G, "Path to a real launch" | To do (docs only) |
@@ -28,6 +30,7 @@ Sections 1 to 3 are pushed (Nov 22). Section 4 (Snap a house) is committed local
 - Demo framing: dismissible banner (a floating pill at bottom-left on laptops), "Reset demo" on Profile with a confirm step; clears only `hs.` keys
 - "Try this" checklist on the feed (rate 3, comment, see moderation, view the map); collapses on phones; reopens from Profile
 - Snap a house (`/snap`): take or pick a photo on phones, upload or "Use a sample photo" on laptops; pick the house from the 5 nearest (if location is allowed) or by address search; shrunk to 1200 px on a canvas (drops GPS data); "No people or license plates" confirm; saved in IndexedDB on this device; the first photo becomes the home's cover; extra photos show in a strip; Reset demo deletes them
+- Top screen (`/top`): Home of the week card (crown), Hot this week (flame, most activity first), Top rated (gold rule: 4.5+ with 3+ ratings, best first, 10 at a time with "Show more"). Uses the same stats as the map, so the two always agree. Friendly empty states; every row opens the home page
 - Moderation: `src/lib/moderation.js` with word lists in `src/lib/moderation-words.js`. Blocks comments about people and insults on new comments, replies and edits. Handles spacing ("o w n e r s"), number swaps ("n3ighbors") and repeated letters, keeps "family room" and "neighborhood" working
 - `src/lib/events.js`: event log in `hs.events` (capped at 2,000, fails quietly)
 - Deploy: GitHub Pages via Actions on every push to `main`
@@ -35,8 +38,8 @@ Sections 1 to 3 are pushed (Nov 22). Section 4 (Snap a house) is committed local
 ## Left vs the PRD
 | Item | State |
 | --- | --- |
-| Snap a house (photo, 5 nearest homes, IndexedDB, sample photo) | Built; needs a real iPhone Safari check |
-| Top screen (`/top` is a placeholder) | To do |
+| Snap a house (photo, 5 nearest homes, IndexedDB, sample photo) | Built and live; **iPhone Safari check pending** |
+| Top screen | Done |
 | Profile: comments, recent activity, locked badges | Partly done (karma and homes rated work) |
 | Event logging and `/stats` | Partly done |
 | Accessibility basics (PRD Accessibility section) | Planned for the UI polish pass |
@@ -59,8 +62,9 @@ Sections 1 to 3 are pushed (Nov 22). Section 4 (Snap a house) is committed local
 ## Known loose ends
 - Likes received stay 0 in single-player; sample-comment likes must be dropped in V2
 - Moderation is rules only: it misses clever wording and can block a harmless comment (for example "man cave", "the people's choice"). Stated up front in the case study; V2 adds an AI check
-- Snap a house has only been tested in headless Edge (with a fake camera file and fake location), not on a real iPhone. Things only a real phone can show: the camera sheet, the location prompt, HEIC photos from the library
+- **iPhone test of Snap a house is pending** (see Phase). It has only been tested in headless Edge (with a fake camera file and fake location). Things only a real phone can show: the camera sheet, the location prompt, HEIC photos from the library
 - Photos are not screened by software, only by the visitor's "no people or license plates" confirm. V2 adds an AI photo check
 - The sample photo is a drawing made in code (labeled "Sample drawing"), not a real photograph
-- Snap covers show on the feed, home page and list, but map pins and Top do not use photos
-- Tests: `npm test` covers moderation and the Snap helpers (shrink size, nearest 5, address search). Everything else is checked by hand in headless Edge at phone (390 px) and laptop (1280 px) sizes
+- Snap covers show on the feed, home page, list and Top, but map pins do not use photos
+- Top lists are capped at 10 rows with "Show more" so a long page of 5,000+ homes never renders at once
+- Tests: `npm test` covers moderation, the Snap helpers (shrink size, nearest 5, address search) and the Top lists (gold rule, hot order, home of the week, empty data). Everything else is checked by hand in headless Edge at phone (390 px) and laptop (1280 px) sizes
