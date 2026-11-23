@@ -1,6 +1,6 @@
 # House Surfer: user stories and acceptance criteria
 
-Nov 22, 2026 · Ryan Kelsey · Status: **draft, waiting for approval before any code**
+Nov 22, 2026 · Ryan Kelsey · Status: **approved Nov 22, 2026**
 
 ## Direction
 
@@ -41,6 +41,7 @@ This replaces the "invite up to 10 friends" framing in the PRD for V1. Metrics, 
 - **2.3** Given I finish all four items, then the checklist shows a short "You've seen it all" state and can be dismissed.
 - **2.4** Given the checklist is showing, when I dismiss it, then it stays hidden on later visits.
 - **2.5** Given I dismissed it, when I go to Profile and tap "Show Try this guide", then it reopens with my progress still checked.
+- **2.7** Given the checklist shows the moderation item, then it includes the hint: Try writing "The neighbors are loud".
 - **2.6** Given I'm on a phone-size screen, then the checklist is collapsed to one line ("Try this: 1 of 4") that expands on tap, so it doesn't push the feed off the screen.
 
 ## 3. Moderation (rule-based)
@@ -152,6 +153,13 @@ What gets blocked:
 - **7.9** Given I'm on a phone, then `/stats` is readable without sideways scrolling.
 - **7.10** Given `/stats` is not in the tab bar, then it's reachable from a link in Profile.
 
+## 8. Sample comment tag
+
+**Story 8.** As a visitor, I want to tell sample comments from my own, so I know what's seeded.
+
+- **8.1** Given a comment is seeded sample data, when it shows on a home page, then it has a small "sample" tag; my own comments never do.
+- **8.2** Given the tag shows, then it is readable in light and dark mode on phone and laptop sizes.
+
 ---
 
 ## Written deliverables (docs only, no code)
@@ -169,8 +177,8 @@ What gets blocked:
 
 UI polish (listed in STATUS.md instead), real logins, a database, shared data between visitors, a report button, AI moderation, photo content checks (only the user confirmation), badges that unlock.
 
-## Open questions for Ryan
+## Decisions from review (Nov 22, 2026)
 
-1. **"Try this" item 3** asks visitors to write about a neighbor to see moderation. Is a friendly hint under the comment box ("Try: 'The neighbors are loud'") okay, or should visitors find it on their own?
-2. **Sample comments:** the demo already seeds sample comments. Do you want a small "sample" tag on them so recruiters can tell them from their own?
-3. **`/stats` access:** link in Profile (my proposal), or hidden with no link?
+1. The Try this guide shows a hint for the moderation item (AC 2.7).
+2. Sample comments carry a small "sample" tag (AC 8.1).
+3. `/stats` is linked from Profile (AC 7.10).

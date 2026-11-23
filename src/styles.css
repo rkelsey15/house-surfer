@@ -92,6 +92,33 @@ h1 { font-size: 24px; letter-spacing: -0.02em; }
 .logo-mark { width: 26px; height: 26px; border-radius: 8px; background: var(--brand); display: grid; place-items: center; }
 .karma { font-size: 12px; font-weight: 700; background: var(--coral-soft); color: var(--coral); border-radius: 999px; padding: 5px 10px; }
 
+/* ---------- Demo banner ---------- */
+.demo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 8px 6px 16px;
+  padding-top: calc(6px + env(safe-area-inset-top));
+  background: var(--brand-soft);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  border-bottom: 1px solid var(--line);
+}
+.demo-banner-close {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--muted);
+}
+
 /* ---------- Tab bar ---------- */
 .tabbar {
   position: fixed;

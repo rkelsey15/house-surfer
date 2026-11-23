@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
+import DemoBanner from './components/DemoBanner.jsx'
 import Logo from './components/Logo.jsx'
 import TabBar from './components/TabBar.jsx'
 import ComingSoon from './screens/ComingSoon.jsx'
@@ -17,10 +18,18 @@ export default function App() {
   const { karmaFromComments } = useComments()
 
   // No handle yet: show the sign-up screen with no tab bar.
-  if (!profile) return <Signup />
+  if (!profile) {
+    return (
+      <>
+        <DemoBanner />
+        <Signup />
+      </>
+    )
+  }
 
   return (
     <div className="app">
+      <DemoBanner />
       <header className="appbar">
         <Logo />
         {/* Karma so far: ratings and comments. Likes received need other users (V2). */}
