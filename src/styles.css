@@ -119,6 +119,20 @@ h1 { font-size: 24px; letter-spacing: -0.02em; }
   color: var(--muted);
 }
 
+/* On wide screens the tabs live in the top bar, so the note floats bottom-left instead. */
+@media (min-width: 900px) {
+  .demo-banner {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 15;
+    padding: 4px 6px 4px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+  }
+}
+
 /* ---------- Tab bar ---------- */
 .tabbar {
   position: fixed;

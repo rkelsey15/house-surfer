@@ -36,6 +36,14 @@ export default function Profile() {
         <span>Surfer name</span>
         <span className="muted small">{profile.handle} · locked</span>
       </div>
+
+      <h2 className="sec-t">Demo</h2>
+      <div className="setting">
+        <span>Start over</span>
+        <button className="btn" onClick={() => {}}>
+          Reset demo
+        </button>
+      </div>
     </div>
   )
 }
