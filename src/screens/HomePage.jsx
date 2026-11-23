@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import HouseArt from '../components/HouseArt.jsx'
 import StarRating from '../components/StarRating.jsx'
 import { useComments, MAX_COMMENT_LENGTH } from '../lib/CommentsContext.jsx'
+import { useGuide } from '../lib/GuideContext.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
@@ -22,12 +23,16 @@ function timeAgo(iso) {
 function Composer({ initial = '', placeholder, button, onSubmit, onCancel, autoFocus }) {
   const [text, setText] = useState(initial)
   const [error, setError] = useState(null)
+  const { markDone } = useGuide()
 
   const submit = () => {
     const t = text.trim()
     if (!t) return
     const problem = checkComment(t)
-    if (problem) return setError(problem)
+    if (problem) {
+      markDone('moderation')
+      return setError(problem)
+    }
     onSubmit(t)
     setText('')
     setError(null)

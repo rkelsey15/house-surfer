@@ -4,6 +4,7 @@ import L from 'leaflet'
 import { CircleMarker, MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import HouseArt from '../components/HouseArt.jsx'
+import { useGuide } from '../lib/GuideContext.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { pinKind, useHomeStats } from '../lib/homeStats.js'
 import { factsLine, typeLine } from '../lib/format.js'
@@ -124,6 +125,8 @@ function ListItem({ home, stat, selected, onShow }) {
 }
 
 export default function MapScreen() {
+  const { markDone } = useGuide()
+  useEffect(() => markDone('map'), [markDone])
   const { homes, status, error } = useHomes()
   const stats = useHomeStats(homes)
   const [ui, setUi] = useState(() => session.ui)
