@@ -5,7 +5,7 @@ Last updated: Nov 22, 2026 · Live: https://rkelsey15.github.io/house-surfer/ ·
 ## Phase
 **Phase 5: Build, demo-complete push.** House Surfer is now a portfolio **demo**, not a live app (see DECISIONS.md): anyone with the link can play in about 60 seconds, with nothing but the browser. The plan and acceptance criteria are in `docs/02-user-stories.md`; we build one section at a time and pause for review after each.
 
-Sections 1 to 5 are pushed (Nov 22). Section 5 (Top screen) is pushed.
+Sections 1 to 6 are pushed (Nov 22). Section 6 (Profile) is pushed.
 
 **Pending: iPhone Safari test of Snap a house.** Ryan can't test on a phone yet. Everything about Snap was checked in headless Edge (phone and laptop sizes, fake camera file, fake location), but the camera sheet, the location prompt and HEIC library photos still need a real iPhone. Test steps were given on Nov 22; the live site already has the build.
 
@@ -17,7 +17,7 @@ Sections 1 to 5 are pushed (Nov 22). Section 5 (Top screen) is pushed.
 | 3 | Moderation (rule-based) | **Done** (44 tests, `npm test`) |
 | 4 | Snap a house, lite | **Built and pushed; iPhone Safari test pending** |
 | 5 | Top screen | **Done** (awaiting review) |
-| 6 | Profile: my comments, activity, locked badges | Next |
+| 6 | Profile: my comments, activity, locked badges | **Done** (awaiting review) |
 | 7 | Event logging and `/stats` | Started: `comment_blocked` is logged; the rest and the page are to do |
 | 8 | "Sample" tag on seeded comments | Looks done already (tag shows in screenshots); confirm at the end |
 | D1 | PRD Appendix G, "Path to a real launch" | To do (docs only) |
@@ -30,6 +30,7 @@ Sections 1 to 5 are pushed (Nov 22). Section 5 (Top screen) is pushed.
 - Demo framing: dismissible banner (a floating pill at bottom-left on laptops), "Reset demo" on Profile with a confirm step; clears only `hs.` keys
 - "Try this" checklist on the feed (rate 3, comment, see moderation, view the map); collapses on phones; reopens from Profile
 - Snap a house (`/snap`): take or pick a photo on phones, upload or "Use a sample photo" on laptops; pick the house from the 5 nearest (if location is allowed) or by address search; shrunk to 1200 px on a canvas (drops GPS data); "No people or license plates" confirm; saved in IndexedDB on this device; the first photo becomes the home's cover; extra photos show in a strip; Reset demo deletes them
+- Profile: handle, karma, homes rated and comments; My comments (newest first, opens the home, empty state links to the feed); Recent activity (last 10 actions, "2 min ago"); five locked badges marked "Coming soon"; Settings; a separate Demo section
 - Top screen (`/top`): Home of the week card (crown), Hot this week (flame, top 5 by recent activity), Top rated (gold rule: 4.5+ with 3+ ratings, best first, 10 at a time with "Show more"). Uses the same stats as the map, so the two always agree. Friendly empty states; every row opens the home page
 - Moderation: `src/lib/moderation.js` with word lists in `src/lib/moderation-words.js`. Blocks comments about people and insults on new comments, replies and edits. Handles spacing ("o w n e r s"), number swaps ("n3ighbors") and repeated letters, keeps "family room" and "neighborhood" working
 - `src/lib/events.js`: event log in `hs.events` (capped at 2,000, fails quietly)
@@ -40,7 +41,7 @@ Sections 1 to 5 are pushed (Nov 22). Section 5 (Top screen) is pushed.
 | --- | --- |
 | Snap a house (photo, 5 nearest homes, IndexedDB, sample photo) | Built and live; **iPhone Safari check pending** |
 | Top screen | Done |
-| Profile: comments, recent activity, locked badges | Partly done (karma and homes rated work) |
+| Profile: comments, recent activity, locked badges | Done |
 | Event logging and `/stats` | Partly done |
 | Accessibility basics (PRD Accessibility section) | Planned for the UI polish pass |
 | Seed photos and a demo video with captions, case study, README polish | To do |
@@ -67,4 +68,4 @@ Sections 1 to 5 are pushed (Nov 22). Section 5 (Top screen) is pushed.
 - The sample photo is a drawing made in code (labeled "Sample drawing"), not a real photograph
 - Snap covers show on the feed, home page, list and Top, but map pins do not use photos
 - Top lists are capped at 10 rows with "Show more" so a long page of 5,000+ homes never renders at once
-- Tests: `npm test` covers moderation, the Snap helpers (shrink size, nearest 5, address search) and the Top lists (gold rule, hot order, home of the week, empty data). Everything else is checked by hand in headless Edge at phone (390 px) and laptop (1280 px) sizes
+- Tests: `npm test` covers moderation, the Profile lists (my comments, activity, relative times, badges), the Snap helpers (shrink size, nearest 5, address search) and the Top lists (gold rule, hot order, home of the week, empty data). Everything else is checked by hand in headless Edge at phone (390 px) and laptop (1280 px) sizes
