@@ -56,7 +56,7 @@ export default function App() {
       {/* The tab bar comes before the page in the code, so Tab order matches what you see on laptops (tabs at the top). */}
       <TabBar />
 
-      <main className={location.pathname === '/' ? 'main main-wide' : 'main'} id="main" tabIndex={-1}>
+      <main className={location.pathname === '/' || location.pathname === '/top' ? 'main main-wide' : 'main'} id="main" tabIndex={-1}>
         <Routes>
           <Route path="/" element={<Surf />} />
           <Route path="/home/:id" element={<HomePage />} />

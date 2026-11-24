@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Logo from '../components/Logo.jsx'
 import MoodImage from '../components/MoodImage.jsx'
-import ThemeSwitch from '../components/ThemeSwitch.jsx'
 import { MOOD_PHOTOS } from '../lib/credits.js'
 import { makeHandleOptions } from '../lib/handles.js'
 import { useProfile } from '../lib/ProfileContext.jsx'
@@ -20,9 +19,6 @@ export default function Signup() {
 
   return (
     <div className="signup">
-      <div className="signup-theme">
-        <ThemeSwitch />
-      </div>
       <MoodImage photo={MOOD_PHOTOS.sidewalk} height={170} position="50% 62%" />
       <div className="hero">
         <Logo center />

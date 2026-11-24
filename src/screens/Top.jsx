@@ -97,21 +97,23 @@ export default function Top() {
     <div className="top-screen">
       <h1>Top homes</h1>
       <WeekCard row={week} />
-      <Section
-        title={<><Icon svg={FLAME} />Hot this week</>}
-        note="The 5 homes with the most ratings and comments in the last 7 days."
-        rows={hot}
-        empty="Nothing is hot yet. Rate or comment on a few homes."
-      />
-      <Section
-        title="Top rated"
-        note="4.5 stars or more, from at least 3 ratings."
-        rows={top}
-        ranked
-        emptyTitle="No top homes yet"
-        empty="Rate a few homes to see the top list."
-        photo={MOOD_PHOTOS.street}
-      />
+      <div className="top-cols">
+        <Section
+          title={<><Icon svg={FLAME} />Hot this week</>}
+          note="The 5 homes with the most ratings and comments in the last 7 days."
+          rows={hot}
+          empty="Nothing is hot yet. Rate or comment on a few homes."
+        />
+        <Section
+          title="Top rated"
+          note="4.5 stars or more, from at least 3 ratings."
+          rows={top}
+          ranked
+          emptyTitle="No top homes yet"
+          empty="Rate a few homes to see the top list."
+          photo={MOOD_PHOTOS.street}
+        />
+      </div>
     </div>
   )
 }

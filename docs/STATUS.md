@@ -25,6 +25,7 @@ Sections 1 to 7 are pushed (Nov 22).
 | P | UI polish: Part A (accessibility basics + the 5 ideas) | **Done and pushed (Nov 23); awaiting Ryan's review** |
 | P2 | UI polish: Part B (the look) | **Done and pushed (Nov 23); awaiting Ryan's review** |
 | P3 | UI polish: Part C (less bland, surfing flow) | **Done and pushed (Nov 23)** |
+| P4 | UI polish: Part D (theme setting moves to Profile, Top two columns on laptops) | **Done; committed, not pushed** |
 | H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
@@ -32,7 +33,7 @@ Sections 1 to 7 are pushed (Nov 22).
 
 ## Built so far
 - Data pipeline: `npm run data` writes `public/data/homes.json`, 5,391 Queen Anne houses (6,720 with townhouses, hidden by a flag)
-- App shell: handle picker with house rules, tab bar, Auto/Light/Dark theme
+- App shell: handle picker with house rules, tab bar, Auto/Light/Dark theme (Appearance on Profile, default Auto)
 - Surf feed, home page with threaded comments and likes, map and list with pins, search and filters
 - Demo framing: dismissible banner (a floating pill at bottom-left on laptops), "Reset demo" on Profile with a confirm step; clears only `hs.` keys
 - "Try this" checklist on the feed (rate 3, comment, see moderation, view the map); collapses on phones; reopens from Profile
@@ -54,6 +55,11 @@ Sections 1 to 7 are pushed (Nov 22).
 | Accessibility basics (PRD Accessibility section) | Planned for the UI polish pass |
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
+
+## UI polish Part D (committed Nov 23, not yet pushed)
+Parts A to C kept. Checked at 390 and 1280 px, light and dark; 130 tests pass, build passes.
+- **Appearance setting:** Auto / Light / Dark is only on Profile, Settings, "Appearance" (with a line "Auto follows your device's light or dark setting"). It was also on the welcome screen; removed there. Auto is the default for new visitors. Saved choice, `theme_changed` event and screen-reader label kept. `ARCHITECTURE.md` needed no change (it never mentioned where the switch is)
+- **Top screen on laptops (1024 px and wider):** Home of the week full width, then Hot this week and Top rated side by side. Phones stay one column
 
 ## Handoff docs (done Nov 23)
 A new engineer, or their AI assistant, can start from the README and be productive without Ryan:

@@ -8,10 +8,15 @@ const OPTIONS = [
 ]
 
 // Manual light/dark switch. "Auto" follows the device setting.
-export default function ThemeSwitch() {
+export default function ThemeSwitch({ labelledBy }) {
   const { theme, setTheme } = useTheme()
   return (
-    <div className="seg" role="radiogroup" aria-label="Color theme">
+    <div
+      className="seg"
+      role="radiogroup"
+      aria-label={labelledBy ? undefined : 'Appearance'}
+      aria-labelledby={labelledBy}
+    >
       {OPTIONS.map(([value, label]) => (
         <button
           key={value}

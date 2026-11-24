@@ -104,10 +104,11 @@ export default function Profile() {
       </ul>
 
       <h2 className="sec-t">Settings</h2>
-      <div className="setting">
-        <span>Theme</span>
-        <ThemeSwitch />
+      <div className="setting setting-stack">
+        <span id="appearance-label">Appearance</span>
+        <ThemeSwitch labelledBy="appearance-label" />
       </div>
+      <p className="muted small">Auto follows your device's light or dark setting.</p>
       <div className="setting">
         <span>Surfer name</span>
         <span className="muted small">{profile.handle} · locked</span>
