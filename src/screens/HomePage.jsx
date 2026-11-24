@@ -148,6 +148,9 @@ function CommentView({ c, isReply, likeCount, liked, replying, onReply, editing,
 
 export default function HomePage() {
   const { id } = useParams()
+  // `key={id}` makes React throw away this screen's state when "Next house" changes the
+  // URL: otherwise the "Saved" bar, an open reply box or edit mode from the last house
+  // would carry over to the next one. It also logs `home_viewed` once per house.
   return <HomePageFor key={id} id={id} />
 }
 
@@ -186,6 +189,8 @@ function HomePageFor({ id }) {
   const home = homes.find((h) => h.id === id)
 
   // Sample comments plus yours, grouped into threads (top comment + replies).
+  // Made-up sample comments (ids start with "sample-", never saved, never editable) are
+  // shown together with the real ones saved in hs.comments. `isSample(c)` tells them apart.
   const threads = useMemo(() => {
     const all = [...sampleComments(id), ...comments.filter((c) => c.home_id === id)]
     const byTime = (a, b) => a.created_at.localeCompare(b.created_at)

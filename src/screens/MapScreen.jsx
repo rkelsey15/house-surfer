@@ -17,6 +17,13 @@ import { LEGEND, PIN_COLORS, pinShape, pinStyle, shapePoints } from '../lib/pins
 // Leaflet's canvas like the round pins were. Leaflet only draws circles on its
 // own, so this takes over the drawing step. Click and tap hit-testing still use
 // the circle of the same radius (plus the canvas's tolerance).
+//
+// WHY it works this way: there are 5,000+ pins. As ordinary HTML markers they would
+// make the map slow, so every pin is painted onto one shared canvas instead.
+// WATCH OUT: `_updatePath`, `_renderer._ctx`, `_renderer._drawing`, `_fillStroke` and
+// `_empty` are Leaflet 1.9 PRIVATE methods, copied from Leaflet's own circle drawing
+// (`_updateCircle`). They can change in a Leaflet upgrade, so look at the map (all pin
+// shapes, tap a pin, zoom) after upgrading Leaflet.
 const ShapeMarker = L.CircleMarker.extend({
   _updatePath() {
     const renderer = this._renderer
@@ -77,6 +84,9 @@ const session = {
 // All the pins as one Leaflet layer, redrawn when the homes, ratings or zoom change.
 // A wider click tolerance makes the small pins easier to hit (the List view is the
 // full alternative for anyone who can't use the map).
+// Every marker is rebuilt on each change. That is fast enough for about 5,400 pins and
+// keeps this simple; if it ever gets slow, update the markers in place instead.
+// `onSelectRef` holds the latest click handler so clicking a pin never uses an old one.
 function PinLayer({ homes, stats, radius, onSelect }) {
   const map = useMap()
   const onSelectRef = useRef(onSelect)

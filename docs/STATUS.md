@@ -25,7 +25,8 @@ Sections 1 to 7 are pushed (Nov 22).
 | P | UI polish: Part A (accessibility basics + the 5 ideas) | **Done and pushed (Nov 23); awaiting Ryan's review** |
 | P2 | UI polish: Part B (the look) | **Done and pushed (Nov 23); awaiting Ryan's review** |
 | P3 | UI polish: Part C (less bland, surfing flow) | **Done and committed (Nov 23); not pushed yet** |
-| CS | Case study | After polish |
+| H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and committed (Nov 23); not pushed yet** |
+| CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
 | D2 | Five UI polish ideas | Listed below; refine at the end |
 
@@ -53,6 +54,17 @@ Sections 1 to 7 are pushed (Nov 22).
 | Accessibility basics (PRD Accessibility section) | Planned for the UI polish pass |
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
+
+## Handoff docs (done Nov 23)
+A new engineer, or their AI assistant, can start from the README and be productive without Ryan:
+- `docs/ARCHITECTURE.md`: what each folder and key file does, data flow (with a Mermaid diagram that GitHub draws), where each feature lives, the data shapes that are the contract (`homes.json`, `hs.*` keys, events, IndexedDB), and "Rebuilding it elsewhere"
+- `docs/CONTRIBUTING.md`: install, run, test, build; branch and pull request steps; the project rules; reading order (README, STATUS, ARCHITECTURE, PRD and acceptance criteria, DECISIONS)
+- README has a "For engineers" section linking both
+- Short "why" comments added in 5 files (no code changed, 42 comment lines): `MapScreen.jsx` (canvas pins and the private Leaflet methods), `moderation.js` (the 5-step check and why rules), `HomePage.jsx` (why `key={id}`, sample vs real comments), `useStoredState.js`, `homeStats.js` (the crown rule)
+- The Mermaid block was checked with Mermaid's own parser (valid flowchart); the doc links and file paths were checked to exist
+- **Keep these two docs current:** when a data shape, storage key, event or feature location changes, update the matching table in `ARCHITECTURE.md`
+
+**Known leftover found while writing the docs:** `src/screens/ComingSoon.jsx` is not used anywhere (safe to delete in a code pass).
 
 ## UI polish Part A (done and pushed Nov 23)
 Target: WCAG 2.2 AA (PRD Accessibility). Checked by hand-driven headless Edge at 390 and 1280 px, light and dark: every tap target 44 px or more, every control has a name, no text under 4.5:1, no sideways scroll, Tab order and focus ring on every stop.

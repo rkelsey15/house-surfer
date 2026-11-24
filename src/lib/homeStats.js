@@ -48,6 +48,10 @@ export function useHomeStats(homes) {
     for (const [id, r] of Object.entries(ratings)) {
       if (new Date(r.at).getTime() >= cutoff) bump(id)
     }
+    // One pass over every home. `stat.week` (the crown) goes to exactly ONE home: the hot
+    // home with the best average, needing at least 3 ratings; ties go to more ratings.
+    // This is the same rule Top uses (lib/top.js reads these stats), so the crown on the
+    // map and the "Home of the week" card can never disagree. Thresholds are in rules.js.
     const out = new Map()
     let best = null
     for (const h of homes) {

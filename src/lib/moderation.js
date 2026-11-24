@@ -3,6 +3,20 @@
 // The word lists are in moderation-words.js.
 import { ALLOWED_PHRASES, BLOCK_MESSAGE, INSULT_WORDS, PERSON_PHRASES, PERSON_WORDS } from './moderation-words.js'
 
+// HOW A COMMENT IS CHECKED, in order (see `moderate` below):
+//   1. tokenize: lowercase, drop accents and hidden characters, cut into words, and
+//      glue spaced-out letters back together ("o w n e r s" becomes "owners").
+//   2. readings: for each word, also try it with number/symbol swaps undone
+//      ("n3ighbors", "0wners"), and with repeated letters squeezed ("ownerrrs").
+//   3. skip allowed phrases such as "family room", which describe the house.
+//   4. look each word up in the blocked lists. Whole words only, so "neighborhood"
+//      is fine while "neighbor" is not. An insult beats a person word as the reason.
+//   5. look for blocked multi-word phrases.
+// WHY rules and not AI: it is free, instant and works offline in a demo. It WILL miss
+// clever wording and sometimes block a harmless comment ("man cave"). The case study
+// says so up front, and V2 adds an AI check on top. Tune the lists in
+// moderation-words.js and add a case to tests/moderation.test.js for each change.
+
 // Number and symbol swaps people use to dodge a filter. "1" is handled
 // separately because it can stand for "i" or "l".
 const SWAPS = { 0: 'o', 3: 'e', 4: 'a', 5: 's', 7: 't', '@': 'a', $: 's' }
