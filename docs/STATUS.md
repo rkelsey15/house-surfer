@@ -1,6 +1,6 @@
 # House Surfer: status
 
-Last updated: Nov 22, 2026 · Live: https://rkelsey15.github.io/house-surfer/ · Repo: rkelsey15/house-surfer (`main`)
+Last updated: Nov 23, 2026 · Live: https://rkelsey15.github.io/house-surfer/ · Repo: rkelsey15/house-surfer (`main`)
 
 ## Phase
 **Phase 5: Build, demo-complete push.** House Surfer is now a portfolio **demo**, not a live app (see DECISIONS.md): anyone with the link can play in about 60 seconds, with nothing but the browser. The plan and acceptance criteria are in `docs/02-user-stories.md`; we build one section at a time and pause for review after each.
@@ -22,7 +22,8 @@ Sections 1 to 7 are pushed (Nov 22).
 | 6 | Profile: my comments, activity, locked badges | **Done** (awaiting review) |
 | 7 | Event logging and `/stats` | **Done** (awaiting review) |
 | 8 | "Sample" tag on seeded comments | Looks done already (tag shows in screenshots); confirm at the end |
-| P | UI polish: Part A (accessibility basics + the 5 ideas), then Part B | **Next, in progress (Nov 22)** |
+| P | UI polish: Part A (accessibility basics + the 5 ideas) | **Done, committed, not pushed (Nov 23); awaiting Ryan's review** |
+| P2 | UI polish: Part B | Next |
 | CS | Case study | After polish |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
 | D2 | Five UI polish ideas | Listed below; refine at the end |
@@ -52,7 +53,20 @@ Sections 1 to 7 are pushed (Nov 22).
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
 
-## UI polish ideas (for a later pass)
+## UI polish Part A (done Nov 23, not pushed yet)
+Target: WCAG 2.2 AA (PRD Accessibility). Checked by hand-driven headless Edge at 390 and 1280 px, light and dark: every tap target 44 px or more, every control has a name, no text under 4.5:1, no sideways scroll, Tab order and focus ring on every stop.
+- Tap targets 44 px: demo note close, "Try this" toggle and close, map card close, chips, buttons, comment actions, tabs, map zoom buttons
+- Map pins differ by shape: hollow circle (unrated), circle (under 3.5), square (3.5 to 4.4), star (4.5+), diamond with crown (top of the week), flame badge (hot). Collapsible Legend on the map
+- Screen readers: stars "Rate 4 of 5 stars" plus "You rated this 4 of 5"; Like, Reply, Edit, Delete and Close have names; house drawings say "Illustration of a Craftsman-era duplex, built 1924"; map has a region label pointing to the List
+- Keyboard: 3 px focus ring, "Skip to content" link, tab bar comes before the page in the code so Tab order matches the laptop layout; laptop demo note shrinks to an "i" button after 5 seconds
+- Blocked comment: focus moves to the message, with a "Why?" line naming house rule 1
+- Reduced motion: transitions off and map zoom animation off when the device asks
+- Contrast fixes: darker secondary text, darker gold (text and stars), a stronger border color for inputs and buttons (3:1), karma pill color; empty stars are outlines
+- Tests: 114 pass (new: contrast of every color pair in both themes, labels, pin shapes, legend, "Why?" text)
+
+**Not yet done or not checked (say so in the case study):** screen reader run (VoiceOver, NVDA); 200% zoom by eye (only 390 px width checked); map pins are not keyboard-reachable (the List view is the full alternative); pin colors against map tiles not measured; focus does not move to the page heading after a screen change; the phone map toolbar takes about a quarter of the screen now that chips are 44 px (candidate for Part B); automated scanner (axe) not run.
+
+## UI polish ideas (original list, all five done in Part A)
 1. **Bigger tap targets:** the close buttons on the demo note and "Try this" card are about 28 px; bring every control to 44 px, and make the tiny ▾ on "Try this" larger.
 2. **Pins that differ by shape, not only color:** hollow circle, filled circle, diamond and so on, so color-blind visitors can read the map (PRD Accessibility).
 3. **Screen-reader labels:** stars read "Rate 4 of 5 stars", icon buttons get names, house drawings get a one-line description.
