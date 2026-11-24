@@ -23,7 +23,7 @@ Sections 1 to 7 are pushed (Nov 22).
 | 7 | Event logging and `/stats` | **Done** (awaiting review) |
 | 8 | "Sample" tag on seeded comments | Looks done already (tag shows in screenshots); confirm at the end |
 | P | UI polish: Part A (accessibility basics + the 5 ideas) | **Done, committed, not pushed (Nov 23); awaiting Ryan's review** |
-| P2 | UI polish: Part B | Next |
+| P2 | UI polish: Part B (the look) | **Done, committed, not pushed (Nov 23); awaiting Ryan's review** |
 | CS | Case study | After polish |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
 | D2 | Five UI polish ideas | Listed below; refine at the end |
@@ -65,6 +65,18 @@ Target: WCAG 2.2 AA (PRD Accessibility). Checked by hand-driven headless Edge at
 - Tests: 114 pass (new: contrast of every color pair in both themes, labels, pin shapes, legend, "Why?" text)
 
 **Not yet done or not checked (say so in the case study):** screen reader run (VoiceOver, NVDA); 200% zoom by eye (only 390 px width checked); map pins are not keyboard-reachable (the List view is the full alternative); pin colors against map tiles not measured; focus does not move to the page heading after a screen change; the phone map toolbar takes about a quarter of the screen now that chips are 44 px (candidate for Part B); automated scanner (axe) not run.
+
+## UI polish Part B (done Nov 23, not pushed yet)
+Everything from Part A kept (44 px targets, labels, contrast, focus ring, pin shapes). Logo drawing unchanged. Re-audited at 320, 390, 640 (about 200% zoom of a laptop window) and 1280 px, light and dark: no small targets, unnamed controls, low-contrast text, off-screen controls or sideways scroll.
+- Logo is a real link, "House Surfer, home", 44 px tall, with hover and focus styles; goes to Surf from any page (not a link on the sign-up screen)
+- Buttons: three styles (primary, secondary, quiet) plus one icon-only circle button; one corner radius scale (8 small, 12 controls and chips, 16 cards; circles stay round)
+- One icon set (2 px line, round ends): the old text glyphs (x, down arrow, up arrow, back arrow, check, lock) are now icons; profile picture is an outline house
+- Phone map toolbar: search and Map/List share one row, filters are one row that scrolls sideways (the count scrolls with them); about 12% of the screen instead of about 25%
+- Type scale (24 screen title, 18 section title, 16 card title, 14 body, 12.5 small) and spacing scale (4, 8, 12, 16, 24) as tokens; every screen now has a real h1 (Surf and Map keep theirs hidden for screen readers); in-text links use the brand color
+- Bug fixed on the way: on phones the Map screen's search box sat under the app bar because the map ignored the demo strip above it
+- Tests: 117 pass (new: radius scale, icon line weight, three button styles)
+
+**Still open for polish:** screen reader run, axe scan, real 200% zoom on a laptop browser (checked by narrow window width instead), map pin contrast against tiles.
 
 ## UI polish ideas (original list, all five done in Part A)
 1. **Bigger tap targets:** the close buttons on the demo note and "Try this" card are about 28 px; bring every control to 44 px, and make the tiny ▾ on "Try this" larger.

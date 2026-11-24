@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import HouseArt from '../components/HouseArt.jsx'
-import { CameraIcon } from '../components/Icons.jsx'
+import { ArrowLeftIcon, CameraIcon } from '../components/Icons.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { usePhotos } from '../lib/PhotosContext.jsx'
 import { factsLine, typeLine } from '../lib/format.js'
@@ -219,7 +219,7 @@ export default function Snap() {
             </div>
           )}
 
-          <button className="link-btn" onClick={startOver}>← Use a different photo</button>
+          <button className="btn quiet" onClick={startOver}><ArrowLeftIcon />Use a different photo</button>
         </>
       )}
 
@@ -228,7 +228,7 @@ export default function Snap() {
           <img className="snap-thumb" src={photo.url} alt="The photo you chose" />
           <div className="snap-block">
             <HomeChoice home={home} onPick={() => setStep('house')} />
-            <button className="link-btn" onClick={() => setStep('house')}>Change house</button>
+            <button className="btn quiet" onClick={() => setStep('house')}>Change house</button>
           </div>
           <div className="snap-rule" role="note">
             <b>No people or license plates.</b>
@@ -253,7 +253,7 @@ export default function Snap() {
           <div className="snap-actions">
             <button className="btn pri full" onClick={() => navigate('/home/' + home.id, { state: { source: 'snap' } })}>Rate this house</button>
             <button className="btn full" onClick={startOver}>Snap another</button>
-            <Link className="link-btn" to="/">Back to Surf</Link>
+            <Link className="btn quiet" to="/">Back to Surf</Link>
           </div>
         </>
       )}

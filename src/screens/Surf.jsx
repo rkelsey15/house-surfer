@@ -58,11 +58,12 @@ export default function Surf() {
 
   return (
     <div>
+      <h1 className="sr-only">Surf</h1>
       <TryThisGuide />
       <div className="card" key={home.id}>
         <HomeCover home={home} />
         <div className="info">
-          <div className="addr">{home.address}</div>
+          <h2 className="addr">{home.address}</h2>
           <div className="facts">{typeLine(home)}</div>
           <div className="facts">{factsLine(home)}</div>
         </div>

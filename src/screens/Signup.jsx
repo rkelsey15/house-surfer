@@ -41,7 +41,7 @@ export default function Signup() {
           </button>
         ))}
       </div>
-      <button className="link-btn" onClick={shuffle}>
+      <button className="btn quiet" onClick={shuffle}>
         Shuffle names
       </button>
 

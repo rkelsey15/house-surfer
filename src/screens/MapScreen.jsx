@@ -9,6 +9,7 @@ import { useHomes } from '../lib/HomesContext.jsx'
 import { pinKind, useHomeStats } from '../lib/homeStats.js'
 import { FLAME, CROWN } from '../lib/badges.js'
 import { factsLine, ratingText, typeLine } from '../lib/format.js'
+import { ChevronDownIcon, CloseIcon } from '../components/Icons.jsx'
 import { prefersReducedMotion } from '../lib/a11y.js'
 import { LEGEND, PIN_COLORS, pinShape, pinStyle, shapePoints } from '../lib/pins.js'
 
@@ -148,7 +149,7 @@ function ListItem({ home, stat, selected, onShow, source }) {
           <div className="sc">{ratingText(stat)}</div>
         </div>
       </Link>
-      <button className="link-btn lcard-show" onClick={() => onShow(home)}>Show on map</button>
+      <button className="btn quiet lcard-show" onClick={() => onShow(home)}>Show on map</button>
     </div>
   )
 }
@@ -178,7 +179,7 @@ function MapLegend() {
   return (
     <section className="legend" aria-label="Map legend">
       <button className="legend-toggle" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        Legend <span aria-hidden="true">{open ? '▴' : '▾'}</span>
+        Legend <span className={open ? 'chev open' : 'chev'} aria-hidden="true"><ChevronDownIcon /></span>
       </button>
       {open && (
         <ul>
@@ -266,19 +267,28 @@ export default function MapScreen() {
 
   return (
     <div className={`mapscreen view-${ui.view}`}>
+      <h1 className="sr-only">Map</h1>
       <div className="mapside">
         <div className="maptools">
-          <input
-            className="mapsearch"
-            type="search"
-            placeholder="Search Queen Anne streets"
-            aria-label="Search by street"
-            value={ui.query}
-            onChange={(e) => patch({ query: e.target.value })}
-          />
-          <div className="chips">
+          <div className="searchrow">
+            <input
+              className="mapsearch"
+              type="search"
+              placeholder="Search Queen Anne streets"
+              aria-label="Search by street"
+              value={ui.query}
+              onChange={(e) => patch({ query: e.target.value })}
+            />
+            <div className="seg viewseg">
+              <button className={ui.view === 'map' ? 'on' : ''} aria-pressed={ui.view === 'map'} onClick={() => patch({ view: 'map' })}>Map</button>
+              <button className={ui.view === 'list' ? 'on' : ''} aria-pressed={ui.view === 'list'} onClick={() => patch({ view: 'list' })}>List</button>
+            </div>
+          </div>
+          {/* One row on phones that scrolls sideways; wraps on laptops. */}
+          <div className="chips" role="group" aria-label="Filters">
+            <span className="muted small chips-count" aria-live="polite">{filtered.length.toLocaleString('en-US')} home{filtered.length === 1 ? '' : 's'}</span>
             {FILTERS.map(([key, label]) => (
-              <button key={key} className={ui.filter === key ? 'chip on' : 'chip'} onClick={() => patch({ filter: key })}>
+              <button key={key} className={ui.filter === key ? 'chip on' : 'chip'} aria-pressed={ui.filter === key} onClick={() => patch({ filter: key })}>
                 {label}
               </button>
             ))}
@@ -288,13 +298,6 @@ export default function MapScreen() {
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
-          </div>
-          <div className="maptools-row">
-            <span className="muted small">{filtered.length.toLocaleString('en-US')} home{filtered.length === 1 ? '' : 's'}</span>
-            <div className="seg viewseg">
-              <button className={ui.view === 'map' ? 'on' : ''} onClick={() => patch({ view: 'map' })}>Map</button>
-              <button className={ui.view === 'list' ? 'on' : ''} onClick={() => patch({ view: 'list' })}>List</button>
-            </div>
           </div>
         </div>
 
@@ -359,7 +362,7 @@ export default function MapScreen() {
                 <div className="sc">{ratingText(selStat)}</div>
               </div>
             </Link>
-            <button className="mapcard-x" aria-label="Close home card" onClick={() => patch({ selected: null })}><span aria-hidden="true">×</span></button>
+            <button className="icon-btn mapcard-x" aria-label="Close home card" onClick={() => patch({ selected: null })}><CloseIcon /></button>
           </div>
         )}
       </div>

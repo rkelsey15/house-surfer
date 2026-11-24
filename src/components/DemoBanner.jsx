@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useStoredState } from '../lib/useStoredState.js'
+import { CloseIcon } from './Icons.jsx'
 
 const NOTE = 'Demo: sample data, saved only on this device'
 const SHRINK_AFTER_MS = 5000
@@ -30,6 +31,19 @@ export default function DemoBanner() {
     }
   }, [reopened, compact])
 
+  // On phones the note is a strip above the app bar. The fixed-position map screen needs its
+  // height (--banner-h) so the search box is not hidden under the app bar.
+  useEffect(() => {
+    const root = document.documentElement
+    const measure = () => root.style.setProperty("--banner-h", (ref.current && !wide ? ref.current.offsetHeight : 0) + "px")
+    measure()
+    window.addEventListener("resize", measure)
+    return () => {
+      window.removeEventListener("resize", measure)
+      root.style.setProperty("--banner-h", "0px")
+    }
+  }, [wide, dismissed, compact])
+
   if (dismissed) return null
 
   if (compact) {
@@ -59,8 +73,8 @@ export default function DemoBanner() {
       onBlur={() => setBusy(false)}
     >
       <span>{NOTE}</span>
-      <button className="demo-banner-close" aria-label="Close demo note" onClick={() => setDismissed(true)}>
-        <span aria-hidden="true">×</span>
+      <button className="icon-btn" aria-label="Close demo note" onClick={() => setDismissed(true)}>
+        <CloseIcon />
       </button>
     </div>
   )

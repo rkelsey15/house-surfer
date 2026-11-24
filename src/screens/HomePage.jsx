@@ -10,6 +10,7 @@ import { usePhotos } from '../lib/PhotosContext.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
 import { factsLine, typeLine } from '../lib/format.js'
+import { ArrowLeftIcon, ArrowUpIcon } from '../components/Icons.jsx'
 import { logEvent } from '../lib/events.js'
 import { moderate } from '../lib/moderation.js'
 import { BLOCK_MESSAGE, WHY_MESSAGE } from '../lib/moderation-words.js'
@@ -124,7 +125,7 @@ function CommentView({ c, isReply, likeCount, liked, replying, onReply, editing,
             aria-pressed={liked}
             aria-label={`Like, ${likeCount} like${likeCount === 1 ? '' : 's'}${mine ? ' (you cannot like your own comment)' : ''}`}
           >
-            ▲ {likeCount}
+            <ArrowUpIcon /> {likeCount}
           </button>
           <button onClick={onReply} aria-label={`Reply to ${c.user}`}>Reply</button>
           {mine && <button onClick={onEdit} aria-label="Edit your comment">Edit</button>}
@@ -236,12 +237,12 @@ export default function HomePage() {
 
   return (
     <div>
-      <button className="back" onClick={() => navigate(-1)}><span aria-hidden="true">← </span>Back</button>
+      <button className="btn quiet back" onClick={() => navigate(-1)}><ArrowLeftIcon />Back</button>
 
       <div className="card">
         <HomeCover home={home} />
         <div className="info">
-          <div className="addr">{home.address}</div>
+          <h1 className="addr">{home.address}</h1>
           <div className="facts">{typeLine(home)}</div>
           <div className="facts">{factsLine(home)}</div>
         </div>

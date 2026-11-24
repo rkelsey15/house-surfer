@@ -47,7 +47,7 @@ export default function App() {
       </button>
       <DemoBanner />
       <header className="appbar">
-        <Logo />
+        <Logo home />
         {/* Karma so far: ratings and comments. Likes received need other users (V2). */}
         <span className="karma">{karmaFromRatings + karmaFromComments} karma</span>
       </header>

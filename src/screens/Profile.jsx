@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useGuide } from '../lib/GuideContext.jsx'
 import ThemeSwitch from '../components/ThemeSwitch.jsx'
-import { HouseFillIcon } from '../components/Icons.jsx'
+import { HouseIcon, LockIcon } from '../components/Icons.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
 import { useComments } from '../lib/CommentsContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
@@ -37,9 +37,9 @@ export default function Profile() {
   return (
     <div>
       <div className="avatar">
-        <HouseFillIcon />
+        <HouseIcon />
       </div>
-      <div className="handle">{profile.handle}</div>
+      <h1 className="handle">{profile.handle}</h1>
       <div className="anon">Anonymous · surfing Queen Anne since {monthYear(profile.joined)}</div>
 
       <div className="stats">
@@ -90,10 +90,8 @@ export default function Profile() {
       <ul className="badge-grid plist">
         {LOCKED_BADGES.map((b) => (
           <li key={b.id} className="badge-lock">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Locked">
-              <rect x="5" y="11" width="14" height="10" rx="2" />
-              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-            </svg>
+            <LockIcon />
+            <span className="sr-only">Locked: </span>
             <b>{b.name}</b>
             <span>{b.how}</span>
             <span className="soon">Coming soon</span>
