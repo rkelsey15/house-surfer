@@ -26,7 +26,7 @@ Sections 1 to 7 are pushed (Nov 22).
 | P2 | UI polish: Part B (the look) | **Done and pushed (Nov 23); awaiting Ryan's review** |
 | P3 | UI polish: Part C (less bland, surfing flow) | **Done and pushed (Nov 23)** |
 | P4 | UI polish: Part D (theme setting moves to Profile, Top two columns on laptops) | **Done and pushed (Nov 23)** |
-| P5 | UI polish: Part E (Profile "See all" pages, Profile laptop columns, ComingSoon deleted, welcome photo) | **Code done and committed; welcome photo waiting for Ryan to pick A, B or C** |
+| P5 | UI polish: Part E (Profile "See all" pages, Profile laptop columns, ComingSoon deleted, welcome photo) | **Done and committed (not pushed)** |
 | H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
@@ -67,7 +67,7 @@ Parts A to D kept. Checked at 390 and 1280 px, light and dark; 132 tests pass, b
 - **Profile lists:** My comments and Recent activity show the latest 5 with "See all" (only when there are more than 5). `#/profile/comments` and `#/profile/activity` list everything newest first, grouped under Today / Yesterday / dated headings, 20 at a time with "Show more", and "Back to Profile" at the top
 - **Profile on laptops (1024 px and up):** stats row across the top, then two columns. Left: My comments, Recent activity. Right: Badges, Settings (Appearance, Surfer name, Product numbers with View stats). Credits and Demo run full width underneath. Phones stay one column
 - **Deleted** `src/screens/ComingSoon.jsx` (unused); `ARCHITECTURE.md` updated (screens, components, Profile row)
-- **Welcome photo:** 3 Pexels options compared side by side; not swapped yet (waiting for Ryan's pick). The current photo shows parked cars and a carport
+- **Welcome photo:** now a green and yellow Queen Anne style Victorian (Pexels, Bryce Carithers), picked by Ryan from 3 options (a Craftsman and another Victorian were the others). The banner is taller (230 px, was 170). The old sidewalk photo stays on the Profile "No comments yet" picture. There are now 3 stock photos, all credited on the photo and in Credits on Profile
 - New tests: date grouping, and the activity list with no limit
 
 ### Wasted space on a 1280 px laptop (ideas only, nothing built)

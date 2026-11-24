@@ -46,7 +46,7 @@ If the picture does not show, your viewer does not render Mermaid. GitHub does (
 | `src/components/` | Shared pieces: `HouseArt` (drawings), `HomeCover`, `StarRating`, `TabBar`, `Logo`, `DemoBanner`, `TryThisGuide`, `MoodImage`, `Icons`, `ProfileRows` (comment and activity rows) |
 | `src/lib/` | Everything that is not a screen. React contexts (`*Context.jsx`) hold saved state; plain `.js` files are pure logic and are the ones with tests |
 | `scripts/build-homes.mjs` | The county data pipeline |
-| `public/` | Served as-is: `data/homes.json`, `images/mood/` (2 stock photos), `images/homes/` (your own sample covers, see `docs/STATUS.md`), `favicon.svg` |
+| `public/` | Served as-is: `data/homes.json`, `images/mood/` (3 stock photos), `images/homes/` (your own sample covers, see `docs/STATUS.md`), `favicon.svg` |
 | `tests/` | `node --test` files, one per area (see the feature table) |
 | `docs/` | `01-prd.md` product requirements, `02-user-stories.md` acceptance criteria, `DECISIONS.md` why, `STATUS.md` where we are, this file, `CONTRIBUTING.md` |
 | `design/` | The original clickable prototype and mockups (reference only) |

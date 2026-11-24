@@ -19,7 +19,7 @@ export default function Signup() {
 
   return (
     <div className="signup">
-      <MoodImage photo={MOOD_PHOTOS.sidewalk} height={170} position="50% 62%" />
+      <MoodImage photo={MOOD_PHOTOS.welcome} height={230} position="50% 40%" />
       <div className="hero">
         <Logo center />
         <h1>Pick your surfer name</h1>
