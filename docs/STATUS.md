@@ -28,8 +28,8 @@ Sections 1 to 7 are pushed (Nov 22).
 | P4 | UI polish: Part D (theme setting moves to Profile, Top two columns on laptops) | **Done and pushed (Nov 23)** |
 | P5 | UI polish: Part E (Profile "See all" pages, Profile laptop columns, ComingSoon deleted, welcome photo) | **Done and pushed (Nov 23)** |
 | P6 | UI polish: Part F (sample photos on about 1 in 3 single-family homes) | **Done and pushed (Nov 23)** |
-| P7 | UI polish: Part G (badge icons and Surfer Elite, demo bar on Profile, laptop layouts for welcome, home page and map list) plus the house drawing fixes | **Done and committed (not pushed)** |
-| P8 | UI polish: Part H (map filter chips, "See all (N)", garage fence gaps, PRD "Map at city scale") | **Done and committed (not pushed)** |
+| P7 | UI polish: Part G (badge icons and Surfer Elite, demo bar on Profile, laptop layouts for welcome, home page and map list) plus the house drawing fixes | **Done and pushed (Nov 23)** |
+| P8 | UI polish: Part H (map filter chips, "See all (N)", garage fence gaps, PRD "Map at city scale") | **Done and pushed (Nov 23)** |
 | H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
@@ -60,7 +60,7 @@ Sections 1 to 7 are pushed (Nov 22).
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
 
-## UI polish Part H (Nov 23, committed, not pushed)
+## UI polish Part H (Nov 23, pushed)
 Parts A to G kept. Checked at 390 and 1280 px, light and dark (headless Edge): chips are 44 px tall, no sideways scroll; 162 tests pass, build passes.
 - **Map filter chips** replace the Legend: Unrated, Under 3.5, 3.5 to 4.4, Gold, Hot, Home of the week, each with its pin shape (flame and crown for the last two). All on by default; **All** and **None** buttons; a live count ("Showing 3,452 of 5,391"). The same filter applies to the map pins and the List view, together with search, Top rated and style. Saved in `hs.map_pins`. Each chip's screen reader name says its state: "Gold homes, shown" / "Gold homes, hidden"; a check mark shows "on" too. With None on, the List says to tap All. Rule for Hot: a hot home shows if Hot is on, whatever its pin type (see DECISIONS). Code: `PinFilter` in `MapScreen.jsx`, rules in `pins.js`
 - **See all (N)** always shows on My comments and Recent activity when there is at least 1 item (it used to need more than 5)
@@ -69,7 +69,7 @@ Parts A to G kept. Checked at 390 and 1280 px, light and dark (headless Edge): c
 - Tests added: chip rule, saved choice cleaning, chip names, garage gaps in every shape, variant and mirror
 - **Not done or not checked:** screen reader pass on the chips; the phone map toolbar is taller again (three rows); at 900 to 1100 px the chip row scrolls sideways rather than wrapping
 
-## UI polish Part G (Nov 23, committed, not pushed)
+## UI polish Part G (Nov 23, pushed)
 Parts A to F kept. Checked at 390 and 1280 px, light and dark (headless Edge screenshots of Profile, welcome, home page, Map list and the drawing grid); 156 tests pass, build passes, no sideways scroll on any screen checked.
 - **Badge icons:** each badge has its own 2 px line icon: First Steps (footprints), Block Walker (pin on a street), Good Neighbor Voice (speech bubble with a house), Crowd Favorite (heart), Curb Photographer (camera), Surfer Elite (star riding a wave). Locked is gray with a small lock; earned is in color (teal, gold, coral); Surfer Elite earned is black with a gold edge. Nothing can be earned in the demo, so all six show locked. To see the earned look: open `#/profile?badges=earned` (design preview only). Code: `Badge.jsx`, icons in `Icons.jsx`, data in `BADGES` in `profileLists.js`
 - **Tap a badge** to open "How to earn it:" under it (a button with `aria-expanded`). Surfer Elite shows: 25+ comments, 50+ likes received, no blocked comments in the last 30 days, "Locked in the demo"
