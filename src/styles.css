@@ -587,3 +587,14 @@ h1.addr { margin-bottom: var(--s1); }
 @media (min-width: 1024px) {
   .top-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s5); align-items: start; }
 }
+
+/* ---------- Profile: See all links, list pages, laptop columns ---------- */
+.profile-sec .btn.full { margin-top: var(--s2); }
+.profile-sec > .sec-t:first-child { margin-top: var(--s5); }
+.day-t { font-size: var(--fs-body); color: var(--muted); margin: var(--s4) 0 0; font-weight: 700; }
+.profile-list h1 { margin: 0 0 var(--s2); }
+.profile-list .btn.full { margin-top: var(--s3); }
+@media (min-width: 1024px) {
+  .profile-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s6, 32px); align-items: start; }
+  .profile-sec .badge-grid { grid-template-columns: repeat(3, 1fr); }
+}

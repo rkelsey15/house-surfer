@@ -46,3 +46,32 @@ export const LOCKED_BADGES = [
   { id: 'liked', name: 'Crowd Favorite', how: 'Get 25 likes on your comments' },
   { id: 'photographer', name: 'Curb Photographer', how: 'Snap 5 houses' },
 ]
+
+// Group newest-first rows under day headings: "Today", "Yesterday", then "Nov 20, 2026".
+// `getAt` says where each row keeps its ISO time. Order inside and between groups is kept.
+export function groupByDate(rows, getAt, nowMs = Date.now()) {
+  const dayKey = (ms) => {
+    const d = new Date(ms)
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+  }
+  const today = dayKey(nowMs)
+  const yesterday = dayKey(nowMs - 86400000)
+  const groups = []
+  for (const row of rows) {
+    const ms = new Date(getAt(row)).getTime()
+    const key = dayKey(ms)
+    let g = groups[groups.length - 1]
+    if (!g || g.key !== key) {
+      const label =
+        key === today
+          ? 'Today'
+          : key === yesterday
+            ? 'Yesterday'
+            : new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      g = { key, label, rows: [] }
+      groups.push(g)
+    }
+    g.rows.push(row)
+  }
+  return groups
+}

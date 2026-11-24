@@ -25,7 +25,8 @@ Sections 1 to 7 are pushed (Nov 22).
 | P | UI polish: Part A (accessibility basics + the 5 ideas) | **Done and pushed (Nov 23); awaiting Ryan's review** |
 | P2 | UI polish: Part B (the look) | **Done and pushed (Nov 23); awaiting Ryan's review** |
 | P3 | UI polish: Part C (less bland, surfing flow) | **Done and pushed (Nov 23)** |
-| P4 | UI polish: Part D (theme setting moves to Profile, Top two columns on laptops) | **Done; committed, not pushed** |
+| P4 | UI polish: Part D (theme setting moves to Profile, Top two columns on laptops) | **Done and pushed (Nov 23)** |
+| P5 | UI polish: Part E (Profile "See all" pages, Profile laptop columns, ComingSoon deleted, welcome photo) | **Code done and committed; welcome photo waiting for Ryan to pick A, B or C** |
 | H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
@@ -56,11 +57,28 @@ Sections 1 to 7 are pushed (Nov 22).
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
 
-## UI polish Part D (committed Nov 23, not yet pushed)
+## UI polish Part D (done and pushed Nov 23)
 Parts A to C kept. Checked at 390 and 1280 px, light and dark; 130 tests pass, build passes.
 - **Appearance setting:** Auto / Light / Dark is only on Profile, Settings, "Appearance" (with a line "Auto follows your device's light or dark setting"). It was also on the welcome screen; removed there. Auto is the default for new visitors. Saved choice, `theme_changed` event and screen-reader label kept. `ARCHITECTURE.md` needed no change (it never mentioned where the switch is)
 - **Top screen on laptops (1024 px and wider):** Home of the week full width, then Hot this week and Top rated side by side. Phones stay one column
 
+## UI polish Part E (Nov 23, committed, not pushed)
+Parts A to D kept. Checked at 390 and 1280 px, light and dark; 132 tests pass, build passes, no sideways scroll.
+- **Profile lists:** My comments and Recent activity show the latest 5 with "See all" (only when there are more than 5). `#/profile/comments` and `#/profile/activity` list everything newest first, grouped under Today / Yesterday / dated headings, 20 at a time with "Show more", and "Back to Profile" at the top
+- **Profile on laptops (1024 px and up):** stats row across the top, then two columns. Left: My comments, Recent activity. Right: Badges, Settings (Appearance, Surfer name, Product numbers with View stats). Credits and Demo run full width underneath. Phones stay one column
+- **Deleted** `src/screens/ComingSoon.jsx` (unused); `ARCHITECTURE.md` updated (screens, components, Profile row)
+- **Welcome photo:** 3 Pexels options compared side by side; not swapped yet (waiting for Ryan's pick). The current photo shows parked cars and a carport
+- New tests: date grouping, and the activity list with no limit
+
+### Wasted space on a 1280 px laptop (ideas only, nothing built)
+1. **Snap a house:** two buttons at the top and the rest of the screen empty. Idea: a drop zone plus a "your snaps" strip and a short tips panel on the right
+2. **Home page:** one 528 px column with 350 px of empty on each side. Idea: picture and rating on the left (sticky), comments on the right
+3. **Welcome screen:** 420 px form in the middle of a wide page. Idea: big house photo on the left half, form on the right
+4. **Stats:** one narrow column that scrolls. Idea: the week tiles on the left, the event table on the right
+5. **Top, Home of the week:** the card is 1,128 px wide with a 210 px picture. Idea: picture left, text right, so the card is about 120 px shorter
+6. **Profile:** the right column ends well before the left. Idea: move Credits into it
+7. **Map list pane:** search, three chips and the style menu take three rows. Idea: one row of chips and a smaller menu, so more homes show
+8. **Surf:** when the guide is closed the card sits alone. Fine as is; if wanted, an "up next" strip of 3 small houses
 ## Handoff docs (done Nov 23)
 A new engineer, or their AI assistant, can start from the README and be productive without Ryan:
 - `docs/ARCHITECTURE.md`: what each folder and key file does, data flow (with a Mermaid diagram that GitHub draws), where each feature lives, the data shapes that are the contract (`homes.json`, `hs.*` keys, events, IndexedDB), and "Rebuilding it elsewhere"
@@ -70,7 +88,6 @@ A new engineer, or their AI assistant, can start from the README and be producti
 - The Mermaid block was checked with Mermaid's own parser (valid flowchart); the doc links and file paths were checked to exist
 - **Keep these two docs current:** when a data shape, storage key, event or feature location changes, update the matching table in `ARCHITECTURE.md`
 
-**Known leftover found while writing the docs:** `src/screens/ComingSoon.jsx` is not used anywhere (safe to delete in a code pass).
 
 ## UI polish Part A (done and pushed Nov 23)
 Target: WCAG 2.2 AA (PRD Accessibility). Checked by hand-driven headless Edge at 390 and 1280 px, light and dark: every tap target 44 px or more, every control has a name, no text under 4.5:1, no sideways scroll, Tab order and focus ring on every stop.

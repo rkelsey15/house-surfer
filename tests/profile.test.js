@@ -1,7 +1,7 @@
 // Run with: npm test
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { LOCKED_BADGES, myComments, recentActivity, relativeTime } from '../src/lib/profileLists.js'
+import { LOCKED_BADGES, groupByDate, myComments, recentActivity, relativeTime } from '../src/lib/profileLists.js'
 
 const c = (id, user, created_at, extra = {}) => ({ id, home_id: 'h1', user, created_at, deleted_at: null, ...extra })
 
@@ -44,4 +44,21 @@ test('badges: all have a name and a how-to (AC 6.5)', () => {
   assert.ok(LOCKED_BADGES.length >= 4)
   assert.ok(LOCKED_BADGES.every((b) => b.name && b.how))
   assert.ok(LOCKED_BADGES.some((b) => b.how === 'Rate 25 homes'))
+})
+
+test('groupByDate: Today, Yesterday, then dated headings; order kept (Part E)', () => {
+  const now = new Date(2026, 10, 23, 15, 0, 0).getTime()
+  const at = (d, h) => new Date(2026, 10, d, h).toISOString()
+  const rows = [{ at: at(23, 12) }, { at: at(23, 9) }, { at: at(22, 20) }, { at: at(10, 8) }]
+  const groups = groupByDate(rows, (r) => r.at, now)
+  assert.deepEqual(groups.map((g) => g.label), ['Today', 'Yesterday', 'Nov 10, 2026'])
+  assert.deepEqual(groups.map((g) => g.rows.length), [2, 1, 1])
+  assert.deepEqual(groupByDate([], (r) => r.at, now), [])
+})
+
+test('recentActivity: limit Infinity returns everything (Part E, See all)', () => {
+  const ratings = {}
+  for (let i = 0; i < 15; i++) ratings['h' + i] = { stars: 4, at: new Date(2026, 0, i + 1).toISOString() }
+  assert.equal(recentActivity({ ratings, comments: [], likes: [], photos: [], me: 'Me', limit: Infinity }).length, 15)
+  assert.equal(recentActivity({ ratings, comments: [], likes: [], photos: [], me: 'Me' }).length, 10)
 })

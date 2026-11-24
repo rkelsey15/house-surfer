@@ -15,7 +15,7 @@ flowchart LR
   end
   subgraph browser["In the visitor's browser"]
     homes --> useHomes["useHomes()<br/>HomesContext"]
-    useHomes --> screens["Screens: Surf, Home page, Map,<br/>Snap, Top, Profile, Stats"]
+    useHomes --> screens["Screens: Surf, Home page, Map,<br/>Snap, Top, Profile,<br/>Profile lists, Stats"]
     sample["sampleData.js<br/>made-up ratings and comments"] --> screens
     screens <--> ls[("localStorage, keys hs.*<br/>ratings, comments, likes, events...")]
     screens <--> idb[("IndexedDB house-surfer<br/>snapped photos")]
@@ -42,8 +42,8 @@ If the picture does not show, your viewer does not render Mermaid. GitHub does (
 | `src/App.jsx` | The app frame (demo banner, app bar with the logo link, tab bar, skip link) and the routes |
 | `src/config.js` | Feature flags (only `showTownhouses`) |
 | `src/styles.css` | All styling. Color, radius, type and spacing **tokens** at the top; light and dark mode |
-| `src/screens/` | One file per screen: `Signup`, `Surf`, `HomePage`, `MapScreen`, `Snap`, `Top`, `Profile`, `Stats`. (`ComingSoon.jsx` is an unused leftover) |
-| `src/components/` | Shared pieces: `HouseArt` (drawings), `HomeCover`, `StarRating`, `TabBar`, `Logo`, `DemoBanner`, `TryThisGuide`, `MoodImage`, `Icons` |
+| `src/screens/` | One file per screen: `Signup`, `Surf`, `HomePage`, `MapScreen`, `Snap`, `Top`, `Profile`, `ProfileList` (the "See all" pages), `Stats` |
+| `src/components/` | Shared pieces: `HouseArt` (drawings), `HomeCover`, `StarRating`, `TabBar`, `Logo`, `DemoBanner`, `TryThisGuide`, `MoodImage`, `Icons`, `ProfileRows` (comment and activity rows) |
 | `src/lib/` | Everything that is not a screen. React contexts (`*Context.jsx`) hold saved state; plain `.js` files are pure logic and are the ones with tests |
 | `scripts/build-homes.mjs` | The county data pipeline |
 | `public/` | Served as-is: `data/homes.json`, `images/mood/` (2 stock photos), `images/homes/` (your own sample covers, see `docs/STATUS.md`), `favicon.svg` |
@@ -62,7 +62,7 @@ If the picture does not show, your viewer does not render Mermaid. GitHub does (
 | **Map and list** | `MapScreen.jsx` | `homeStats.js`, `rules.js` (gold, hot, week thresholds), `pins.js` (pin shapes and legend) | `a11y`, `top` |
 | **Snap a house** | `Snap.jsx` | `imageTools.js` (shrink and strip GPS), `nearest.js`, `photoDb.js`, `PhotosContext.jsx` | `snap` |
 | **Top** | `Top.jsx` | `top.js` (same rules as the map) | `top` |
-| **Profile** (comments, activity, badges, credits, Reset demo) | `Profile.jsx` | `profileLists.js`, `demo.js`, `credits.js` | `profile`, `credits` |
+| **Profile** (comments, activity, badges, settings, credits, Reset demo) | `Profile.jsx` (latest 5 of each list), `ProfileList.jsx` (routes `/profile/comments` and `/profile/activity`: everything, grouped by day, 20 at a time) | `profileLists.js` (incl. `groupByDate`), `demo.js`, `credits.js` | `profile`, `credits` |
 | **Events and `/stats`** | `Stats.jsx` (link from Profile) | `events.js` (log), `stats.js` (counts, north-star) | `events`, `stats` |
 | **House drawings** | `HouseArt.jsx` | `houseDesign.js` (palettes, variants) | `housedesign` |
 | **Accessibility and look** | tokens in `styles.css` | `a11y.js`, `contrast.js` | `a11y`, `contrast`, `style` |
