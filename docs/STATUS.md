@@ -27,6 +27,7 @@ Sections 1 to 7 are pushed (Nov 22).
 | P3 | UI polish: Part C (less bland, surfing flow) | **Done and pushed (Nov 23)** |
 | P4 | UI polish: Part D (theme setting moves to Profile, Top two columns on laptops) | **Done and pushed (Nov 23)** |
 | P5 | UI polish: Part E (Profile "See all" pages, Profile laptop columns, ComingSoon deleted, welcome photo) | **Done and committed (not pushed)** |
+| P6 | UI polish: Part F (sample photos on about 1 in 3 single-family homes) | **Done and committed (not pushed)** |
 | H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
@@ -56,6 +57,16 @@ Sections 1 to 7 are pushed (Nov 22).
 | Accessibility basics (PRD Accessibility section) | Planned for the UI polish pass |
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
+
+## UI polish Part F (Nov 23, committed, not pushed)
+Parts A to E kept. Checked at 390 and 1280 px, light and dark: no sideways scroll; 136 tests pass, build passes.
+- **20 stock photos** in `public/images/sample/` (Pexels, free license, checked one by one by eye: no people, no apartment blocks, no readable plates; Queen Anne Victorian, Craftsman and ordinary single-family styles). 1200 px wide WebP, 71 to 190 KB each, **3.23 MB in total**. Credits (photographer plus links) are in `SAMPLE_PHOTOS` in `src/lib/credits.js`, shown on a new **Credits screen** (`#/credits`, linked from Credits on Profile). Text only, so the page itself downloads no photos
+- **Which homes:** about 1 in 3 **single-family** homes (1,685 of the 5,391 houses, 31%). Picked from the home id (a hash), so a home always shows the same photo on every screen and device. Duplexes and triplexes always keep their drawing, because a one-house photo on a duplex would mislead. Code: `src/lib/stockCovers.js`.
+- **Label and alt text:** every stock cover has a dark chip on the photo, "Sample photo, not this home" (just "Sample photo" on the small 64 to 72 px thumbnails in lists and Top), and alt text that starts "Sample photo, not this home."
+- **Real photos win:** order is the visitor's own Snap photo, then your photo from `public/images/homes/`, then a stock photo, then the drawing (`chooseCover`, tested)
+- **Lazy loading:** every cover photo has `loading="lazy"`. In the Map list on a phone, photos far down the list were not downloaded. A visitor only pays for the photos on the screens they scroll to: about one per three houses, roughly 165 KB each
+- Tests added: the files exist and are under 200 KB, share is 30 to 37%, same home same photo, every photo used, duplexes never get one, real photos beat samples
+- **Not done or not checked:** the stock photos are not screened by software (looked at by eye only); map pins do not use photos; a few photos show a small house number or sign too small to read at normal size (the "214" on the green Queen Anne, "30" on the autumn one); the photographers' names come from each Pexels page and are not verified beyond that
 
 ## UI polish Part D (done and pushed Nov 23)
 Parts A to C kept. Checked at 390 and 1280 px, light and dark; 130 tests pass, build passes.
@@ -153,7 +164,7 @@ Do this when you have the photos. Nothing changes until `covers.json` lists a ph
 - Moderation is rules only: it misses clever wording and can block a harmless comment (for example "man cave", "the people's choice"). Stated up front in the case study; V2 adds an AI check
 - **iPhone test of Snap a house is pending** (see Phase). It has only been tested in headless Edge (with a fake camera file and fake location). Things only a real phone can show: the camera sheet, the location prompt, HEIC photos from the library
 - Photos are not screened by software, only by the visitor's "no people or license plates" confirm. V2 adds an AI photo check
-- The sample photo is a drawing made in code (labeled "Sample drawing"), not a real photograph
+- The Snap "Use a sample photo" button still makes a drawing in code (labeled "Sample drawing"). Separately, about 1 in 3 single-family homes show a stock sample photo as their cover (Part F)
 - Snap covers show on the feed, home page, list and Top, but map pins do not use photos
 - Top lists are capped at 10 rows with "Show more" so a long page of 5,000+ homes never renders at once
 - Tests: `npm test` covers moderation, the event log and stats, the Profile lists (my comments, activity, relative times, badges), the Snap helpers (shrink size, nearest 5, address search) and the Top lists (gold rule, hot order, home of the week, empty data). Everything else is checked by hand in headless Edge at phone (390 px) and laptop (1280 px) sizes

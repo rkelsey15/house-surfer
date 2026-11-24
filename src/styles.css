@@ -598,3 +598,12 @@ h1.addr { margin-bottom: var(--s1); }
   .profile-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s6, 32px); align-items: start; }
   .profile-sec .badge-grid { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ---------- Sample photo covers (Part F) ---------- */
+.cover-wrap { position: relative; }
+/* Same look as .mood-credit: white on a dark chip, so it reads on any photo in both themes. */
+.sample-tag { position: absolute; left: var(--s2); bottom: var(--s2); max-width: calc(100% - 2 * var(--s2)); padding: 2px 8px; border-radius: var(--r-sm); background: rgba(0, 0, 0, .72); color: #fff; font-size: 11px; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+.cover-wrap .cover-photo { background: var(--line); }
+.credit-grid { list-style: none; display: grid; gap: var(--s2); }
+.credit-grid li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); font-size: var(--fs-small); color: var(--muted); line-height: 1.5; }
+.credit-grid a { color: var(--brand); font-weight: 600; }

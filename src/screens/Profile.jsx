@@ -145,8 +145,9 @@ export default function Profile() {
           ))}
           <li>
             <span>
-              The photos set the mood only; they are never shown on a real home. They are free to use under the{' '}
-              <a href={PEXELS_LICENSE_URL} target="_blank" rel="noreferrer">Pexels license</a>.
+              Mood photos set the tone on welcome and empty screens. Sample photos on some homes are stand-ins, labeled as such. All are free to use under the{' '}
+              <a href={PEXELS_LICENSE_URL} target="_blank" rel="noreferrer">Pexels license</a>.{' '}
+              <Link to="/credits">See all photo credits</Link>
             </span>
           </li>
           <li>

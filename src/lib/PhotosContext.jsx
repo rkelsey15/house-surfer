@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { logEvent } from './events.js'
 import { listPhotos, savePhoto } from './photoDb.js'
 import { parseCovers } from './sampleCovers.js'
+import { chooseCover } from './stockCovers.js'
 
 // Photos saved on this device (IndexedDB), ready to show.
 // Shape of each: { id, home_id, created_at, url } where url is a local blob link.
@@ -51,14 +52,10 @@ export function PhotosProvider({ children }) {
 
   const value = useMemo(() => {
     const photosFor = (homeId) => photos.filter((p) => p.home_id === homeId)
-    // The first photo a visitor saved for a home is its cover; otherwise a sample cover, if there is one.
-    const coverInfo = (homeId) => {
-      const mine = photosFor(homeId)[0]
-      if (mine) return { url: mine.url, kind: 'yours' }
-      const sample = samples.get(homeId)
-      return sample ? { url: sample, kind: 'sample' } : null
-    }
-    const coverUrl = (homeId) => coverInfo(homeId)?.url ?? null
+    // Real photos always win. Order: the visitor's own Snap photo, then your own photo from
+    // public/images/homes/, then (for about 1 home in 3) a stock sample photo, then the drawing.
+    const coverInfo = (homeId, home) => chooseCover({ homeId, home, mine: photosFor(homeId)[0]?.url, sample: samples.get(homeId), base: import.meta.env.BASE_URL })
+    const coverUrl = (homeId, home) => coverInfo(homeId, home)?.url ?? null
     return { photos, coverUrl, coverInfo, photosFor, addPhoto }
   }, [photos, samples, addPhoto])
 

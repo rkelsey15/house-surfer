@@ -6,6 +6,7 @@ import TabBar from './components/TabBar.jsx'
 import HomePage from './screens/HomePage.jsx'
 import MapScreen from './screens/MapScreen.jsx'
 import Profile from './screens/Profile.jsx'
+import Credits from './screens/Credits.jsx'
 import ProfileList from './screens/ProfileList.jsx'
 import Signup from './screens/Signup.jsx'
 import Snap from './screens/Snap.jsx'
@@ -66,6 +67,7 @@ export default function App() {
           <Route path="/top" element={<Top />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/credits" element={<Credits />} />
           <Route path="/profile/comments" element={<ProfileList kind="comments" />} />
           <Route path="/profile/activity" element={<ProfileList kind="activity" />} />
           <Route path="*" element={<Navigate to="/" replace />} />
