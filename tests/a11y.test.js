@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { houseAlt, ratedText, starLabel } from '../src/lib/a11y.js'
 import { WHY_MESSAGE } from '../src/lib/moderation-words.js'
-import { LEGEND, PIN_COLORS, PIN_KINDS, PIN_SHAPES, pinShape, shapePoints } from '../src/lib/pins.js'
+import { PIN_FILTERS, PIN_COLORS, PIN_KINDS, PIN_SHAPES, pinShape, shapePoints } from '../src/lib/pins.js'
 
 test('stars read "Rate N of 5 stars" and the pick is announced', () => {
   assert.equal(starLabel(4), 'Rate 4 of 5 stars')
@@ -31,10 +31,10 @@ test('polygon pins have the right number of corners', () => {
   assert.equal(shapePoints('circle', 6).length, 0)
 })
 
-test('the legend lists every pin kind plus the flame and crown', () => {
-  for (const kind of PIN_KINDS) assert.ok(LEGEND.some((row) => row.kind === kind), kind)
-  assert.ok(LEGEND.some((row) => row.badge === 'flame'))
-  assert.ok(LEGEND.some((row) => row.badge === 'crown'))
+test('the filter chips cover every pin kind plus the flame and crown', () => {
+  for (const kind of PIN_KINDS) assert.ok(PIN_FILTERS.some((row) => row.kind === kind), kind)
+  assert.ok(PIN_FILTERS.some((row) => row.badge === 'flame'))
+  assert.ok(PIN_FILTERS.some((row) => row.badge === 'crown'))
 })
 
 test('the blocked-comment "Why?" line names the house rule', () => {

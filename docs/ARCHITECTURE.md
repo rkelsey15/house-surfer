@@ -59,7 +59,7 @@ If the picture does not show, your viewer does not render Mermaid. GitHub does (
 | **Surf** (feed, rate, skip) | `Surf.jsx`, `StarRating`, `TryThisGuide` | `feedSession.js` (shuffled queue and your place, shared with "Next house"), `GuideContext.jsx` | `feed` |
 | **Home page and comments** | `HomePage.jsx` (threads, composer, "Next house", "Saved" bar) | `CommentsContext.jsx`, `RatingsContext.jsx`, `sampleData.js` | `moderation` |
 | **Moderation** (block comments about people) | the composer in `HomePage.jsx` | `moderation.js`, word lists in `moderation-words.js` | `moderation` |
-| **Map and list** | `MapScreen.jsx` | `homeStats.js`, `rules.js` (gold, hot, week thresholds), `pins.js` (pin shapes and legend) | `a11y`, `top` |
+| **Map and list** | `MapScreen.jsx` | `homeStats.js`, `rules.js` (gold, hot, week thresholds), `pins.js` (pin shapes, the filter chips and which homes pass them) | `a11y`, `top` |
 | **Snap a house** | `Snap.jsx` | `imageTools.js` (shrink and strip GPS), `nearest.js`, `photoDb.js`, `PhotosContext.jsx` | `snap` |
 | **Top** | `Top.jsx` | `top.js` (same rules as the map) | `top` |
 | **Profile** (comments, activity, badges, settings, credits, Reset demo) | `Profile.jsx` (latest 5 of each list), `ProfileList.jsx` (routes `/profile/comments` and `/profile/activity`: everything, grouped by day, 20 at a time) | `profileLists.js` (incl. `groupByDate`), `demo.js`, `credits.js` (mood and sample photo credits), `houseGeometry.js` (roofs, door spans, fence gaps), `stockCovers.js` (which homes get a sample photo; the cover order) | `profile`, `credits` |
@@ -96,6 +96,7 @@ There are no owner or resident names anywhere, ever.
 | `hs.theme` | `"system"`, `"light"` or `"dark"` |
 | `hs.guide` | `{ dismissed, done: { rate3, comment, moderation, map } }` |
 | `hs.demoBannerDismissed` | `true` once the demo note is closed |
+| `hs.map_pins` | Which map filter chips are on: an array of `unrated`, `low`, `mid`, `high`, `hot`, `week` (all six by default). Filters both the map and the List |
 
 **Event names and their extra fields:** `app_opened {device}`, `home_viewed {home_id, source}` (source is one of feed, map, search, top, snap, other), `rating_submitted {home_id, stars, is_edit}`, `comment_posted {home_id, is_reply}`, `comment_edited {home_id}`, `comment_deleted {comment_id}`, `like_given {comment_id}`, `photo_uploaded {home_id}`, `comment_blocked {reason}`, `theme_changed {theme}`.
 

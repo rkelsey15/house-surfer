@@ -29,6 +29,7 @@ Sections 1 to 7 are pushed (Nov 22).
 | P5 | UI polish: Part E (Profile "See all" pages, Profile laptop columns, ComingSoon deleted, welcome photo) | **Done and pushed (Nov 23)** |
 | P6 | UI polish: Part F (sample photos on about 1 in 3 single-family homes) | **Done and pushed (Nov 23)** |
 | P7 | UI polish: Part G (badge icons and Surfer Elite, demo bar on Profile, laptop layouts for welcome, home page and map list) plus the house drawing fixes | **Done and committed (not pushed)** |
+| P8 | UI polish: Part H (map filter chips, "See all (N)", garage fence gaps, PRD "Map at city scale") | **Done and committed (not pushed)** |
 | H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
@@ -59,6 +60,15 @@ Sections 1 to 7 are pushed (Nov 22).
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
 
+## UI polish Part H (Nov 23, committed, not pushed)
+Parts A to G kept. Checked at 390 and 1280 px, light and dark (headless Edge): chips are 44 px tall, no sideways scroll; 162 tests pass, build passes.
+- **Map filter chips** replace the Legend: Unrated, Under 3.5, 3.5 to 4.4, Gold, Hot, Home of the week, each with its pin shape (flame and crown for the last two). All on by default; **All** and **None** buttons; a live count ("Showing 3,452 of 5,391"). The same filter applies to the map pins and the List view, together with search, Top rated and style. Saved in `hs.map_pins`. Each chip's screen reader name says its state: "Gold homes, shown" / "Gold homes, hidden"; a check mark shows "on" too. With None on, the List says to tap All. Rule for Hot: a hot home shows if Hot is on, whatever its pin type (see DECISIONS). Code: `PinFilter` in `MapScreen.jsx`, rules in `pins.js`
+- **See all (N)** always shows on My comments and Recent activity when there is at least 1 item (it used to need more than 5)
+- **Fences leave a gap at garage and carport doors** (ranch garage and carport, colonial garage, modern stacked boxes) as well as the front door. Check on `#/drawings` (and `?flip=1`)
+- **PRD:** new "Map at city scale" section under Scaling by stage (clustering, neighborhood picker, "Search this area", heat map), marked future and not built
+- Tests added: chip rule, saved choice cleaning, chip names, garage gaps in every shape, variant and mirror
+- **Not done or not checked:** screen reader pass on the chips; the phone map toolbar is taller again (three rows); at 900 to 1100 px the chip row scrolls sideways rather than wrapping
+
 ## UI polish Part G (Nov 23, committed, not pushed)
 Parts A to F kept. Checked at 390 and 1280 px, light and dark (headless Edge screenshots of Profile, welcome, home page, Map list and the drawing grid); 156 tests pass, build passes, no sideways scroll on any screen checked.
 - **Badge icons:** each badge has its own 2 px line icon: First Steps (footprints), Block Walker (pin on a street), Good Neighbor Voice (speech bubble with a house), Crowd Favorite (heart), Curb Photographer (camera), Surfer Elite (star riding a wave). Locked is gray with a small lock; earned is in color (teal, gold, coral); Surfer Elite earned is black with a gold edge. Nothing can be earned in the demo, so all six show locked. To see the earned look: open `#/profile?badges=earned` (design preview only). Code: `Badge.jsx`, icons in `Icons.jsx`, data in `BADGES` in `profileLists.js`
@@ -69,7 +79,7 @@ Parts A to F kept. Checked at 390 and 1280 px, light and dark (headless Edge scr
 - **Map list on laptops (900 px and up):** search, home count, filter chips and the style menu are one toolbar row across the top, so the list below shows more homes (about 4 cards show at 800 px tall). Phones unchanged
 - **House drawing fixes (found while checking):** roofs are now built from their walls (`src/lib/houseGeometry.js`): centered, 5 px overhang (was 14 to 20), and reaching 1 px into the wall so no gap or hairline can show. Fixed: the butterfly roof floated above its walls (the wall top now follows the roof underside), the Victorian tower left a 2 px gap to the main wall, and chimneys now rise through the roof instead of hovering above it. Fences leave a gate gap at the front door in every shape, variant and mirrored layout (the rail used to run across the door). **Drawing grid:** open `#/drawings` (not linked anywhere) for every shape and variant; add `?flip=1`, `?units=2` or `?units=3`, `?pal=3` to see mirrored, attached and other colors
 - Tests added: six badges and the Surfer Elite rule, one icon per badge, contrast of every badge color pair, roofs centered with a small overhang, every roof comes from a helper, the fence never covers a door (all shapes, variants, mirrored)
-- **Not done or not checked:** no real earning logic for badges (V2: needs other people's likes and moderation history); screen reader pass on the badge buttons; the ranch carport and garage doors can still sit behind the fence (only front doors get a gate); I did not look at every earned badge at 390 px
+- **Not done or not checked:** no real earning logic for badges (V2: needs other people's likes and moderation history); screen reader pass on the badge buttons (the ranch garage and carport fence gap was fixed in Part H); I did not look at every earned badge at 390 px
 
 ## UI polish Part F (Nov 23, pushed)
 Parts A to E kept. Checked at 390 and 1280 px, light and dark: no sideways scroll; 136 tests pass, build passes.
@@ -116,7 +126,7 @@ A new engineer, or their AI assistant, can start from the README and be producti
 ## UI polish Part A (done and pushed Nov 23)
 Target: WCAG 2.2 AA (PRD Accessibility). Checked by hand-driven headless Edge at 390 and 1280 px, light and dark: every tap target 44 px or more, every control has a name, no text under 4.5:1, no sideways scroll, Tab order and focus ring on every stop.
 - Tap targets 44 px: demo note close, "Try this" toggle and close, map card close, chips, buttons, comment actions, tabs, map zoom buttons
-- Map pins differ by shape: hollow circle (unrated), circle (under 3.5), square (3.5 to 4.4), star (4.5+), diamond with crown (top of the week), flame badge (hot). Collapsible Legend on the map
+- Map pins differ by shape: hollow circle (unrated), circle (under 3.5), square (3.5 to 4.4), star (4.5+), diamond with crown (top of the week), flame badge (hot). Legend on the map (replaced in Part H by filter chips)
 - Screen readers: stars "Rate 4 of 5 stars" plus "You rated this 4 of 5"; Like, Reply, Edit, Delete and Close have names; house drawings say "Illustration of a Craftsman-era duplex, built 1924"; map has a region label pointing to the List
 - Keyboard: 3 px focus ring, "Skip to content" link, tab bar comes before the page in the code so Tab order matches the laptop layout; laptop demo note shrinks to an "i" button after 5 seconds
 - Blocked comment: focus moves to the message, with a "Why?" line naming house rule 1

@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import { ERAS } from '../src/lib/houseDesign.js'
-import { DOORS, FENCE, G, GATE_ROOM, Hp, OVER, fenceParts, gateFor, roofPoints, roofY } from '../src/lib/houseGeometry.js'
+import { DOORS, FENCE, G, GARAGES, GATE_ROOM, Hp, OVER, fenceParts, gateFor, gatesFor, roofPoints, roofY } from '../src/lib/houseGeometry.js'
 
 test('a gable roof is centered on its wall, overhangs a little, and reaches below the wall top', () => {
   for (const [x0, x1] of [[64, 236], [106, 194], [182, 246], [66, 96]]) {
@@ -60,4 +60,24 @@ test('the fence never covers a front door, in any shape, variant or mirror image
 test('mirroring flips the gate across the scene', () => {
   const [a, b] = gateFor('ranch', 0, false)
   assert.deepEqual(gateFor('ranch', 0, true), [300 - b, 300 - a])
+})
+
+test('the fence also leaves a gap at every garage and carport door', () => {
+  for (const era of Object.values(ERAS)) {
+    assert.equal(GARAGES[era.shape]?.length, era.variants, era.shape)
+    for (let v = 0; v < era.variants; v++) {
+      for (const flip of [false, true]) {
+        const gates = gatesFor(era.shape, v, flip)
+        const { posts, rails } = fenceParts(gates)
+        for (const [d0, d1] of gates) {
+          for (const x of posts) assert.ok(x + FENCE.postW <= d0 || x >= d1, `post at ${x} blocks a door of ${era.shape} ${v} flip=${flip}`)
+          for (const [r0, r1] of rails) assert.ok(r1 <= d0 || r0 >= d1, 'rail crosses a door')
+        }
+        assert.ok(posts.length > 4, 'there is still a fence')
+      }
+    }
+  }
+  // The ranch with a garage and the carport house really have one.
+  assert.equal(gatesFor('ranch', 0, false).length, 2)
+  assert.equal(gatesFor('ranch', 1, false).length, 2)
 })

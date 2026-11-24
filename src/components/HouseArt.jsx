@@ -1,5 +1,5 @@
 import { houseAlt } from '../lib/a11y.js'
-import { FENCE, G, Hp, fenceParts, gateFor, roofPoints, roofY } from '../lib/houseGeometry.js'
+import { FENCE, G, Hp, fenceParts, gatesFor, roofPoints, roofY } from '../lib/houseGeometry.js'
 import { houseDesign } from '../lib/houseDesign.js'
 
 // House illustrations, drawn in code (no photos, no listing images).
@@ -534,8 +534,8 @@ export function HouseScene({ design: d, height = 210, label = 'House drawing' })
     return { u, tx: cx - 150 * scale, wall: u % 2 === 0 ? d.palette.wall : d.neighborWall }
   })
 
-  // The fence leaves a gate gap at the front door.
-  const gate = gateFor(d.shape, d.variant, d.flip)
+  // The fence leaves a gap at the front door and at any garage or carport door.
+  const gate = gatesFor(d.shape, d.variant, d.flip)
 
   return (
     <svg

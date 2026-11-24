@@ -17,15 +17,27 @@ export const PIN_SHAPES = { unrated: 'circle-hollow', low: 'circle', mid: 'squar
 
 export const pinShape = (kind) => PIN_SHAPES[kind] ?? 'circle'
 
-// Legend rows, in the order they show. `kind` rows draw a pin; `badge` rows draw the flame or crown.
-export const LEGEND = [
-  { kind: 'unrated', label: 'Unrated' },
-  { kind: 'low', label: 'Under 3.5' },
-  { kind: 'mid', label: '3.5 to 4.4' },
-  { kind: 'high', label: '4.5+ (3+ ratings)' },
-  { badge: 'flame', label: 'Hot this week' },
-  { kind: 'week', badge: 'crown', label: 'Top of the week' },
+// The map's filter chips, in the order they show. Each chip is also the legend: it draws the
+// pin (`kind`) and/or the flame or crown (`badge`). `name` is what a screen reader says.
+export const PIN_FILTERS = [
+  { key: 'unrated', kind: 'unrated', label: 'Unrated', name: 'Unrated homes' },
+  { key: 'low', kind: 'low', label: 'Under 3.5', name: 'Homes under 3.5' },
+  { key: 'mid', kind: 'mid', label: '3.5 to 4.4', name: 'Homes rated 3.5 to 4.4' },
+  { key: 'high', kind: 'high', label: 'Gold', name: 'Gold homes' },
+  { key: 'hot', badge: 'flame', label: 'Hot', name: 'Hot homes' },
+  { key: 'week', kind: 'week', badge: 'crown', label: 'Home of the week', name: 'Home of the week' },
 ]
+export const PIN_FILTER_KEYS = PIN_FILTERS.map((f) => f.key)
+
+// A home shows when its pin type is on, or when it is hot and "Hot" is on (the flame sits on
+// top of any pin type). `on` is the list of chip keys that are switched on.
+export const passesPinFilter = (kind, hot, on) => on.includes(kind) || (hot && on.includes('hot'))
+
+// Read the saved choice back: keep only known keys; anything unreadable means "all on".
+export const cleanPinFilter = (saved) => (Array.isArray(saved) ? PIN_FILTER_KEYS.filter((k) => saved.includes(k)) : PIN_FILTER_KEYS)
+
+// Screen reader name for a chip, like "Gold homes, shown".
+export const pinFilterName = (f, isOn) => `${f.name}, ${isOn ? 'shown' : 'hidden'}`
 
 // Corner points of a polygon pin, centered on (0, 0), for a pin of radius r.
 // Circles have no points (they are drawn with an arc).

@@ -44,17 +44,43 @@ export const DOORS = {
 export const GATE_ROOM = 9
 export const FENCE = { x0: 58, x1: 242, first: 60, step: 7.6, count: 24, postW: 4.5 }
 
-// The door span in scene coordinates (mirrored when the house is flipped).
-export function gateFor(shape, variant, flip) {
-  const door = DOORS[shape]?.[variant] ?? [130, 170]
-  return flip ? [300 - door[1], 300 - door[0]] : door
+// Garage and carport doors, per shape and variant (an empty list means none). The fence leaves
+// a gap here too, so a car could drive out. Keep in step with HouseArt.jsx like DOORS above.
+export const GARAGES = {
+  victorian: [[], [], []],
+  craftsman: [[], [], [], []],
+  cottage: [[], [], []],
+  ranch: [[[176, 232]], [[182, 242]], []],
+  colonial: [[], [[182, 246]], []],
+  modern: [[], [], [[188, 226]], []],
 }
 
-// What the fence is made of: post x positions and the rail pieces, with the gate gap left open.
-export function fenceParts(gate) {
-  const g0 = gate[0] - GATE_ROOM
-  const g1 = gate[1] + GATE_ROOM
-  const posts = Array.from({ length: FENCE.count }, (_, i) => FENCE.first + i * FENCE.step).filter((x) => x + FENCE.postW < g0 || x > g1)
-  const rails = [[FENCE.x0, Math.min(g0, FENCE.x1)], [Math.max(g1, FENCE.x0), FENCE.x1]].filter(([a, b]) => b > a)
-  return { posts, rails, gap: [g0, g1] }
+// A span in scene coordinates (mirrored when the house is flipped).
+const mirror = (span, flip) => (flip ? [300 - span[1], 300 - span[0]] : span)
+
+// The front door span.
+export function gateFor(shape, variant, flip) {
+  return mirror(DOORS[shape]?.[variant] ?? [130, 170], flip)
+}
+
+// Every span the fence must leave open: the front door plus any garage or carport door.
+export function gatesFor(shape, variant, flip) {
+  const garages = GARAGES[shape]?.[variant] ?? []
+  return [gateFor(shape, variant, flip), ...garages.map((g) => mirror(g, flip))]
+}
+
+// What the fence is made of: post x positions and the rail pieces, with a gap left open at each
+// gate. `gates` is one [left, right] span or a list of them (see gatesFor).
+export function fenceParts(gates) {
+  const list = (typeof gates[0] === 'number' ? [gates] : gates)
+    .map(([a, b]) => [a - GATE_ROOM, b + GATE_ROOM])
+    .sort((a, b) => a[0] - b[0])
+  const inGap = (x0, x1) => list.some(([g0, g1]) => x1 > g0 && x0 < g1)
+  const posts = Array.from({ length: FENCE.count }, (_, i) => FENCE.first + i * FENCE.step).filter((x) => !inGap(x, x + FENCE.postW))
+  // Rails: the fence's length minus each gap.
+  let rails = [[FENCE.x0, FENCE.x1]]
+  for (const [g0, g1] of list) {
+    rails = rails.flatMap(([a, b]) => (g1 <= a || g0 >= b ? [[a, b]] : [[a, Math.min(g0, b)], [Math.max(g1, a), b]])).filter(([a, b]) => b - a > 0.01)
+  }
+  return { posts, rails, gaps: list, gap: list[0] }
 }

@@ -70,9 +70,7 @@ export default function Profile() {
                     <CommentRow key={c.id} c={c} homeById={homeById} />
                   ))}
                 </ul>
-                {mine.length > PREVIEW && (
-                  <Link className="btn full" to="/profile/comments">See all {mine.length} comments</Link>
-                )}
+                <Link className="btn full" to="/profile/comments">See all ({mine.length})</Link>
               </>
             )}
           </section>
@@ -88,9 +86,7 @@ export default function Profile() {
                     <ActivityRow key={a.key} a={a} homeById={homeById} />
                   ))}
                 </ul>
-                {activity.length > PREVIEW && (
-                  <Link className="btn full" to="/profile/activity">See all activity</Link>
-                )}
+                <Link className="btn full" to="/profile/activity">See all ({activity.length})</Link>
               </>
             )}
           </section>

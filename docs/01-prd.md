@@ -317,6 +317,17 @@ Each stage adds only what the next group of users needs. The real architecture j
 
 Costs are estimates for typical free and starter tiers, not quotes.
 
+### Map at city scale (future, not built)
+
+Today the map draws every Queen Anne house (about 5,400 pins) on one canvas, which is fine for one neighborhood. A whole city has hundreds of thousands of homes, so the map has to stop drawing every pin at once. These are ideas for a later stage, **not built and not scheduled**:
+
+- **Pin clustering.** When zoomed out, nearby pins merge into one numbered bubble ("312"). Tap it or zoom in and the bubble splits into smaller bubbles, then single pins. The number is a count of homes, so it works for people who can't tell pin colors apart. The pin filter chips (built) would apply before the clustering, so a bubble counts only the homes that are switched on.
+- **Neighborhood picker.** A list or search box ("Queen Anne", "Ballard", "Capitol Hill") that jumps the map to that area, so nobody has to pan across a city. It needs a small file of neighborhood names and outlines.
+- **"Search this area" button.** After you pan or zoom, a button appears; tapping it loads only the homes inside the visible map box (a request by bounding box, for example from a database with a spatial index). The app then never has to download the whole city's `homes.json`. This is the point where the data moves from a static file to the V2 database.
+- **Heat map when far out.** Past a certain zoom, show a smooth color wash (average rating or number of ratings per area) instead of bubbles, then switch to bubbles and pins as you zoom in. Only worth it if clustering alone still feels cluttered.
+
+Not decided: whether clustering runs in the browser (fine up to tens of thousands of pins) or on the server (needed at city scale), and which map library handles it. The List view stays the full, screen-reader-friendly alternative to the map at any scale.
+
 ## Risks and open questions
 
 | Risk | Mitigation |
