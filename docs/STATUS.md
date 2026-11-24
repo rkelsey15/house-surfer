@@ -24,6 +24,7 @@ Sections 1 to 7 are pushed (Nov 22).
 | 8 | "Sample" tag on seeded comments | Looks done already (tag shows in screenshots); confirm at the end |
 | P | UI polish: Part A (accessibility basics + the 5 ideas) | **Done and pushed (Nov 23); awaiting Ryan's review** |
 | P2 | UI polish: Part B (the look) | **Done and pushed (Nov 23); awaiting Ryan's review** |
+| P3 | UI polish: Part C (less bland, surfing flow) | **Done and committed (Nov 23); not pushed yet** |
 | CS | Case study | After polish |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
 | D2 | Five UI polish ideas | Listed below; refine at the end |
@@ -77,6 +78,27 @@ Everything from Part A kept (44 px targets, labels, contrast, focus ring, pin sh
 - Tests: 117 pass (new: radius scale, icon line weight, three button styles)
 
 **Still open for polish:** screen reader run, axe scan, real 200% zoom on a laptop browser (checked by narrow window width instead), map pin contrast against tiles.
+
+## UI polish Part C (done and committed Nov 23, not pushed yet)
+Parts A and B kept (re-audited at 320, 390, 1024 and 1280 px, light and dark: no small targets, unnamed controls, low contrast, off-screen controls or sideways scroll).
+- **Surf on laptops (1024 px and wider):** the house card is bigger (764 px wide, 400 px tall picture) with the "Try this" guide as a panel on its right; if the guide is dismissed the card centers. On phones the guide stays a small card above the house that you can collapse
+- **Stock photos (2, Pexels, free to use, credited):** a hero on the welcome screen and pictures on empty states (Profile "No comments yet", Top "No top homes yet", Surf "You've surfed them all"). Credit text sits on each photo and links are in a new Credits section on Profile. Never shown on a home or address (a test checks the files live in `public/images/mood/`)
+- **Richer house drawings:** 6 shape families (new: colonial for late-century homes), 3 or 4 roof/porch variants each, 8 color palettes per era, chimneys, shutters, mirrored layouts, trees (bush, round, pine, tall), picket fences, flower beds, clouds; windows glow warm in dark mode. Same home always gets the same drawing. Tests check variety (600+ distinct looks across 720 homes)
+- **Surf flow:** a home opened from Surf has a "Next house" button next to Back. After a rating or comment saves, a "Saved" bar with "Next house" appears at the bottom of the screen. Next house opens the next house's page (top of page, focus on its title) and logs `home_viewed` with source `feed`. It replaces the history entry, so Back still goes straight to Surf, which shows the house you got to
+- **Own photos folder ready:** `public/images/homes/` with a README and an empty `covers.json` (see below)
+- Tests: 130 pass (new: house design variety, feed order and Next house, credits and sample-cover parsing)
+
+**Not seen on screen yet:** the Top and Surf "surfed them all" empty states (the sample data fills Top, and the feed has 5,000+ homes). They use the same component as the Profile one, which was checked.
+
+## Adding your own house photos (10 to 15 sample covers)
+Do this when you have the photos. Nothing changes until `covers.json` lists a photo.
+1. **Find each home's id.** Open the home in the app: the address bar ends with the id, like `#/home/055c5ad4`
+2. **Photo rules:** taken by you from a public sidewalk. No people, no license plates, no close-up house numbers. No listing photos and no stock photos (CLAUDE.md rule 4)
+3. **Remove location data** from each file: right-click it, Properties, Details tab, "Remove Properties and Personal Information", "Create a copy with all possible properties removed"
+4. **Shrink it** to about 1200 px wide and under about 250 KB (Paint: Resize, then Save as JPEG)
+5. **Save it** in `public/images/homes/` named by the id, for example `055c5ad4.jpg`
+6. **List it** in `public/images/homes/covers.json`: `{ "055c5ad4": { "file": "055c5ad4.jpg" }, "1a2b3c4d": { "file": "1a2b3c4d.jpg" } }`
+7. Run `npm run dev`, open that home, check it, then commit. A photo a visitor snaps of the same home takes priority over your sample cover
 
 ## UI polish ideas (original list, all five done in Part A)
 1. **Bigger tap targets:** the close buttons on the demo note and "Try this" card are about 28 px; bring every control to 44 px, and make the tiny ▾ on "Try this" larger.

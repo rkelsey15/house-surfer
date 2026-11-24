@@ -6,6 +6,8 @@ import { HouseIcon, LockIcon } from '../components/Icons.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
 import { useComments } from '../lib/CommentsContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
+import { EmptyState } from '../components/MoodImage.jsx'
+import { MOOD_PHOTOS, PEXELS_LICENSE_URL } from '../lib/credits.js'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { usePhotos } from '../lib/PhotosContext.jsx'
 import { LOCKED_BADGES, myComments, recentActivity, relativeTime } from '../lib/profileLists.js'
@@ -50,9 +52,11 @@ export default function Profile() {
 
       <h2 className="sec-t">My comments</h2>
       {mine.length === 0 ? (
-        <p className="muted center note">
-          You haven't left a comment yet. <Link to="/">Surf the feed</Link> and say something about a house.
-        </p>
+        <EmptyState photo={MOOD_PHOTOS.sidewalk} position="50% 55%" title="No comments yet">
+          <p className="muted">
+            <Link to="/">Surf the feed</Link> and say something about a house.
+          </p>
+        </EmptyState>
       ) : (
         <ul className="plist">
           {mine.map((c) => (
@@ -108,6 +112,27 @@ export default function Profile() {
         <span>Surfer name</span>
         <span className="muted small">{profile.handle} · locked</span>
       </div>
+
+      <h2 className="sec-t">Credits</h2>
+      <ul className="credits">
+        {Object.values(MOOD_PHOTOS).map((p) => (
+          <li key={p.file}>
+            <span>
+              Photo: <a href={p.pageUrl} target="_blank" rel="noreferrer">{p.title}</a> by{' '}
+              <a href={p.photographerUrl} target="_blank" rel="noreferrer">{p.photographer}</a> on {p.source}
+            </span>
+          </li>
+        ))}
+        <li>
+          <span>
+            The photos set the mood only; they are never shown on a real home. They are free to use under the{' '}
+            <a href={PEXELS_LICENSE_URL} target="_blank" rel="noreferrer">Pexels license</a>.
+          </span>
+        </li>
+        <li>
+          <span>Homes: King County public records. Map: &copy; OpenStreetMap contributors. House drawings are made in code.</span>
+        </li>
+      </ul>
 
       <h2 className="sec-t demo-sec">Demo</h2>
       <div className="setting">

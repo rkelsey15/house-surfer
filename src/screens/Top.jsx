@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import HomeCover from '../components/HomeCover.jsx'
+import { EmptyState } from '../components/MoodImage.jsx'
+import { MOOD_PHOTOS } from '../lib/credits.js'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { factsLine, ratingText, typeLine } from '../lib/format.js'
 import { useHomeStats } from '../lib/homeStats.js'
@@ -51,14 +53,20 @@ function WeekCard({ row }) {
   )
 }
 
-function Section({ title, note, rows, empty, ranked }) {
+function Section({ title, note, rows, empty, emptyTitle, ranked, photo }) {
   const [shown, setShown] = useState(TOP_PAGE)
   return (
     <section className="top-section">
       <h2 className="sec-t">{title}</h2>
       {note && <p className="muted small">{note}</p>}
       {rows.length === 0 ? (
-        <p className="muted center note">{empty}</p>
+        photo ? (
+          <EmptyState photo={photo} position="50% 60%" title={emptyTitle}>
+            <p className="muted">{empty}</p>
+          </EmptyState>
+        ) : (
+          <p className="muted center note">{empty}</p>
+        )
       ) : (
         <>
           {rows.slice(0, shown).map(({ home, stat }, i) => (
@@ -100,7 +108,9 @@ export default function Top() {
         note="4.5 stars or more, from at least 3 ratings."
         rows={top}
         ranked
+        emptyTitle="No top homes yet"
         empty="Rate a few homes to see the top list."
+        photo={MOOD_PHOTOS.street}
       />
     </div>
   )

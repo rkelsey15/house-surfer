@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import DemoBanner from './components/DemoBanner.jsx'
 import Logo from './components/Logo.jsx'
 import TabBar from './components/TabBar.jsx'
@@ -21,6 +21,7 @@ let opened = false
 
 export default function App() {
   const { profile } = useProfile()
+  const location = useLocation()
   const { karmaFromRatings } = useRatings()
   const { karmaFromComments } = useComments()
 
@@ -55,7 +56,7 @@ export default function App() {
       {/* The tab bar comes before the page in the code, so Tab order matches what you see on laptops (tabs at the top). */}
       <TabBar />
 
-      <main className="main" id="main" tabIndex={-1}>
+      <main className={location.pathname === '/' ? 'main main-wide' : 'main'} id="main" tabIndex={-1}>
         <Routes>
           <Route path="/" element={<Surf />} />
           <Route path="/home/:id" element={<HomePage />} />

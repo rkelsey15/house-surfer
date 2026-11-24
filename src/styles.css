@@ -19,6 +19,7 @@
   --control-line: #7a807d;
   --map: #e8eee6;
   --sky: #dcebf2;
+  --window: #eaf4f8;
   --on-brand: #ffffff;
   /* Corner radius: 8 small things, 12 controls (buttons, inputs, chips), 16 cards. Circles stay round. */
   --r-sm: 8px;
@@ -56,6 +57,7 @@
     --control-line: #72807b;
     --map: #1f2a26;
     --sky: #1d3540;
+    --window: #ffe3a0;
     --on-brand: #0b1513;
     color-scheme: dark;
   }
@@ -77,6 +79,7 @@
   --control-line: #72807b;
   --map: #1f2a26;
   --sky: #1d3540;
+  --window: #ffe3a0;
   --on-brand: #0b1513;
   color-scheme: dark;
 }
@@ -533,3 +536,50 @@ a { color: var(--brand); }
 h1.addr { margin-bottom: var(--s1); }
 .sec-t + .note, .sec-t + .muted { margin-top: 0; }
 .top-section .sec-t .legend-badge { width: 20px; height: 20px; }
+
+/* ---------- Mood photos (stock, decoration only) ---------- */
+.mood { position: relative; overflow: hidden; border-radius: var(--r-card); background: var(--brand-soft); }
+.mood img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.mood-credit { position: absolute; right: var(--s2); bottom: var(--s2); padding: 2px 8px; border-radius: var(--r-sm); background: rgba(0, 0, 0, .72); color: #fff; font-size: 11px; line-height: 1.4; }
+.empty-state { margin: var(--s4) 0; text-align: center; }
+.empty-text { padding: var(--s3) var(--s2) 0; }
+.empty-text h3 { font-size: var(--fs-h3); margin-bottom: var(--s1); }
+.empty-text p { margin: 0 0 var(--s3); }
+.signup .mood { margin-bottom: var(--s4); }
+
+/* ---------- Surf: laptop layout (Try this panel beside the card) ---------- */
+.surf-card-col { min-width: 0; }
+.guide-title { display: flex; align-items: baseline; gap: var(--s2); flex: 1; font-size: var(--fs-h2); margin: 0; }
+.guide-panel .guide-intro { margin: 0 0 var(--s2); }
+.surf-done { max-width: 480px; margin: 0 auto; }
+@media (min-width: 1024px) {
+  .main-wide { max-width: 1160px; }
+  .surf-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: var(--s5); align-items: start; }
+  .surf-grid.no-guide { grid-template-columns: minmax(0, 760px); justify-content: center; }
+  .surf-grid .guide-panel { position: sticky; top: 72px; margin: 0; padding: var(--s4); }
+  .surf-grid .guide-list li { font-size: var(--fs-body); padding: var(--s2) 0; }
+  .surf-grid .guide-title { padding-left: var(--s1); }
+}
+
+/* ---------- Home page: Next house and the Saved bar ---------- */
+.home-top { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); margin-bottom: var(--s2); }
+.home-top .back { margin-bottom: 0; }
+.saved-spacer { height: 88px; }
+.saved-bar {
+  position: fixed; z-index: 30; left: var(--s4); right: var(--s4);
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  max-width: 528px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s3);
+  padding: var(--s2) var(--s2) var(--s2) var(--s4);
+  background: var(--surface); border: 1px solid var(--brand); border-radius: var(--r-card);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+}
+.saved-text { display: inline-flex; align-items: center; gap: var(--s2); font-weight: 700; color: var(--brand); }
+.saved-text .ico { width: 18px; height: 18px; }
+@media (min-width: 900px) { .saved-bar { bottom: var(--s5); } }
+
+/* ---------- Credits ---------- */
+.credits { list-style: none; display: grid; gap: var(--s2); font-size: var(--fs-small); color: var(--muted); }
+.credits li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); line-height: 1.5; }
+.credits a { color: var(--brand); font-weight: 600; }
+.signup-theme { margin-bottom: var(--s2); }

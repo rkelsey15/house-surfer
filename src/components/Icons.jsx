@@ -92,3 +92,9 @@ export const LockIcon = () => (
     <path d="M8 11V8a4 4 0 0 1 8 0v3" />
   </svg>
 )
+
+export const ArrowRightIcon = () => (
+  <svg {...base} className="ico ico-sm">
+    <path d="M5 12h14M13 6l6 6-6 6" />
+  </svg>
+)

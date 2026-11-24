@@ -10,8 +10,9 @@ import { usePhotos } from '../lib/PhotosContext.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
 import { factsLine, typeLine } from '../lib/format.js'
-import { ArrowLeftIcon, ArrowUpIcon } from '../components/Icons.jsx'
+import { ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, CheckIcon } from '../components/Icons.jsx'
 import { logEvent } from '../lib/events.js'
+import { advanceFeed } from '../lib/feedSession.js'
 import { moderate } from '../lib/moderation.js'
 import { BLOCK_MESSAGE, WHY_MESSAGE } from '../lib/moderation-words.js'
 import { isSample, sampleComments, sampleLikes, sampleRating } from '../lib/sampleData.js'
@@ -147,6 +148,10 @@ function CommentView({ c, isReply, likeCount, liked, replying, onReply, editing,
 
 export default function HomePage() {
   const { id } = useParams()
+  return <HomePageFor key={id} id={id} />
+}
+
+function HomePageFor({ id }) {
   const location = useLocation()
   const viewed = useRef(null)
   useEffect(() => {
@@ -158,6 +163,21 @@ export default function HomePage() {
   const { homes, status } = useHomes()
   const { ratings, rate } = useRatings()
   const { comments, likes, addComment, editComment, deleteComment } = useComments()
+  // Opened from Surf: offer "Next house" (the next one in the feed). After a rating or a
+  // comment saves, "Saved" appears with a Next house button right there.
+  const fromFeed = location.state?.source === 'feed'
+  const [saved, setSaved] = useState(null) // 'rating' | 'comment' | null
+  const titleRef = useRef(null)
+  useEffect(() => {
+    // Arrived with "Next house": move focus to the new house's title so a screen reader starts there.
+    if (location.state?.advanced) titleRef.current?.focus()
+    window.scrollTo(0, 0)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const goNext = () => {
+    const next = advanceFeed(homes, ratings, id)
+    if (next) navigate('/home/' + next.id, { state: { source: 'feed', advanced: true }, replace: true })
+    else navigate('/')
+  }
   const [replyTo, setReplyTo] = useState(null)
   const [editId, setEditId] = useState(null)
 
@@ -211,6 +231,7 @@ export default function HomePage() {
     },
     postReply: (parent, text) => {
       addComment(id, text, parent.parent_id ?? parent.id)
+      setSaved('comment')
       cancel()
     },
     remove: (cid) => {
@@ -237,12 +258,19 @@ export default function HomePage() {
 
   return (
     <div>
-      <button className="btn quiet back" onClick={() => navigate(-1)}><ArrowLeftIcon />Back</button>
+      <div className="home-top">
+        <button className="btn quiet back" onClick={() => navigate(-1)}><ArrowLeftIcon />Back</button>
+        {fromFeed && (
+          <button className="btn pri" onClick={goNext}>
+            Next house<ArrowRightIcon />
+          </button>
+        )}
+      </div>
 
       <div className="card">
         <HomeCover home={home} />
         <div className="info">
-          <h1 className="addr">{home.address}</h1>
+          <h1 className="addr" tabIndex={-1} ref={titleRef}>{home.address}</h1>
           <div className="facts">{typeLine(home)}</div>
           <div className="facts">{factsLine(home)}</div>
         </div>
@@ -269,10 +297,21 @@ export default function HomePage() {
       <p className="muted center small">Other people's ratings are made-up samples. Yours counts too.</p>
 
       <p className="rate-label">{mine ? `You gave it ${mine} star${mine > 1 ? 's' : ''}` : 'Your rating'}</p>
-      <StarRating value={mine} onChange={(n) => rate(id, n)} />
+      <StarRating
+        value={mine}
+        onChange={(n) => {
+          rate(id, n)
+          setSaved('rating')
+        }}
+      />
 
       <h2 className="sec-t">Comments</h2>
-      <Composer placeholder="Say something about the house…" button="Post comment" onSubmit={(t) => addComment(id, t)} />
+      <Composer placeholder="Say something about the house…" button="Post comment"
+        onSubmit={(t) => {
+          addComment(id, t)
+          setSaved('comment')
+        }}
+      />
 
       {threads.length === 0 && <p className="muted center note">No comments yet. Say something about the house.</p>}
       {threads.map(({ top, replies }) => (
@@ -283,6 +322,23 @@ export default function HomePage() {
           ))}
         </div>
       ))}
+
+      {saved && (
+        <>
+          <div className="saved-spacer" aria-hidden="true" />
+          <div className="saved-bar" role="status">
+            <span className="saved-text">
+              <CheckIcon />
+              Saved<span className="sr-only">: your {saved}</span>
+            </span>
+            {fromFeed && (
+              <button className="btn pri" onClick={goNext}>
+                Next house<ArrowRightIcon />
+              </button>
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }

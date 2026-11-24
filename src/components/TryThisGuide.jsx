@@ -4,30 +4,39 @@ import { GUIDE_ITEMS, useGuide } from '../lib/GuideContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
 import { CheckIcon, ChevronDownIcon, CloseIcon } from './Icons.jsx'
 
-// First-visit checklist shown at the top of the feed. On phones it starts
-// collapsed to one line ("Try this: 1 of 4") so the feed stays on screen.
-export default function TryThisGuide() {
+// First-visit checklist for the Surf screen.
+//  - Phones: a small card above the house that starts collapsed ("Try this  1 of 4").
+//  - Laptops (`panel`): a panel on the right of the house card, always open.
+export default function TryThisGuide({ panel = false }) {
   const { dismissed, done, doneCount, total, dismiss } = useGuide()
   const { count } = useRatings()
-  const [open, setOpen] = useState(() => window.matchMedia('(min-width: 600px)').matches)
+  const [openState, setOpen] = useState(() => window.matchMedia('(min-width: 600px)').matches)
   if (dismissed) return null
 
+  const open = panel || openState
   const allDone = doneCount === total
 
   return (
-    <section className="guide" aria-label="Try this">
+    <section className={panel ? 'guide guide-panel' : 'guide'} aria-label="Try this">
       <div className="guide-head">
-        <button className="guide-toggle" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-          <b>Try this</b>
-          <span className="muted small">{doneCount} of {total}</span>
-          <span className={open ? 'chev open' : 'chev'} aria-hidden="true"><ChevronDownIcon /></span>
-        </button>
+        {panel ? (
+          <h2 className="guide-title">
+            Try this <span className="muted small">{doneCount} of {total}</span>
+          </h2>
+        ) : (
+          <button className="guide-toggle" aria-expanded={openState} onClick={() => setOpen((o) => !o)}>
+            <b>Try this</b>
+            <span className="muted small">{doneCount} of {total}</span>
+            <span className={openState ? 'chev open' : 'chev'} aria-hidden="true"><ChevronDownIcon /></span>
+          </button>
+        )}
         <button className="icon-btn" aria-label="Dismiss Try this guide" onClick={dismiss}>
           <CloseIcon />
         </button>
       </div>
       {open && (
         <>
+          {panel && <p className="muted small guide-intro">Four things to do in about a minute.</p>}
           {allDone && (
             <p className="guide-done">
               You've seen it all.{' '}

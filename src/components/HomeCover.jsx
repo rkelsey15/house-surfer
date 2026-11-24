@@ -3,15 +3,15 @@ import HouseArt from './HouseArt.jsx'
 
 // The picture for a home: its first saved photo, or the drawing until then.
 export default function HomeCover({ home, height }) {
-  const { coverUrl } = usePhotos()
-  const url = coverUrl(home.id)
-  if (!url) return <HouseArt home={home} height={height} />
+  const { coverInfo } = usePhotos()
+  const cover = coverInfo(home.id)
+  if (!cover) return <HouseArt home={home} height={height} />
   return (
     <img
       className="art cover-photo"
-      src={url}
+      src={cover.url}
       style={{ height: height ?? 210 }}
-      alt={`Your photo of a house in the ${home.address}, saved on this device`}
+      alt={cover.kind === 'yours' ? `Your photo of a house in the ${home.address}, saved on this device` : `Photo of a house in the ${home.address}`}
     />
   )
 }
