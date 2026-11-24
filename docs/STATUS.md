@@ -22,8 +22,8 @@ Sections 1 to 7 are pushed (Nov 22).
 | 6 | Profile: my comments, activity, locked badges | **Done** (awaiting review) |
 | 7 | Event logging and `/stats` | **Done** (awaiting review) |
 | 8 | "Sample" tag on seeded comments | Looks done already (tag shows in screenshots); confirm at the end |
-| P | UI polish: Part A (accessibility basics + the 5 ideas) | **Done, committed, not pushed (Nov 23); awaiting Ryan's review** |
-| P2 | UI polish: Part B (the look) | **Done, committed, not pushed (Nov 23); awaiting Ryan's review** |
+| P | UI polish: Part A (accessibility basics + the 5 ideas) | **Done and pushed (Nov 23); awaiting Ryan's review** |
+| P2 | UI polish: Part B (the look) | **Done and pushed (Nov 23); awaiting Ryan's review** |
 | CS | Case study | After polish |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
 | D2 | Five UI polish ideas | Listed below; refine at the end |
@@ -53,7 +53,7 @@ Sections 1 to 7 are pushed (Nov 22).
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
 
-## UI polish Part A (done Nov 23, not pushed yet)
+## UI polish Part A (done and pushed Nov 23)
 Target: WCAG 2.2 AA (PRD Accessibility). Checked by hand-driven headless Edge at 390 and 1280 px, light and dark: every tap target 44 px or more, every control has a name, no text under 4.5:1, no sideways scroll, Tab order and focus ring on every stop.
 - Tap targets 44 px: demo note close, "Try this" toggle and close, map card close, chips, buttons, comment actions, tabs, map zoom buttons
 - Map pins differ by shape: hollow circle (unrated), circle (under 3.5), square (3.5 to 4.4), star (4.5+), diamond with crown (top of the week), flame badge (hot). Collapsible Legend on the map
@@ -66,7 +66,7 @@ Target: WCAG 2.2 AA (PRD Accessibility). Checked by hand-driven headless Edge at
 
 **Not yet done or not checked (say so in the case study):** screen reader run (VoiceOver, NVDA); 200% zoom by eye (only 390 px width checked); map pins are not keyboard-reachable (the List view is the full alternative); pin colors against map tiles not measured; focus does not move to the page heading after a screen change; the phone map toolbar takes about a quarter of the screen now that chips are 44 px (candidate for Part B); automated scanner (axe) not run.
 
-## UI polish Part B (done Nov 23, not pushed yet)
+## UI polish Part B (done and pushed Nov 23)
 Everything from Part A kept (44 px targets, labels, contrast, focus ring, pin shapes). Logo drawing unchanged. Re-audited at 320, 390, 640 (about 200% zoom of a laptop window) and 1280 px, light and dark: no small targets, unnamed controls, low-contrast text, off-screen controls or sideways scroll.
 - Logo is a real link, "House Surfer, home", 44 px tall, with hover and focus styles; goes to Surf from any page (not a link on the sign-up screen)
 - Buttons: three styles (primary, secondary, quiet) plus one icon-only circle button; one corner radius scale (8 small, 12 controls and chips, 16 cards; circles stay round)
