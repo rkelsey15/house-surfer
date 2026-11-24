@@ -20,6 +20,9 @@
   --map: #e8eee6;
   --sky: #dcebf2;
   --window: #eaf4f8;
+  --gold-soft: #f6e7c2;
+  --elite-bg: #0e0e0e;
+  --elite-gold: #e8b443;
   --on-brand: #ffffff;
   /* Corner radius: 8 small things, 12 controls (buttons, inputs, chips), 16 cards. Circles stay round. */
   --r-sm: 8px;
@@ -58,6 +61,9 @@
     --map: #1f2a26;
     --sky: #1d3540;
     --window: #ffe3a0;
+    --gold-soft: #3a2e10;
+    --elite-bg: #0e0e0e;
+    --elite-gold: #e8b443;
     --on-brand: #0b1513;
     color-scheme: dark;
   }
@@ -80,6 +86,9 @@
   --map: #1f2a26;
   --sky: #1d3540;
   --window: #ffe3a0;
+  --gold-soft: #3a2e10;
+  --elite-bg: #0e0e0e;
+  --elite-gold: #e8b443;
   --on-brand: #0b1513;
   color-scheme: dark;
 }
@@ -409,15 +418,18 @@ select.chip { background: var(--surface); }
 .leaflet-touch .leaflet-bar a:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
 .leaflet-control-attribution { font-size: 10px; }
 
-/* Wide screens: list on the left, map on the right. */
+/* Wide screens: one toolbar row across the top (search, count, filters, style), then the
+   list on the left and the map on the right. The list gets the height the old stacked
+   toolbar used to take. */
 @media (min-width: 900px) {
-  .mapscreen { bottom: 0; grid-template-columns: 400px 1fr; grid-template-rows: 1fr; }
-  .mapside { display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--line); }
-  .maptools { grid-row: auto; }
-  .maplist { grid-row: auto; flex: 1; display: block !important; }
-  .mapwrap { grid-row: auto; grid-column: 2; display: block !important; }
+  .mapscreen { bottom: 0; grid-template-columns: 400px 1fr; grid-template-rows: auto 1fr; }
+  .mapside { display: contents; }
+  .maptools { grid-row: 1; grid-column: 1 / -1; display: flex; align-items: center; gap: var(--s3); }
+  .searchrow { flex: 0 0 300px; }
   .viewseg { display: none; }
-  .chips { flex-wrap: wrap; overflow: visible; margin: var(--s2) 0 0; padding: 0; }
+  .chips { flex: 1; min-width: 0; margin: 0; padding: 0; }
+  .maplist { grid-row: 2; grid-column: 1; display: block !important; border-right: 1px solid var(--line); }
+  .mapwrap { grid-row: 2; grid-column: 2; display: block !important; }
   .mapcard { left: auto; width: 380px; }
 }
 .badge-icon { background: none; border: 0; pointer-events: none; }
@@ -607,3 +619,48 @@ h1.addr { margin-bottom: var(--s1); }
 .credit-grid { list-style: none; display: grid; gap: var(--s2); }
 .credit-grid li { padding: var(--s2) 0; border-bottom: 1px solid var(--line); font-size: var(--fs-small); color: var(--muted); line-height: 1.5; }
 .credit-grid a { color: var(--brand); font-weight: 600; }
+
+/* ---------- Part G: badges, demo bar, laptop layouts ---------- */
+.badge-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.badge { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 100%; min-height: 44px; padding: var(--s3) var(--s2); text-align: center; background: none; border: 1px dashed var(--control-line); border-radius: var(--r-card); color: var(--muted); }
+.badge b { color: var(--ink); font-size: 13px; }
+.badge .badge-how { font-size: 12px; }
+.badge[aria-expanded='true'] { border-style: solid; }
+.badge-medal { position: relative; display: grid; place-items: center; width: 56px; height: 56px; margin-bottom: var(--s1); border-radius: 50%; }
+.badge-medal .ico { width: 28px; height: 28px; }
+.badge-lockmark { position: absolute; right: -6px; bottom: -4px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--surface); border: 1px solid var(--control-line); color: var(--ink); }
+.badge-lockmark .ico { width: 12px; height: 12px; }
+.badge-locked .badge-medal { background: var(--line); color: var(--muted); }
+.badge-teal .badge-medal { background: var(--brand-soft); color: var(--brand); }
+.badge-gold .badge-medal { background: var(--gold-soft); color: var(--gold-text); }
+.badge-coral .badge-medal { background: var(--coral-soft); color: var(--danger); }
+.badge-elite .badge-medal { background: var(--elite-bg); color: var(--elite-gold); box-shadow: 0 0 0 3px var(--elite-gold); }
+.badge-teal, .badge-gold, .badge-coral, .badge-elite { border-style: solid; border-color: var(--line); background: var(--surface); }
+.badge-detail { margin: var(--s1) 0 0; padding: var(--s2) var(--s3); border-radius: var(--r-sm); background: var(--brand-soft); color: var(--ink); font-size: var(--fs-small); }
+.badge-detail[hidden] { display: none; }
+
+.demobar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); margin-bottom: var(--s3); padding: var(--s1) var(--s2) var(--s1) var(--s3); border: 1px solid var(--line); border-radius: var(--r-ctl); background: var(--brand-soft); }
+.demobar-label { font-weight: 800; font-size: var(--fs-small); text-transform: uppercase; letter-spacing: .06em; color: var(--ink); }
+.demobar-actions, .demobar-confirm { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); margin-left: auto; }
+.demobar-confirm { flex: 1; font-weight: 600; font-size: var(--fs-small); }
+.demobar-confirm span { flex: 1 1 200px; }
+@media (min-width: 1024px) { .demobar { margin-bottom: var(--s4); padding-left: var(--s4); } }
+
+.signup-photo.fill { height: 230px; }
+@media (min-width: 1024px) {
+  .signup { max-width: none; min-height: 100vh; padding: 0; display: grid; grid-template-columns: 1fr 1fr; }
+  .signup .signup-photo.fill { position: sticky; top: 0; height: 100vh; margin: 0; border-radius: 0; }
+  .signup-form { align-self: center; width: 100%; max-width: 440px; margin: 0 auto; padding: var(--s5) var(--s4); }
+}
+
+.home-grid { display: block; }
+@media (min-width: 1024px) {
+  .home-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--s5); align-items: start; }
+  .home-side { position: sticky; top: 72px; }
+  .home-comments > .sec-t:first-child { margin-top: 0; }
+}
+
+/* Drawing gallery (#/drawings, not linked) */
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--s3); }
+.gallery figure { border: 1px solid var(--line); border-radius: var(--r-card); overflow: hidden; background: var(--surface); }
+.gallery figcaption { padding: var(--s2) var(--s3); font-size: var(--fs-small); color: var(--muted); }

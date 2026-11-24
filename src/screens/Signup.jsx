@@ -19,7 +19,9 @@ export default function Signup() {
 
   return (
     <div className="signup">
-      <MoodImage photo={MOOD_PHOTOS.welcome} height={230} position="50% 40%" />
+      {/* Phones: photo on top. Laptops (1024 px and up): photo fills the left half, form on the right. */}
+      <MoodImage photo={MOOD_PHOTOS.welcome} position="50% 40%" fill className="signup-photo" />
+      <div className="signup-form">
       <div className="hero">
         <Logo center />
         <h1>Pick your surfer name</h1>
@@ -54,6 +56,7 @@ export default function Signup() {
       <button className="btn pri full start" onClick={() => saveProfile(picked)}>
         Start surfing
       </button>
+      </div>
     </div>
   )
 }

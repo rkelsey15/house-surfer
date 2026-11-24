@@ -98,3 +98,47 @@ export const ArrowRightIcon = () => (
     <path d="M5 12h14M13 6l6 6-6 6" />
   </svg>
 )
+
+// ---- Badge icons (Part G): same 24 px grid, 2 px line, round ends ----
+
+// First Steps: two footprints, one a step ahead of the other.
+export const FootprintsIcon = () => (
+  <svg {...base}>
+    <ellipse cx="8" cy="7.5" rx="2.5" ry="3.5" />
+    <ellipse cx="8" cy="15" rx="2" ry="2" />
+    <ellipse cx="16" cy="12" rx="2.5" ry="3.5" />
+    <ellipse cx="16" cy="19.5" rx="2" ry="2" />
+  </svg>
+)
+
+// Block Walker: a map pin standing on a street.
+export const PinStreetIcon = () => (
+  <svg {...base}>
+    <path d="M12 2.5a5.5 5.5 0 0 1 5.5 5.5c0 3.8-5.5 8.5-5.5 8.5S6.5 11.8 6.5 8A5.5 5.5 0 0 1 12 2.5z" />
+    <circle cx="12" cy="8" r="1.8" />
+    <path d="M3 21h18" />
+  </svg>
+)
+
+// Good Neighbor Voice: a speech bubble with a house in it.
+export const SpeechHouseIcon = () => (
+  <svg {...base}>
+    <path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-8l-4 4v-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+    <path d="m8.5 11.5 3.5-3 3.5 3M9.5 10.5V14h5v-3.5" />
+  </svg>
+)
+
+// Crowd Favorite: a heart.
+export const HeartIcon = () => (
+  <svg {...base}>
+    <path d="M12 20.5s-8.5-4.8-8.5-10.7A4.6 4.6 0 0 1 12 7.2a4.6 4.6 0 0 1 8.5 2.6c0 5.9-8.5 10.7-8.5 10.7z" />
+  </svg>
+)
+
+// Surfer Elite: a star riding a wave (the House Surfer wave, plus a star for "elite").
+export const WaveStarIcon = () => (
+  <svg {...base}>
+    <path d="m12 2.5 1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z" />
+    <path d="M3 19.5c2.25-2.2 3.75-2.2 6 0s3.75 2.2 6 0 3.75-2.2 6 0" />
+  </svg>
+)

@@ -26,8 +26,9 @@ Sections 1 to 7 are pushed (Nov 22).
 | P2 | UI polish: Part B (the look) | **Done and pushed (Nov 23); awaiting Ryan's review** |
 | P3 | UI polish: Part C (less bland, surfing flow) | **Done and pushed (Nov 23)** |
 | P4 | UI polish: Part D (theme setting moves to Profile, Top two columns on laptops) | **Done and pushed (Nov 23)** |
-| P5 | UI polish: Part E (Profile "See all" pages, Profile laptop columns, ComingSoon deleted, welcome photo) | **Done and committed (not pushed)** |
-| P6 | UI polish: Part F (sample photos on about 1 in 3 single-family homes) | **Done and committed (not pushed)** |
+| P5 | UI polish: Part E (Profile "See all" pages, Profile laptop columns, ComingSoon deleted, welcome photo) | **Done and pushed (Nov 23)** |
+| P6 | UI polish: Part F (sample photos on about 1 in 3 single-family homes) | **Done and pushed (Nov 23)** |
+| P7 | UI polish: Part G (badge icons and Surfer Elite, demo bar on Profile, laptop layouts for welcome, home page and map list) plus the house drawing fixes | **Done and committed (not pushed)** |
 | H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
@@ -58,7 +59,19 @@ Sections 1 to 7 are pushed (Nov 22).
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
 
-## UI polish Part F (Nov 23, committed, not pushed)
+## UI polish Part G (Nov 23, committed, not pushed)
+Parts A to F kept. Checked at 390 and 1280 px, light and dark (headless Edge screenshots of Profile, welcome, home page, Map list and the drawing grid); 156 tests pass, build passes, no sideways scroll on any screen checked.
+- **Badge icons:** each badge has its own 2 px line icon: First Steps (footprints), Block Walker (pin on a street), Good Neighbor Voice (speech bubble with a house), Crowd Favorite (heart), Curb Photographer (camera), Surfer Elite (star riding a wave). Locked is gray with a small lock; earned is in color (teal, gold, coral); Surfer Elite earned is black with a gold edge. Nothing can be earned in the demo, so all six show locked. To see the earned look: open `#/profile?badges=earned` (design preview only). Code: `Badge.jsx`, icons in `Icons.jsx`, data in `BADGES` in `profileLists.js`
+- **Tap a badge** to open "How to earn it:" under it (a button with `aria-expanded`). Surfer Elite shows: 25+ comments, 50+ likes received, no blocked comments in the last 30 days, "Locked in the demo"
+- **Demo controls moved to the top of Profile:** a slim bar on laptops, a compact row on phones ("Demo", "Try this guide", "Start over"). "Start over" still asks first ("Clear all your demo data on this device?", Cancel, Yes, reset). The old Demo section at the bottom is gone. Code: `DemoBar.jsx`
+- **Welcome screen on laptops (1024 px and up):** the Queen Anne photo fills the left half, the name form sits on the right. Phones unchanged
+- **Home page on laptops:** picture, rating and stars on the left and stay in view while you scroll; comments on the right. Phones unchanged. The home page frame widens to 1160 px like Surf
+- **Map list on laptops (900 px and up):** search, home count, filter chips and the style menu are one toolbar row across the top, so the list below shows more homes (about 4 cards show at 800 px tall). Phones unchanged
+- **House drawing fixes (found while checking):** roofs are now built from their walls (`src/lib/houseGeometry.js`): centered, 5 px overhang (was 14 to 20), and reaching 1 px into the wall so no gap or hairline can show. Fixed: the butterfly roof floated above its walls (the wall top now follows the roof underside), the Victorian tower left a 2 px gap to the main wall, and chimneys now rise through the roof instead of hovering above it. Fences leave a gate gap at the front door in every shape, variant and mirrored layout (the rail used to run across the door). **Drawing grid:** open `#/drawings` (not linked anywhere) for every shape and variant; add `?flip=1`, `?units=2` or `?units=3`, `?pal=3` to see mirrored, attached and other colors
+- Tests added: six badges and the Surfer Elite rule, one icon per badge, contrast of every badge color pair, roofs centered with a small overhang, every roof comes from a helper, the fence never covers a door (all shapes, variants, mirrored)
+- **Not done or not checked:** no real earning logic for badges (V2: needs other people's likes and moderation history); screen reader pass on the badge buttons; the ranch carport and garage doors can still sit behind the fence (only front doors get a gate); I did not look at every earned badge at 390 px
+
+## UI polish Part F (Nov 23, pushed)
 Parts A to E kept. Checked at 390 and 1280 px, light and dark: no sideways scroll; 136 tests pass, build passes.
 - **20 stock photos** in `public/images/sample/` (Pexels, free license, checked one by one by eye: no people, no apartment blocks, no readable plates; Queen Anne Victorian, Craftsman and ordinary single-family styles). 1200 px wide WebP, 71 to 190 KB each, **3.23 MB in total**. Credits (photographer plus links) are in `SAMPLE_PHOTOS` in `src/lib/credits.js`, shown on a new **Credits screen** (`#/credits`, linked from Credits on Profile). Text only, so the page itself downloads no photos
 - **Which homes:** about 1 in 3 **single-family** homes (1,685 of the 5,391 houses, 31%). Picked from the home id (a hash), so a home always shows the same photo on every screen and device. Duplexes and triplexes always keep their drawing, because a one-house photo on a duplex would mislead. Code: `src/lib/stockCovers.js`.
@@ -73,7 +86,7 @@ Parts A to C kept. Checked at 390 and 1280 px, light and dark; 130 tests pass, b
 - **Appearance setting:** Auto / Light / Dark is only on Profile, Settings, "Appearance" (with a line "Auto follows your device's light or dark setting"). It was also on the welcome screen; removed there. Auto is the default for new visitors. Saved choice, `theme_changed` event and screen-reader label kept. `ARCHITECTURE.md` needed no change (it never mentioned where the switch is)
 - **Top screen on laptops (1024 px and wider):** Home of the week full width, then Hot this week and Top rated side by side. Phones stay one column
 
-## UI polish Part E (Nov 23, committed, not pushed)
+## UI polish Part E (Nov 23, pushed)
 Parts A to D kept. Checked at 390 and 1280 px, light and dark; 132 tests pass, build passes, no sideways scroll.
 - **Profile lists:** My comments and Recent activity show the latest 5 with "See all" (only when there are more than 5). `#/profile/comments` and `#/profile/activity` list everything newest first, grouped under Today / Yesterday / dated headings, 20 at a time with "Show more", and "Back to Profile" at the top
 - **Profile on laptops (1024 px and up):** stats row across the top, then two columns. Left: My comments, Recent activity. Right: Badges, Settings (Appearance, Surfer name, Product numbers with View stats). Credits and Demo run full width underneath. Phones stay one column

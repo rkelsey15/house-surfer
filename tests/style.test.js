@@ -10,7 +10,7 @@ const icons = readFileSync(new URL('../src/components/Icons.jsx', import.meta.ur
 test('corner radius uses the scale (small, control, card) or a circle or pill', () => {
   const loose = [...css.matchAll(/border-radius:\s*([^;}]+)/g)]
     .map((m) => m[1].trim())
-    .filter((v) => !/^(var\(--r-(sm|ctl|card)\)|50%|999px)$/.test(v))
+    .filter((v) => !/^(var\(--r-(sm|ctl|card)\)|50%|999px|0)$/.test(v))
   // The logo mark keeps its original 8 px (the logo is unchanged).
   assert.deepEqual([...new Set(loose)], ['8px'])
 })

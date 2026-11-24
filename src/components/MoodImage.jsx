@@ -3,9 +3,10 @@ import { creditLine } from '../lib/credits.js'
 // A stock photo used only for mood (welcome screen, empty states). It is
 // decoration, so it has no alt text; the photographer is credited on the photo
 // and with links in "Credits" on the Profile screen.
-export default function MoodImage({ photo, height = 160, position = 'center', className = '' }) {
+export default function MoodImage({ photo, height = 160, position = 'center', className = '', fill = false }) {
+  // `fill`: no inline height, so a CSS class decides how tall the photo is.
   return (
-    <figure className={`mood ${className}`.trim()} style={{ height }}>
+    <figure className={`mood ${className}`.trim()} style={fill ? undefined : { height }}>
       <img src={import.meta.env.BASE_URL + photo.file} alt="" loading="lazy" style={{ objectPosition: position }} />
       <figcaption className="mood-credit">{creditLine(photo)}</figcaption>
     </figure>

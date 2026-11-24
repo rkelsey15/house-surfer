@@ -1,4 +1,5 @@
 import { houseAlt } from '../lib/a11y.js'
+import { FENCE, G, Hp, fenceParts, gateFor, roofPoints, roofY } from '../lib/houseGeometry.js'
 import { houseDesign } from '../lib/houseDesign.js'
 
 // House illustrations, drawn in code (no photos, no listing images).
@@ -32,30 +33,42 @@ const Shutters = ({ x, y, w, h, c }) => (
   </g>
 )
 
-const Chimney = ({ x, y, h = 28, brick }) => (
-  <g>
-    <rect x={x} y={y} width="12" height={h} fill={brick} />
-    <rect x={x - 2} y={y - 3} width="16" height="4" fill={brick} />
-  </g>
-)
+// Roof helpers (G, Hp, roofPoints, roofY) and the fence and door geometry live in lib/houseGeometry.js.
+const Roof = ({ g, fill }) => <polygon points={roofPoints(g).map((p) => p.join(',')).join(' ')} fill={fill} />
+
+// A chimney that rises from inside the house, through the roof `g`, to above its top edge.
+// Draw it first: the wall and roof drawn after it hide the part that is inside.
+const Chimney = ({ g, x, brick }) => {
+  const top = Math.min(roofY(g, x), roofY(g, x + 12)) - 14
+  const bottom = g.base + 6
+  return (
+    <g>
+      <rect x={x} y={top} width="12" height={bottom - top} fill={brick} />
+      <rect x={x - 2} y={top - 3} width="16" height="4" fill={brick} />
+    </g>
+  )
+}
 
 const Knob = ({ x, y }) => <circle cx={x} cy={y} r="1.6" fill="#f4e4b0" />
 
 // ---------------------------------------------------------------------------
 // Shapes. Each gets { c: {wall, roof, trim, door}, v: variant, wall (this unit's wall), chimney, brick }.
+// Order inside each: chimney, walls, roofs, then details (so roofs always sit on top of walls).
 
 const SHAPES = {
   // Victorian: tall, gabled, with trim. 0 = turret and porch, 1 = twin gables, 2 = bay window and tall gable.
   victorian: ({ c, v, wall, chimney, brick }) => {
     if (v === 1) {
+      const a = G(84, 156, 72, 38)
+      const b = G(150, 226, 92, 66)
       return (
         <>
-          {chimney && <Chimney x={196} y={34} h={32} brick={brick} />}
+          {chimney && <Chimney g={b} x={204} brick={brick} />}
           <rect x="84" y="72" width="72" height="78" fill={wall} />
-          <polygon points="78,72 120,38 162,72" fill={c.roof} />
-          <polygon points="120,48 134,68 106,68" fill={c.trim} opacity=".9" />
           <rect x="150" y="92" width="76" height="58" fill={wall} />
-          <polygon points="144,92 188,66 232,92" fill={c.roof} />
+          <Roof g={a} fill={c.roof} />
+          <Roof g={b} fill={c.roof} />
+          <polygon points="120,48 134,68 106,68" fill={c.trim} opacity=".9" />
           <polygon points="188,74 200,90 176,90" fill={c.trim} opacity=".9" />
           <Win x={98} y={86} w={22} h={26} t={c.trim} />
           <Win x={166} y={104} w={20} h={22} t={c.trim} />
@@ -68,16 +81,18 @@ const SHAPES = {
       )
     }
     if (v === 2) {
+      const main = G(96, 204, 70, 26)
+      const bay = G(66, 96, 90, 76, 4)
       return (
         <>
-          {chimney && <Chimney x={176} y={34} h={30} brick={brick} />}
+          {chimney && <Chimney g={main} x={176} brick={brick} />}
           <rect x="96" y="70" width="108" height="80" fill={wall} />
-          <polygon points="150,26 212,70 88,70" fill={c.roof} />
+          <rect x="66" y="90" width="30" height="60" fill={wall} />
+          <Roof g={main} fill={c.roof} />
+          <Roof g={bay} fill={c.roof} />
           <polygon points="150,40 168,66 132,66" fill={c.trim} opacity=".9" />
           <circle cx="150" cy="58" r="5" fill={WIN} stroke={c.roof} strokeWidth="1.5" />
-          <polygon points="66,92 96,86 96,138 66,142" fill={wall} />
-          <polygon points="62,92 82,76 100,88" fill={c.roof} />
-          <path d="M66 100l30-6M66 116l30-4M66 130l30-2" stroke={c.trim} strokeWidth="1.5" />
+          <path d="M66 102h30M66 116h30M66 130h30" stroke={c.trim} strokeWidth="1.5" />
           <Win x={110} y={84} w={22} h={28} t={c.trim} />
           <Win x={168} y={84} w={22} h={28} t={c.trim} />
           <rect x="136" y="112" width="26" height="38" fill={c.door} />
@@ -87,23 +102,26 @@ const SHAPES = {
         </>
       )
     }
+    const main = G(106, 194, 74, 42)
+    const tower = G(192, 232, 58, 22, 4)
+    const porch = G(66, 106, 98, 84, 4)
     return (
       <>
-        {chimney && <Chimney x={116} y={36} h={34} brick={brick} />}
-        <polygon points="150,42 202,74 98,74" fill={c.roof} />
+        {chimney && <Chimney g={main} x={116} brick={brick} />}
         <rect x="106" y="74" width="88" height="76" fill={wall} />
+        <rect x="192" y="58" width="40" height="92" fill={wall} />
+        <rect x="66" y="98" width="42" height="52" fill={wall} />
+        <Roof g={main} fill={c.roof} />
+        <Roof g={tower} fill={c.roof} />
+        <Roof g={porch} fill={c.roof} />
+        <line x1="212" y1="22" x2="212" y2="10" stroke={c.roof} strokeWidth="2" />
         <polygon points="150,52 166,70 134,70" fill={c.trim} opacity=".9" />
         <circle cx="150" cy="64" r="4" fill={WIN} stroke={c.roof} strokeWidth="1.5" />
-        <rect x="196" y="58" width="36" height="92" fill={wall} />
-        <polygon points="214,20 238,58 190,58" fill={c.roof} />
-        <line x1="214" y1="20" x2="214" y2="9" stroke={c.roof} strokeWidth="2" />
         <Win x={204} y={68} w={20} h={24} t={c.trim} />
         <Win x={204} y={104} w={20} h={24} t={c.trim} />
         <Win x={118} y={88} w={24} h={26} t={c.trim} />
         <rect x="156" y="112" width="24" height="38" fill={c.door} />
         <Knob x={175} y={132} />
-        <rect x="66" y="98" width="40" height="52" fill={wall} opacity=".9" />
-        <polygon points="62,98 86,82 110,98" fill={c.roof} />
         <path d="M70 150V104M82 150V104M94 150V104" stroke={c.trim} strokeWidth="2" />
       </>
     )
@@ -114,14 +132,16 @@ const SHAPES = {
   craftsman: ({ c, v, wall, chimney, brick }) => {
     const stone = '#8d8579'
     if (v === 1) {
+      const main = G(66, 234, 82, 44)
+      const dormer = G(128, 172, 56, 38)
       return (
         <>
-          {chimney && <Chimney x={196} y={42} h={30} brick={brick} />}
-          <polygon points="54,82 150,44 246,82" fill={c.roof} />
-          <rect x="128" y="56" width="44" height="24" fill={wall} />
-          <polygon points="122,56 150,38 178,56" fill={c.roof} />
-          <Win x={138} y={60} w={24} h={16} t={c.trim} />
+          {chimney && <Chimney g={main} x={196} brick={brick} />}
           <rect x="66" y="82" width="168" height="68" fill={wall} />
+          <Roof g={main} fill={c.roof} />
+          <rect x="128" y="56" width="44" height="26" fill={wall} />
+          <Roof g={dormer} fill={c.roof} />
+          <Win x={138} y={60} w={24} h={16} t={c.trim} />
           <rect x="66" y="108" width="168" height="6" fill={c.trim} />
           <rect x="74" y="114" width="9" height="36" fill={c.trim} />
           <rect x="217" y="114" width="9" height="36" fill={c.trim} />
@@ -133,12 +153,13 @@ const SHAPES = {
       )
     }
     if (v === 2) {
+      const main = G(74, 226, 82, 30)
       return (
         <>
-          {chimney && <Chimney x={104} y={40} h={34} brick={brick} />}
-          <polygon points="60,82 150,30 240,82" fill={c.roof} />
-          <polygon points="150,42 176,76 124,76" fill={c.trim} opacity=".85" />
+          {chimney && <Chimney g={main} x={104} brick={brick} />}
           <rect x="74" y="82" width="152" height="68" fill={wall} />
+          <Roof g={main} fill={c.roof} />
+          <polygon points="150,42 176,76 124,76" fill={c.trim} opacity=".85" />
           <rect x="74" y="108" width="152" height="8" fill={c.trim} />
           <rect x="82" y="116" width="14" height="34" fill={stone} />
           <rect x="80" y="112" width="18" height="5" fill={c.trim} />
@@ -152,11 +173,12 @@ const SHAPES = {
       )
     }
     if (v === 3) {
+      const main = Hp(64, 236, 84, 46, 40)
       return (
         <>
-          {chimney && <Chimney x={186} y={32} h={30} brick={brick} />}
-          <polygon points="44,84 92,46 208,46 256,84" fill={c.roof} />
+          {chimney && <Chimney g={main} x={186} brick={brick} />}
           <rect x="64" y="84" width="172" height="66" fill={wall} />
+          <Roof g={main} fill={c.roof} />
           <rect x="64" y="108" width="172" height="6" fill={c.trim} />
           <rect x="72" y="114" width="8" height="36" fill={c.trim} />
           <rect x="220" y="114" width="8" height="36" fill={c.trim} />
@@ -168,12 +190,13 @@ const SHAPES = {
         </>
       )
     }
+    const main = G(64, 236, 78, 36)
     return (
       <>
-        {chimney && <Chimney x={196} y={44} h={30} brick={brick} />}
-        <polygon points="50,78 150,36 250,78" fill={c.roof} />
-        <path d="M110 78l-22 20M190 78l22 20" stroke={c.trim} strokeWidth="2.5" />
+        {chimney && <Chimney g={main} x={196} brick={brick} />}
         <rect x="64" y="78" width="172" height="72" fill={wall} />
+        <Roof g={main} fill={c.roof} />
+        <path d="M84 78l-10 12M216 78l10 12" stroke={c.trim} strokeWidth="2.5" />
         <rect x="64" y="112" width="172" height="6" fill={c.trim} />
         <rect x="72" y="118" width="8" height="32" fill={c.trim} />
         <rect x="220" y="118" width="8" height="32" fill={c.trim} />
@@ -188,11 +211,12 @@ const SHAPES = {
   // Cottage (pre-war): small and steep. 0 = round attic window, 1 = chimney and arched door, 2 = cross gable.
   cottage: ({ c, v, wall, chimney, brick }) => {
     if (v === 1) {
+      const main = G(70, 230, 74, 26)
       return (
         <>
-          <Chimney x={190} y={26} h={38} brick={brick} />
-          <polygon points="56,74 150,26 244,74" fill={c.roof} />
+          <Chimney g={main} x={190} brick={brick} />
           <rect x="70" y="74" width="160" height="76" fill={wall} />
+          <Roof g={main} fill={c.roof} />
           <path d="M136 150v-28a14 14 0 0 1 28 0v28z" fill={c.door} />
           <Knob x={158} y={136} />
           <Win x={86} y={94} w={30} h={24} t={c.trim} />
@@ -205,12 +229,14 @@ const SHAPES = {
       )
     }
     if (v === 2) {
+      const main = G(66, 234, 78, 46)
+      const cross = G(66, 150, 82, 40, 4)
       return (
         <>
-          {chimney && <Chimney x={196} y={42} h={28} brick={brick} />}
-          <polygon points="52,78 150,46 248,78" fill={c.roof} />
+          {chimney && <Chimney g={main} x={196} brick={brick} />}
           <rect x="66" y="78" width="168" height="72" fill={wall} />
-          <polygon points="66,82 108,40 150,82" fill={c.roof} />
+          <Roof g={main} fill={c.roof} />
+          <Roof g={cross} fill={c.roof} />
           <polygon points="80,80 108,52 136,80" fill={wall} />
           <Win x={98} y={64} w={20} h={14} t={c.trim} />
           <Win x={82} y={96} w={34} h={24} t={c.trim} />
@@ -221,11 +247,12 @@ const SHAPES = {
         </>
       )
     }
+    const main = G(74, 226, 70, 22)
     return (
       <>
-        {chimney && <Chimney x={92} y={30} h={34} brick={brick} />}
-        <polygon points="60,70 150,22 240,70" fill={c.roof} />
+        {chimney && <Chimney g={main} x={92} brick={brick} />}
         <rect x="74" y="70" width="152" height="80" fill={wall} />
+        <Roof g={main} fill={c.roof} />
         <rect x="134" y="104" width="30" height="46" fill={c.door} />
         <Knob x={158} y={128} />
         <Win x={90} y={88} w={30} h={24} t={c.trim} />
@@ -236,14 +263,15 @@ const SHAPES = {
     )
   },
 
-  // Ranch (mid-century): long and low. 0 = hip roof and garage, 1 = carport, 2 = split level with picture window.
+  // Ranch (mid-century): long and low. 0 = low gable and garage, 1 = carport, 2 = split level with picture window.
   ranch: ({ c, v, wall, chimney, brick }) => {
     if (v === 1) {
+      const main = G(58, 242, 88, 64)
       return (
         <>
-          {chimney && <Chimney x={104} y={48} h={26} brick={brick} />}
-          <polygon points="44,88 150,64 256,88" fill={c.roof} />
+          {chimney && <Chimney g={main} x={104} brick={brick} />}
           <rect x="58" y="88" width="184" height="62" fill={wall} />
+          <Roof g={main} fill={c.roof} />
           <rect x="178" y="100" width="68" height="5" fill={c.trim} />
           <rect x="182" y="105" width="4" height="45" fill={c.trim} />
           <rect x="238" y="105" width="4" height="45" fill={c.trim} />
@@ -258,27 +286,29 @@ const SHAPES = {
       )
     }
     if (v === 2) {
+      const a = G(62, 146, 66, 46)
+      const b = G(146, 246, 98, 82)
       return (
         <>
-          {chimney && <Chimney x={72} y={36} h={30} brick={brick} />}
+          {chimney && <Chimney g={a} x={72} brick={brick} />}
           <rect x="62" y="66" width="84" height="84" fill={wall} />
-          <polygon points="56,66 104,46 152,66" fill={c.roof} />
           <rect x="146" y="98" width="100" height="52" fill={wall} />
-          <polygon points="140,98 196,82 252,98" fill={c.roof} />
+          <Roof g={a} fill={c.roof} />
+          <Roof g={b} fill={c.roof} />
           <rect x="74" y="94" width="58" height="36" fill={WIN} stroke={c.trim} strokeWidth="2" />
           <path d="M103 94v36M74 112h58" stroke={c.trim} strokeWidth="1.4" />
           <rect x="160" y="112" width="20" height="38" fill={c.door} />
           <Knob x={176} y={132} />
           <Win x={196} y={108} w={36} h={18} t={c.trim} />
-          <rect x="62" y="64" width="90" height="4" fill={c.trim} opacity=".7" />
         </>
       )
     }
+    const main = G(56, 244, 82, 54)
     return (
       <>
-        {chimney && <Chimney x={182} y={40} h={24} brick={brick} />}
-        <polygon points="42,82 150,54 258,82" fill={c.roof} />
+        {chimney && <Chimney g={main} x={182} brick={brick} />}
         <rect x="56" y="82" width="188" height="68" fill={wall} />
+        <Roof g={main} fill={c.roof} />
         <rect x="76" y="110" width="22" height="40" fill={c.door} />
         <Knob x={94} y={130} />
         <Win x={112} y={96} w={48} h={20} t={c.trim} />
@@ -297,13 +327,15 @@ const SHAPES = {
       [188, 78],
     ]
     if (v === 1) {
+      const main = G(70, 182, 66, 36)
+      const garage = G(182, 246, 100, 84)
       return (
         <>
-          {chimney && <Chimney x={80} y={34} h={32} brick={brick} />}
+          {chimney && <Chimney g={main} x={80} brick={brick} />}
           <rect x="70" y="66" width="112" height="84" fill={wall} />
-          <polygon points="62,66 126,36 190,66" fill={c.roof} />
           <rect x="182" y="100" width="64" height="50" fill={wall} />
-          <polygon points="176,100 214,84 252,100" fill={c.roof} />
+          <Roof g={main} fill={c.roof} />
+          <Roof g={garage} fill={c.roof} />
           <rect x="192" y="114" width="44" height="36" fill={c.trim} />
           <path d="M192 126h44M192 138h44" stroke={c.roof} strokeWidth="1.2" opacity=".5" />
           {[88, 146].map((x) => (
@@ -320,24 +352,28 @@ const SHAPES = {
         </>
       )
     }
+    const main = G(70, 230, 66, 34)
     return (
       <>
         {chimney && (
           <>
-            <Chimney x={80} y={36} h={32} brick={brick} />
-            <Chimney x={208} y={36} h={32} brick={brick} />
+            <Chimney g={main} x={80} brick={brick} />
+            <Chimney g={main} x={208} brick={brick} />
           </>
         )}
-        <polygon points="56,66 150,34 244,66" fill={c.roof} />
         <rect x="70" y="66" width="160" height="84" fill={wall} />
+        <Roof g={main} fill={c.roof} />
         {v === 2 &&
-          [92, 184].map((x) => (
-            <g key={x}>
-              <rect x={x} y="48" width="28" height="20" fill={wall} />
-              <polygon points={`${x - 4},48 ${x + 14},36 ${x + 32},48`} fill={c.roof} />
-              <Win x={x + 6} y={52} w={16} h={12} t={c.trim} bars={false} />
-            </g>
-          ))}
+          [92, 184].map((x) => {
+            const d = G(x, x + 28, 48, 36, 4)
+            return (
+              <g key={x}>
+                <rect x={x} y="48" width="28" height="20" fill={wall} />
+                <Roof g={d} fill={c.roof} />
+                <Win x={x + 6} y={52} w={16} h={12} t={c.trim} bars={false} />
+              </g>
+            )
+          })}
         {upper.map(([x, y]) => (
           <g key={x}>
             <Win x={x} y={y} w={24} h={22} t={c.trim} />
@@ -361,10 +397,12 @@ const SHAPES = {
   // Modern: flat or sloped roofs and big glass. 0 = flat and glass, 1 = butterfly roof, 2 = stacked boxes, 3 = shed roof.
   modern: ({ c, v, wall }) => {
     if (v === 1) {
+      // Butterfly: two slopes that dip to a valley in the middle. The wall's top edge follows the
+      // underside of the roof (and runs 2 units under it), so there is no gap at the ends or the valley.
       return (
         <>
-          <rect x="70" y="56" width="160" height="94" fill={wall} />
-          <polygon points="58,38 150,62 242,38 242,48 150,72 58,48" fill={c.roof} />
+          <polygon points="70,48 150,70 230,48 230,150 70,150" fill={wall} />
+          <polygon points="65,40 150,64 235,40 235,48 150,72 65,48" fill={c.roof} />
           <rect x="84" y="82" width="42" height="52" fill={WIN} stroke={c.trim} strokeWidth="2" />
           <rect x="132" y="82" width="42" height="52" fill={WIN} stroke={c.trim} strokeWidth="2" />
           <path d="M105 82v52M153 82v52" stroke={c.trim} strokeWidth="1.2" />
@@ -377,8 +415,8 @@ const SHAPES = {
       return (
         <>
           <rect x="60" y="102" width="180" height="48" fill={wall} />
+          <rect x="100" y="54" width="132" height="48" fill={wall} opacity=".92" />
           <rect x="56" y="98" width="188" height="5" fill={c.roof} />
-          <rect x="100" y="54" width="132" height="46" fill={wall} opacity=".92" />
           <rect x="94" y="50" width="144" height="5" fill={c.roof} />
           <rect x="112" y="64" width="62" height="28" fill={WIN} stroke={c.trim} strokeWidth="2" />
           <rect x="186" y="64" width="34" height="28" fill={c.roof} opacity=".8" />
@@ -390,10 +428,11 @@ const SHAPES = {
       )
     }
     if (v === 3) {
+      // Shed roof: one slope. Wall top sits under the roof band; the band is drawn last.
       return (
         <>
-          <polygon points="70,80 230,50 230,150 70,150" fill={wall} />
-          <polygon points="62,82 238,48 238,57 62,91" fill={c.roof} />
+          <polygon points="70,86 230,54 230,150 70,150" fill={wall} />
+          <polygon points="65,81 235,47 235,56 65,90" fill={c.roof} />
           <rect x="84" y="112" width="20" height="38" fill={c.door} />
           <Knob x={99} y={132} />
           <rect x="120" y="94" width="44" height="40" fill={WIN} stroke={c.trim} strokeWidth="2" />
@@ -405,7 +444,7 @@ const SHAPES = {
     return (
       <>
         <rect x="70" y="40" width="160" height="110" fill={wall} />
-        <rect x="62" y="34" width="176" height="10" fill={c.roof} />
+        <rect x="65" y="34" width="170" height="10" fill={c.roof} />
         <rect x="84" y="56" width="70" height="40" fill={WIN} stroke={c.trim} strokeWidth="2" />
         <rect x="170" y="56" width="44" height="94" fill={c.roof} opacity=".8" />
         <rect x="84" y="108" width="70" height="26" fill={WIN} stroke={c.trim} strokeWidth="2" />
@@ -449,14 +488,20 @@ const Tree = ({ kind, x, size }) => {
   )
 }
 
-const Picket = () => (
-  <g fill="#fffdf6" opacity=".95">
-    <rect x="58" y="142" width="184" height="3" />
-    {Array.from({ length: 24 }, (_, i) => 60 + i * 7.6).map((x) =>
-      x > 122 && x < 178 ? null : <rect key={x} x={x} y="136" width="4.5" height="16" />,
-    )}
-  </g>
-)
+// A white picket fence along the front, with a gate gap at the door (see fenceParts).
+const Picket = ({ gate }) => {
+  const { posts, rails } = fenceParts(gate)
+  return (
+    <g fill="#fffdf6" opacity=".95">
+      {rails.map(([x0, x1]) => (
+        <rect key={x0} x={x0} y="142" width={x1 - x0} height="3" />
+      ))}
+      {posts.map((x) => (
+        <rect key={x} x={x} y="136" width={FENCE.postW} height="16" />
+      ))}
+    </g>
+  )
+}
 
 const Flowers = ({ colors }) => (
   <g>
@@ -474,8 +519,9 @@ const Cloud = ({ x, y, s = 1 }) => (
   </g>
 )
 
-export default function HouseArt({ home, height = 210 }) {
-  const d = houseDesign(home)
+// The whole scene for one design (see houseDesign). Split from HouseArt so the drawing
+// gallery (#/drawings) can show any shape and variant without needing a matching home.
+export function HouseScene({ design: d, height = 210, label = 'House drawing' }) {
   const Shape = SHAPES[d.shape]
 
   // One house, or 2 or 3 homes side by side, each drawn smaller so they fit.
@@ -488,6 +534,9 @@ export default function HouseArt({ home, height = 210 }) {
     return { u, tx: cx - 150 * scale, wall: u % 2 === 0 ? d.palette.wall : d.neighborWall }
   })
 
+  // The fence leaves a gate gap at the front door.
+  const gate = gateFor(d.shape, d.variant, d.flip)
+
   return (
     <svg
       className="art"
@@ -495,7 +544,7 @@ export default function HouseArt({ home, height = 210 }) {
       preserveAspectRatio="xMidYMid slice"
       style={{ height }}
       role="img"
-      aria-label={houseAlt(home)}
+      aria-label={label}
     >
       <rect width="300" height="170" fill="var(--sky)" />
       <circle cx={d.sunX} cy="30" r="12" fill="#fff" opacity=".9" />
@@ -513,7 +562,11 @@ export default function HouseArt({ home, height = 210 }) {
         ))}
       </g>
       {d.flowers && <Flowers colors={d.flowers} />}
-      {d.fence && d.units === 1 && <Picket />}
+      {d.fence && d.units === 1 && <Picket gate={gate} />}
     </svg>
   )
+}
+
+export default function HouseArt({ home, height = 210 }) {
+  return <HouseScene design={houseDesign(home)} height={height} label={houseAlt(home)} />
 }

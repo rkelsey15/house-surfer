@@ -38,14 +38,23 @@ export function recentActivity({ ratings, comments, likes, photos, me, limit = 1
   return items.filter((i) => i.at).sort((a, b) => b.at.localeCompare(a.at)).slice(0, limit)
 }
 
-// Locked badge placeholders. Nothing unlocks in the demo.
-export const LOCKED_BADGES = [
-  { id: 'first-steps', name: 'First Steps', how: 'Rate 5 homes' },
-  { id: 'block-walker', name: 'Block Walker', how: 'Rate 25 homes' },
-  { id: 'voice', name: 'Good Neighbor Voice', how: 'Post 10 comments' },
-  { id: 'liked', name: 'Crowd Favorite', how: 'Get 25 likes on your comments' },
-  { id: 'photographer', name: 'Curb Photographer', how: 'Snap 5 houses' },
+// All six badges. In the demo every one stays locked: nothing can be earned yet (needs
+// other people's likes, V2). `how` is the short line on the tile; `detail` shows when you tap it.
+export const BADGES = [
+  { id: 'first-steps', name: 'First Steps', how: 'Rate 5 homes', detail: 'Rate 5 homes.' },
+  { id: 'block-walker', name: 'Block Walker', how: 'Rate 25 homes', detail: 'Rate 25 homes.' },
+  { id: 'voice', name: 'Good Neighbor Voice', how: 'Post 10 comments', detail: 'Post 10 comments about houses.' },
+  { id: 'liked', name: 'Crowd Favorite', how: 'Get 25 likes on your comments', detail: 'Get 25 likes on your comments.' },
+  { id: 'photographer', name: 'Curb Photographer', how: 'Snap 5 houses', detail: 'Snap photos of 5 houses.' },
+  {
+    id: 'elite',
+    name: 'Surfer Elite',
+    how: 'Helpful top contributor',
+    detail: 'Post 25 or more comments, get 50 or more likes on them, and have no blocked comments in the last 30 days. Locked in the demo.',
+    rule: { comments: 25, likes: 50, cleanDays: 30 },
+  },
 ]
+export const LOCKED_BADGES = BADGES
 
 // Group newest-first rows under day headings: "Today", "Yesterday", then "Nov 20, 2026".
 // `getAt` says where each row keeps its ISO time. Order inside and between groups is kept.

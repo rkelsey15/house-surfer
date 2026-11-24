@@ -7,6 +7,7 @@ import HomePage from './screens/HomePage.jsx'
 import MapScreen from './screens/MapScreen.jsx'
 import Profile from './screens/Profile.jsx'
 import Credits from './screens/Credits.jsx'
+import DrawingGallery from './screens/DrawingGallery.jsx'
 import ProfileList from './screens/ProfileList.jsx'
 import Signup from './screens/Signup.jsx'
 import Snap from './screens/Snap.jsx'
@@ -58,7 +59,7 @@ export default function App() {
       {/* The tab bar comes before the page in the code, so Tab order matches what you see on laptops (tabs at the top). */}
       <TabBar />
 
-      <main className={['/', '/top', '/profile'].includes(location.pathname) ? 'main main-wide' : 'main'} id="main" tabIndex={-1}>
+      <main className={['/', '/top', '/profile'].includes(location.pathname) || location.pathname.startsWith('/home/') || location.pathname === '/drawings' ? 'main main-wide' : 'main'} id="main" tabIndex={-1}>
         <Routes>
           <Route path="/" element={<Surf />} />
           <Route path="/home/:id" element={<HomePage />} />
@@ -68,6 +69,7 @@ export default function App() {
           <Route path="/stats" element={<Stats />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/credits" element={<Credits />} />
+          <Route path="/drawings" element={<DrawingGallery />} />
           <Route path="/profile/comments" element={<ProfileList kind="comments" />} />
           <Route path="/profile/activity" element={<ProfileList kind="activity" />} />
           <Route path="*" element={<Navigate to="/" replace />} />

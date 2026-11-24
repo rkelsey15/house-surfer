@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useGuide } from '../lib/GuideContext.jsx'
+import { useMemo } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import Badge from '../components/Badge.jsx'
+import DemoBar from '../components/DemoBar.jsx'
 import ThemeSwitch from '../components/ThemeSwitch.jsx'
-import { HouseIcon, LockIcon } from '../components/Icons.jsx'
+import { HouseIcon } from '../components/Icons.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
 import { useComments } from '../lib/CommentsContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
@@ -10,13 +11,12 @@ import { EmptyState } from '../components/MoodImage.jsx'
 import { MOOD_PHOTOS, PEXELS_LICENSE_URL } from '../lib/credits.js'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { usePhotos } from '../lib/PhotosContext.jsx'
-import { LOCKED_BADGES, myComments, recentActivity } from '../lib/profileLists.js'
+import { BADGES, myComments, recentActivity } from '../lib/profileLists.js'
 import { ActivityRow, CommentRow } from '../components/ProfileRows.jsx'
 
 // Profile shows only the latest few of each list; "See all" opens the full page.
 const PREVIEW = 5
 
-import { resetDemo } from '../lib/demo.js'
 
 const monthYear = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 
@@ -35,12 +35,12 @@ export default function Profile() {
     () => recentActivity({ ratings, comments, likes, photos, me: profile.handle, limit: Infinity }),
     [ratings, comments, likes, photos, profile.handle],
   )
-  const [confirming, setConfirming] = useState(false)
-  const { reopen } = useGuide()
-  const navigate = useNavigate()
+  // Design preview only: #/profile?badges=earned shows the earned look. Nothing is earned in the demo.
+  const previewEarned = new URLSearchParams(useLocation().search).get('badges') === 'earned'
 
   return (
     <div>
+      <DemoBar />
       <div className="avatar">
         <HouseIcon />
       </div>
@@ -99,16 +99,10 @@ export default function Profile() {
         <div className="profile-col">
           <section className="profile-sec">
             <h2 className="sec-t">Badges</h2>
-            <p className="muted small">Coming soon. No badge unlocks in the demo.</p>
+            <p className="muted small">Coming soon. No badge unlocks in the demo. Tap one to see how to earn it.</p>
             <ul className="badge-grid plist">
-              {LOCKED_BADGES.map((b) => (
-                <li key={b.id} className="badge-lock">
-                  <LockIcon />
-                  <span className="sr-only">Locked: </span>
-                  <b>{b.name}</b>
-                  <span>{b.how}</span>
-                  <span className="soon">Coming soon</span>
-                </li>
+              {BADGES.map((b) => (
+                <Badge key={b.id} badge={b} earned={previewEarned} />
               ))}
             </ul>
           </section>
@@ -154,43 +148,6 @@ export default function Profile() {
             <span>Homes: King County public records. Map: &copy; OpenStreetMap contributors. House drawings are made in code.</span>
           </li>
         </ul>
-      </section>
-
-      <section className="profile-sec">
-        <h2 className="sec-t demo-sec">Demo</h2>
-        <div className="setting">
-          <span>Try this guide</span>
-          <button
-            className="btn"
-            onClick={() => {
-              reopen()
-              navigate('/')
-            }}
-          >
-            Show Try this guide
-          </button>
-        </div>
-        <div className="setting">
-          <span>Start over</span>
-          {!confirming && (
-            <button className="btn" onClick={() => setConfirming(true)}>
-              Reset demo
-            </button>
-          )}
-        </div>
-        {confirming && (
-          <div className="reset-confirm" role="alertdialog" aria-label="Reset demo">
-            <p>Clear all your demo data on this device?</p>
-            <div className="reset-actions">
-              <button className="btn" onClick={() => setConfirming(false)}>
-                Cancel
-              </button>
-              <button className="btn danger" onClick={resetDemo}>
-                Yes, reset
-              </button>
-            </div>
-          </div>
-        )}
       </section>
     </div>
   )

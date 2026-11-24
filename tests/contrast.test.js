@@ -40,6 +40,12 @@ const PAIRS = [
   ['control-line', 'surface', GRAPHIC, 'input and button borders on cards'],
   ['control-line', 'bg', GRAPHIC, 'input and button borders on page'],
   ['brand', 'bg', GRAPHIC, 'focus ring on page'],
+  ['muted', 'line', GRAPHIC, 'locked badge icon'],
+  ['brand', 'brand-soft', GRAPHIC, 'earned teal badge icon'],
+  ['gold-text', 'gold-soft', TEXT, 'earned gold badge icon'],
+  ['danger', 'coral-soft', GRAPHIC, 'earned coral badge icon'],
+  ['elite-gold', 'elite-bg', TEXT, 'Surfer Elite icon on black'],
+  ['ink', 'gold-soft', TEXT, 'text on gold'],
   ['brand', 'surface', GRAPHIC, 'focus ring on cards'],
 ]
 

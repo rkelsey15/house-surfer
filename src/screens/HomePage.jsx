@@ -15,6 +15,7 @@ import { logEvent } from '../lib/events.js'
 import { advanceFeed } from '../lib/feedSession.js'
 import { moderate } from '../lib/moderation.js'
 import { BLOCK_MESSAGE, WHY_MESSAGE } from '../lib/moderation-words.js'
+import { LAPTOP_QUERY, useMediaQuery } from '../lib/useMediaQuery.js'
 import { isSample, sampleComments, sampleLikes, sampleRating } from '../lib/sampleData.js'
 
 function timeAgo(iso) {
@@ -155,6 +156,7 @@ export default function HomePage() {
 }
 
 function HomePageFor({ id }) {
+  const laptop = useMediaQuery(LAPTOP_QUERY)
   const location = useLocation()
   const viewed = useRef(null)
   useEffect(() => {
@@ -272,8 +274,11 @@ function HomePageFor({ id }) {
         )}
       </div>
 
+      {/* Laptops: picture, rating and stars stay in view on the left; comments scroll on the right. */}
+      <div className="home-grid">
+      <div className="home-side">
       <div className="card">
-        <HomeCover home={home} />
+        <HomeCover home={home} height={laptop ? 280 : undefined} />
         <div className="info">
           <h1 className="addr" tabIndex={-1} ref={titleRef}>{home.address}</h1>
           <div className="facts">{typeLine(home)}</div>
@@ -310,6 +315,8 @@ function HomePageFor({ id }) {
         }}
       />
 
+      </div>
+      <div className="home-comments">
       <h2 className="sec-t">Comments</h2>
       <Composer placeholder="Say something about the house…" button="Post comment"
         onSubmit={(t) => {
@@ -327,6 +334,9 @@ function HomePageFor({ id }) {
           ))}
         </div>
       ))}
+
+      </div>
+      </div>
 
       {saved && (
         <>

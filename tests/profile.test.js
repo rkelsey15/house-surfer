@@ -1,7 +1,7 @@
 // Run with: npm test
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { LOCKED_BADGES, groupByDate, myComments, recentActivity, relativeTime } from '../src/lib/profileLists.js'
+import { BADGES, LOCKED_BADGES, groupByDate, myComments, recentActivity, relativeTime } from '../src/lib/profileLists.js'
 
 const c = (id, user, created_at, extra = {}) => ({ id, home_id: 'h1', user, created_at, deleted_at: null, ...extra })
 
@@ -38,6 +38,27 @@ test('recentActivity: mixes kinds, newest first, capped at 10 (AC 6.4)', () => {
   assert.deepEqual(out.map((i) => i.kind), ['snapped', 'liked', 'commented', 'rated'])
   const many = Object.fromEntries(Array.from({ length: 15 }, (_, i) => [`h${i}`, { stars: 3, at: `2026-02-${String(i + 1).padStart(2, '0')}T00:00:00Z` }]))
   assert.equal(recentActivity({ ratings: many, comments: [], likes: [], photos: [], me: 'Me' }).length, 10)
+})
+
+test('six badges, each with its own name, how-to and tap text; Surfer Elite has the agreed rule', () => {
+  assert.equal(BADGES.length, 6)
+  assert.equal(new Set(BADGES.map((b) => b.id)).size, 6)
+  assert.ok(BADGES.every((b) => b.name && b.how && b.detail))
+  const elite = BADGES.find((b) => b.id === 'elite')
+  assert.equal(elite.name, 'Surfer Elite')
+  assert.deepEqual(elite.rule, { comments: 25, likes: 50, cleanDays: 30 })
+  assert.match(elite.detail, /25/)
+  assert.match(elite.detail, /50/)
+  assert.match(elite.detail, /30 days/)
+})
+
+test('every badge has its own icon', async () => {
+  const { readFileSync } = await import('node:fs')
+  const src = readFileSync(new URL('../src/components/Badge.jsx', import.meta.url), 'utf8')
+  const block = src.slice(src.indexOf('const ICONS'), src.indexOf('}', src.indexOf('const ICONS')))
+  const icons = [...block.matchAll(/(\w+Icon),/g)].map((m) => m[1])
+  assert.equal(new Set(icons).size, BADGES.length, 'six different icons')
+  for (const b of BADGES) assert.ok(block.includes(b.id), b.id + ' has an icon')
 })
 
 test('badges: all have a name and a how-to (AC 6.5)', () => {
