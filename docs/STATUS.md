@@ -24,8 +24,8 @@ Sections 1 to 7 are pushed (Nov 22).
 | 8 | "Sample" tag on seeded comments | Looks done already (tag shows in screenshots); confirm at the end |
 | P | UI polish: Part A (accessibility basics + the 5 ideas) | **Done and pushed (Nov 23); awaiting Ryan's review** |
 | P2 | UI polish: Part B (the look) | **Done and pushed (Nov 23); awaiting Ryan's review** |
-| P3 | UI polish: Part C (less bland, surfing flow) | **Done and committed (Nov 23); not pushed yet** |
-| H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and committed (Nov 23); not pushed yet** |
+| P3 | UI polish: Part C (less bland, surfing flow) | **Done and pushed (Nov 23)** |
+| H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
 | D2 | Five UI polish ideas | Listed below; refine at the end |
@@ -91,7 +91,7 @@ Everything from Part A kept (44 px targets, labels, contrast, focus ring, pin sh
 
 **Still open for polish:** screen reader run, axe scan, real 200% zoom on a laptop browser (checked by narrow window width instead), map pin contrast against tiles.
 
-## UI polish Part C (done and committed Nov 23, not pushed yet)
+## UI polish Part C (done and pushed Nov 23)
 Parts A and B kept (re-audited at 320, 390, 1024 and 1280 px, light and dark: no small targets, unnamed controls, low contrast, off-screen controls or sideways scroll).
 - **Surf on laptops (1024 px and wider):** the house card is bigger (764 px wide, 400 px tall picture) with the "Try this" guide as a panel on its right; if the guide is dismissed the card centers. On phones the guide stays a small card above the house that you can collapse
 - **Stock photos (2, Pexels, free to use, credited):** a hero on the welcome screen and pictures on empty states (Profile "No comments yet", Top "No top homes yet", Surf "You've surfed them all"). Credit text sits on each photo and links are in a new Credits section on Profile. Never shown on a home or address (a test checks the files live in `public/images/mood/`)
