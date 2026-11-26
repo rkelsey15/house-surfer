@@ -60,7 +60,14 @@ Sections 1 to 7 are pushed (Nov 22).
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
 
-## Design kit (Nov 25, committed, not pushed)
+## Walkability and Steep hill (Nov 25, committed, not pushed)
+Free OpenStreetMap places plus free elevation tiles, worked out in the data script. Formula and reasons in DECISIONS.md.
+- **Data:** `homes.json` is now 1,908 KB (was 1,378 KB, +530 KB, +38%; gzipped about 205 KB vs 159 KB). Each home has `walk` (0 to 100), `places` (five counts) and, on steep homes only, `hill: true`. No coordinates were added; the exact point is used in memory only. `npm run data` takes about 1 to 2 minutes the first time (one Overpass request, 12 elevation tiles), seconds after that
+- **Scores:** range 24 to 100, median 72. 627 homes 90+, 2,871 at 70 to 89, 1,212 at 50 to 69, 2,008 at 25 to 49, 2 under 25. 1,565 homes (23%) are steep. 1,649 OpenStreetMap places were used
+- **App:** home page shows "Walkability Very walkable, 80", up to 4 count pills and a "Steep hill" pill; Credits has an OpenStreetMap section. Phone and laptop, light and dark, no sideways scroll. 171 tests pass, build passes. Code: `scripts/walkability.mjs`, `scripts/elevation.mjs`, `src/lib/walk.js`
+- **Not done or not checked:** the score is not shown on the feed card, the map or the list, and there is no filter or sort by it; I did not compare any score with a real walk; screen reader pass on the pills; townhouses (hidden) have scores too; the Overpass download depends on a free public server being up on the day you rebuild with `--refresh`
+
+## Design kit (Nov 25, pushed)
 Ryan's reusable UI kit is in `design/ui-kit/` (tokens, components, JS, gallery) for prototypes, the case study page and the demo video. **Not used by the app**: nothing in `src/` imports it and app styles are untouched. `README.md` explains each piece and `theme-surfer`. CLAUDE.md and `ARCHITECTURE.md` have the "start from the kit, don't mix with `src/styles.css`, 44 px" note.
 - Checked: all 4 files present; build passes and `dist` holds no kit files (Vite only bundles what `index.html` imports); 162 tests pass
 - **Two fixes to the kit while checking:** `gallery.html` had unfilled placeholders (`<!--INLINE_CSS-->`, `<!--INLINE_JS-->`) so it opened unstyled; it now links the three files. And the State toggle and Clickable flow showed every pane at once; added `.kit [hidden]{display:none !important}` to `components.css`

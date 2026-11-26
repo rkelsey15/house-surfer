@@ -37,8 +37,14 @@ export default function Credits() {
       <ul className="credit-grid">
         {Object.values(MOOD_PHOTOS).map((p) => <Item key={p.file} p={p} kind="mood" />)}
       </ul>
+      <h2 className="sec-t">Walkability</h2>
+      <p className="muted">
+        Walkability counts shops, cafes, parks, transit stops and schools within about 800 m (a 10 minute walk) of each home, using data &copy;{' '}
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>, available under the{' '}
+        <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" rel="noreferrer">Open Database License</a>. The 0 to 100 score is House Surfer&rsquo;s own formula.
+      </p>
       <h2 className="sec-t">Everything else</h2>
-      <p className="muted">Homes: King County public records. Map: &copy; OpenStreetMap contributors. House drawings are made in code.</p>
+      <p className="muted">Homes: King County public records. Map: &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>. House drawings are made in code.</p>
     </div>
   )
 }

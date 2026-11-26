@@ -12,6 +12,10 @@
 //   2. King County GIS "Parcels" layer: the outline of each parcel, which we
 //      reduce to one lat/lng point per house.
 //   3. Seattle's Neighborhood Map Atlas: the official Queen Anne outline.
+//   4. OpenStreetMap (Overpass API, one request, saved in data/raw): everyday
+//      places for the Walkability score. See scripts/walkability.mjs.
+//   5. AWS Terrain Tiles (free elevation images, saved in data/raw): the
+//      "steep hill" flag. See scripts/elevation.mjs.
 //
 // Privacy rules baked in (see CLAUDE.md, product rules 1 and 2)
 //   - We NEVER read the buyer/seller name columns of the sales file.
@@ -19,6 +23,8 @@
 //   - Pin locations are fuzzed by about half a block (25-50 m), so a pin can
 //     not point at one exact house. The exact location is never saved.
 //   - Sale prices are not written out, only the year of the last sale.
+//   - Walkability uses the exact point only in memory. Only the score and five
+//     counts are saved, never any coordinates of the places or the exact point.
 //   - The id is a hash, not the county parcel number.
 
 import fs from 'node:fs'
@@ -28,6 +34,8 @@ import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import AdmZip from 'adm-zip'
 import { parse } from 'csv-parse'
+import { loadElevation, gradeAt, STEEP_GRADE } from './elevation.mjs'
+import { getPlaces, makeIndex, countsFor, walkScore } from './walkability.mjs'
 
 const ROOT = path.resolve(import.meta.dirname, '..')
 const RAW = path.join(ROOT, 'data', 'raw')
@@ -342,6 +350,13 @@ async function main() {
     if (year > (lastSale.get(pin) ?? 0)) lastSale.set(pin, year)
   }
 
+  log('Step 6: OpenStreetMap places for Walkability')
+  const places = await getPlaces(bbox(rings), RAW, REFRESH, log)
+  log(`  places found: ${places.length}`)
+  const placeIndex = makeIndex(places, 47.64)
+  log('Step 7: elevation tiles for the steep hill flag')
+  const heightAt = await loadElevation(bbox(rings), RAW, REFRESH, log)
+
   // ---- assemble homes ----
   const homes = []
   const seenIds = new Set()
@@ -360,6 +375,8 @@ async function main() {
     const fuzzed = fuzzPoint(exactLng, exactLat, id, rings)
     if (!fuzzed) { drop('could not fuzz location'); continue }
     const [lng, lat] = fuzzed
+    const nearby = countsFor(placeIndex, exactLng, exactLat) // exact point stays in memory
+    const grade = gradeAt(heightAt, exactLng, exactLat) // exact point stays in memory
     const baths = num(b.BathFullCount) + 0.75 * num(b.Bath3qtrCount) + 0.5 * num(b.BathHalfCount)
     const yearBuilt = num(b.YrBuilt) || null
     homes.push({
@@ -375,6 +392,9 @@ async function main() {
       units,
       style: styleFromYear(yearBuilt),
       lastSaleYear: lastSale.get(pin) ?? null,
+      walk: walkScore(nearby),
+      places: nearby,
+      ...(grade != null && grade >= STEEP_GRADE ? { hill: true } : {}), // only steep homes carry the flag
     })
   }
   homes.sort((a, b) => a.address.localeCompare(b.address, 'en', { numeric: true }) || a.id.localeCompare(b.id))
@@ -390,6 +410,9 @@ async function main() {
   log('  By type: ', count('type'))
   log('  By style:', count('style'))
   log('  Dropped:  ', dropped)
+  const ws = homes.map((h) => h.walk)
+  log(`  Walkability: min ${Math.min(...ws)}, median ${[...ws].sort((a, b) => a - b)[ws.length >> 1]}, max ${Math.max(...ws)}`)
+  log(`  Steep hill flag: ${homes.filter((h) => h.hill).length} homes (${pct(homes.filter((h) => h.hill).length)})`)
   log(`  Have beds ${pct(homes.filter((h) => h.beds).length)}, baths ${pct(homes.filter((h) => h.baths).length)}, year built ${pct(homes.filter((h) => h.yearBuilt).length)}, last sale ${pct(homes.filter((h) => h.lastSaleYear).length)}`)
 }
 

@@ -80,8 +80,11 @@ If the picture does not show, your viewer does not render Mermaid. GitHub does (
 | `type` | `"Single-family"`, `"Duplex"`, `"Triplex"` or `"Townhouse"` (hidden unless `showTownhouses`) |
 | `units` | 1, 2 or 3 |
 | `style` | An era from year built: `"Victorian era"`, `"Craftsman era"`, `"Pre-war"`, `"Mid-century"`, `"Late century"`, `"Modern"` |
+| `walk` | Walkability, whole number 0 to 100, from OpenStreetMap places within 800 m (formula in DECISIONS.md). Never called "Walk Score" |
+| `places` | `{ grocery, food, transit, parks, schools }`: counts within 800 m, the inputs to `walk`. No place coordinates are saved |
+| `hill` | `true` only on steep homes (ground slopes 18% or more around the home). Missing means not steep. No heights are saved |
 
-There are no owner or resident names anywhere, ever.
+There are no owner or resident names anywhere, ever. `walk`, `places` and `hill` are worked out from the **exact** point inside the data script only; the exact point is never saved. Code: `scripts/walkability.mjs` (OpenStreetMap via one Overpass request), `scripts/elevation.mjs` (free AWS elevation tiles), `src/lib/walk.js` (label and chips). Raw downloads are cached in `data/raw` (gitignored).
 
 **Saved in `localStorage`** (all keys start with `hs.`; columns are `snake_case` on purpose so they can move to a database later):
 

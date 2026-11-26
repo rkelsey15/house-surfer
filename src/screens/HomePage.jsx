@@ -10,6 +10,7 @@ import { usePhotos } from '../lib/PhotosContext.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
 import { factsLine, typeLine } from '../lib/format.js'
+import { hillNote, walkChips, walkSummary } from '../lib/walk.js'
 import { ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, CheckIcon } from '../components/Icons.jsx'
 import { logEvent } from '../lib/events.js'
 import { advanceFeed } from '../lib/feedSession.js'
@@ -283,6 +284,15 @@ function HomePageFor({ id }) {
           <h1 className="addr" tabIndex={-1} ref={titleRef}>{home.address}</h1>
           <div className="facts">{typeLine(home)}</div>
           <div className="facts">{factsLine(home)}</div>
+          {walkSummary(home) && (
+            <div className="walk">
+              <div className="walk-score"><span className="walk-label">Walkability</span> {walkSummary(home)}</div>
+              <ul className="walk-tags" aria-label="Places within about a 10 minute walk">
+                {walkChips(home.places).map((t) => <li key={t}>{t}</li>)}
+                {hillNote(home) && <li className="hill">{hillNote(home)}</li>}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
 
