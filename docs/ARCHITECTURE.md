@@ -104,6 +104,10 @@ There are no owner or resident names anywhere, ever.
 
 **Sample cover photos you add yourself:** `public/images/homes/covers.json`, `{ "<homeId>": { "file": "<name>.jpg" } }` (starts empty).
 
+## Design kit
+
+For prototypes, mockups and case-study visuals, start from `design/ui-kit/` (use `theme-surfer`). The app has its own styles in `src/styles.css`; don't mix them. Chips and buttons in the app must stay 44 px. The kit has tokens, components, a gallery and a README. Nothing in `src/` imports it, and Vite never bundles `design/` (it only follows imports from `index.html`; `public/` is the only folder copied as is).
+
 ## Rebuilding it elsewhere
 
 If you need this app on another stack (Next.js, native, anything):

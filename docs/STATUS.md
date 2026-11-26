@@ -1,6 +1,6 @@
 # House Surfer: status
 
-Last updated: Nov 23, 2026 · Live: https://rkelsey15.github.io/house-surfer/ · Repo: rkelsey15/house-surfer (`main`)
+Last updated: Nov 25, 2026 · Live: https://rkelsey15.github.io/house-surfer/ · Repo: rkelsey15/house-surfer (`main`)
 
 ## Phase
 **Phase 5: Build, demo-complete push.** House Surfer is now a portfolio **demo**, not a live app (see DECISIONS.md): anyone with the link can play in about 60 seconds, with nothing but the browser. The plan and acceptance criteria are in `docs/02-user-stories.md`; we build one section at a time and pause for review after each.
@@ -59,6 +59,12 @@ Sections 1 to 7 are pushed (Nov 22).
 | Accessibility basics (PRD Accessibility section) | Planned for the UI polish pass |
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
+
+## Design kit (Nov 25, committed, not pushed)
+Ryan's reusable UI kit is in `design/ui-kit/` (tokens, components, JS, gallery) for prototypes, the case study page and the demo video. **Not used by the app**: nothing in `src/` imports it and app styles are untouched. `README.md` explains each piece and `theme-surfer`. CLAUDE.md and `ARCHITECTURE.md` have the "start from the kit, don't mix with `src/styles.css`, 44 px" note.
+- Checked: all 4 files present; build passes and `dist` holds no kit files (Vite only bundles what `index.html` imports); 162 tests pass
+- **Two fixes to the kit while checking:** `gallery.html` had unfilled placeholders (`<!--INLINE_CSS-->`, `<!--INLINE_JS-->`) so it opened unstyled; it now links the three files. And the State toggle and Clickable flow showed every pane at once; added `.kit [hidden]{display:none !important}` to `components.css`
+- **Not done or noticed:** the gallery looks at the system dark/light setting, and in dark mode the page background is the portfolio navy behind a teal-themed card area (the `theme-surfer` class is on `main`, not `body`); fonts load from Google Fonts (needs internet); the clickable flow was seen on its first screen only, not clicked through; the `.seg` state buttons are 36 px, not 44
 
 ## UI polish Part H (Nov 23, pushed)
 Parts A to G kept. Checked at 390 and 1280 px, light and dark (headless Edge): chips are 44 px tall, no sideways scroll; 162 tests pass, build passes.

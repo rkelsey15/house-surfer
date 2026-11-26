@@ -4,6 +4,8 @@ Mobile-first social app for rating houses: swipe through homes, give 1 to 5 star
 
 **Read docs/STATUS.md first.** Then docs/DECISIONS.md and docs/01-prd.md only when the task needs them.
 
+**Design kit:** For prototypes, mockups and case-study visuals, start from `design/ui-kit/` (use `theme-surfer`). The app has its own styles in `src/styles.css`; don't mix them. Chips and buttons in the app must stay 44 px.
+
 ## Stack
 Vite + React (JavaScript) with HashRouter, Leaflet (react-leaflet) with OpenStreetMap. No backend: V1 saves to the browser (localStorage keys start with `hs.`, via `src/lib/storage.js`). Data is King County public records, built by a Node script. Deployed to GitHub Pages by `.github/workflows/deploy.yml` on every push to `main`.
 

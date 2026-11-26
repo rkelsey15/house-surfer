@@ -1,0 +1,69 @@
+<title>UI Kit Gallery</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<style>
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;padding-block:24px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+h1,h2{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.8rem,5vw,2.6rem)}h2{font-size:1.3rem}
+.label{font:500 .74rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{color:var(--muted);max-width:60ch;margin:8px 0 0}
+.top{display:flex;gap:12px;flex-wrap:wrap;align-items:end;justify-content:space-between}
+.sec{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:24px;align-items:start}
+@media(max-width:720px){.sec{grid-template-columns:minmax(0,1fr)}}
+.sec p{margin:6px 0 10px;color:var(--muted);font-size:.95rem}
+code{font:500 .8rem var(--mono);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:2px 6px;overflow-wrap:anywhere}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.map{height:90px;border-radius:var(--r-sm);background:linear-gradient(135deg,var(--line),var(--bg));position:relative}
+.pin{position:absolute;width:14px;height:14px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--hi);top:30px;left:45%}
+</style>
+<main class="kit theme-surfer" id="root">
+<header class="top"><div><div class="label">Portfolio prototype toolkit</div><h1>UI Kit Gallery</h1>
+<p class="lede">Six reusable pieces for prototypes. Copy a piece, change the words, ship. Colors live in one file (tokens.css).</p></div>
+<div class="seg" id="brand"><button aria-pressed="true" data-b="theme-surfer">House Surfer look</button><button aria-pressed="false" data-b="">Portfolio look</button></div></header>
+
+<section class="sec"><div><div class="label">1 of 6</div><h2>Phone frame</h2><p>Wraps any screen so it reads as a real app. Put your screen inside <code>.phone-screen</code>.</p></div>
+<div class="stage"><div class="phone"><div class="phone-screen"><div class="phone-bar"></div>
+<div class="map"><span class="pin"></span></div>
+<div class="card"><h4>412 Alder St</h4><p>3 bd · 2 ba · 1,840 sq ft</p><span class="price">$845,000</span></div></div></div></div></section>
+
+<section class="sec"><div><div class="label">2 of 6</div><h2>Basics: card, button, chip, tabs</h2><p>Everyday parts. Tabs switch panels with no setup: add <code>data-tabs</code>.</p></div>
+<div class="stage">
+<div class="grid2"><div class="card"><h4>Ballard</h4><p>Walk score 91</p></div><div class="card"><h4>Fremont</h4><p>Walk score 88</p></div></div>
+<div class="row"><button class="btn">Save search</button><button class="btn btn-ghost">Share</button><span class="chip on">Under $900k</span><span class="chip">Pet friendly</span><span class="chip good">Price drop</span></div>
+<div data-tabs><div class="tabs" role="tablist"><button class="tab" role="tab" aria-selected="true" aria-controls="p1">Overview</button><button class="tab" role="tab" aria-selected="false" aria-controls="p2">Schools</button><button class="tab" role="tab" aria-selected="false" aria-controls="p3">Commute</button></div>
+<div class="tabpanel" id="p1">Quiet street, updated kitchen, south-facing yard.</div><div class="tabpanel" id="p2" hidden>Three elementary schools within one mile.</div><div class="tabpanel" id="p3" hidden>22 minutes to downtown by bus.</div></div>
+</div></section>
+
+<section class="sec"><div><div class="label">3 of 6</div><h2>Before / after slider</h2><p>Drag to compare old and new. Add <code>data-compare</code> and a range input.</p></div>
+<div class="stage"><div class="cmp" data-compare>
+<div class="cmp-pane cmp-before"><span class="cmp-tag">Before</span><br><br><div class="card"><h4>Listing</h4><p>Long paragraph of text, no price comparison, tiny photo, hard to scan.</p></div></div>
+<div class="cmp-pane cmp-after"><span class="cmp-tag">After</span><br><br><div class="card"><h4>412 Alder St</h4><span class="price">$845,000</span><div class="row"><span class="chip good">Price drop</span><span class="chip">3 bd</span></div></div></div>
+<div class="cmp-line"></div><input type="range" min="0" max="100" value="50" aria-label="Drag to compare before and after"></div></div></section>
+
+<section class="sec"><div><div class="label">4 of 6</div><h2>State toggle</h2><p>Flip one component between empty, loading, error and success. Shows reviewers you designed the edge cases.</p></div>
+<div class="stage"><div data-states><div class="seg"><button data-state="empty">Empty</button><button data-state="loading">Loading</button><button data-state="error">Error</button><button data-state="ok">Success</button></div>
+<div class="state-pane" data-pane="empty"><strong>No saved homes yet</strong><span>Tap the heart on a listing to save it here.</span></div>
+<div class="state-pane" data-pane="loading"><div class="skel"></div><div class="skel" style="width:60%"></div></div>
+<div class="state-pane" data-pane="error"><strong style="color:var(--bad)">Couldn't load listings</strong><span>Check your connection and try again.</span><button class="btn btn-ghost">Retry</button></div>
+<div class="state-pane" data-pane="ok"><div class="card" style="width:100%;text-align:left"><h4>12 homes match</h4><p>Sorted by newest</p></div></div></div></div></section>
+
+<section class="sec"><div><div class="label">5 of 6</div><h2>Clickable flow</h2><p>Tap through 3 to 5 screens inside a phone. Add <code>data-flow</code> and one <code>.flow-screen</code> per step.</p></div>
+<div class="stage"><div class="phone"><div class="phone-screen" data-flow><div class="phone-bar"></div>
+<div class="flow-screen"><h3>Find your next home</h3><p>Search by commute, not just price.</p><button class="btn" data-next>Get started</button></div>
+<div class="flow-screen"><h3>Set your budget</h3><div class="row"><span class="chip on">$600k–$900k</span><span class="chip">$900k+</span></div><button class="btn" data-next>Next</button><button class="btn btn-ghost" data-back>Back</button></div>
+<div class="flow-screen"><h3>You're set</h3><div class="card"><h4>12 homes match</h4></div><button class="btn btn-ghost" data-restart>Start over</button></div>
+<div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div></div></div></section>
+
+<section class="sec"><div><div class="label">6 of 6</div><h2>How to reuse</h2></div>
+<div class="stage"><p style="margin:0">1. Copy the <code>ui-kit/</code> folder into a new prototype.<br>2. Link <code>tokens.css</code>, <code>components.css</code>, <code>components.js</code>.<br>3. Paste a piece from this page. Recolor by editing tokens.css only.</p></div></section>
+</main>
+<script src="components.js"></script>
+<script>
+(function(){var r=document.getElementById('root');document.querySelectorAll('#brand button').forEach(function(b){b.addEventListener('click',function(){
+r.classList.toggle('theme-surfer',!!b.dataset.b);document.querySelectorAll('#brand button').forEach(function(x){x.setAttribute('aria-pressed',x===b)})})})})();
+</script>

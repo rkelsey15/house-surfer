@@ -1,0 +1,53 @@
+/* UI kit components. Uses only tokens.css values. */
+.kit{color:var(--ink);font-family:var(--body)}
+.kit *{box-sizing:border-box}
+
+/* 1 Phone frame: wrap any screen */
+.phone{width:min(100%,320px);aspect-ratio:9/18;border:8px solid var(--ink);border-radius:36px;background:var(--bg);overflow:hidden;position:relative;margin:0 auto}
+.phone-screen{height:100%;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.phone-bar{height:22px;display:flex;justify-content:center}
+.phone-bar::before{content:"";width:70px;height:6px;border-radius:3px;background:var(--line);margin-top:2px}
+
+/* 2 Basics */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.card h4{margin:0;font-family:var(--display);font-size:1rem}
+.card p{margin:0;color:var(--muted);font-size:.9rem}
+.price{font-family:var(--display);font-weight:700;font-size:1.25rem}
+.btn{font:600 .95rem var(--body);min-height:44px;padding:0 18px;border-radius:var(--r-sm);border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.btn-ghost{background:transparent;color:var(--accent)}
+.btn:focus-visible,.tab:focus-visible,.seg button:focus-visible,.cmp input:focus-visible{outline:3px solid var(--hi);outline-offset:2px}
+.chip{display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:99px;border:1px solid var(--line);background:var(--surface);font-size:.8rem;color:var(--muted)}
+.chip.on{border-color:var(--accent);color:var(--accent);font-weight:600}
+.chip.good{color:var(--good);border-color:var(--good)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.tab{min-height:44px;padding:0 14px;background:none;border:0;border-bottom:3px solid transparent;font:600 .9rem var(--body);color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.tabpanel{padding:12px 0;font-size:.95rem}
+
+/* 3 Before / after slider */
+.cmp{position:relative;border-radius:var(--r-md);overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+.cmp-pane{padding:16px;min-height:150px}
+.cmp-after{position:absolute;inset:0;clip-path:inset(0 0 0 var(--pos,50%));background:var(--surface)}
+.cmp-tag{position:absolute;top:8px;font:600 .7rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cmp-before .cmp-tag{left:10px}.cmp-after .cmp-tag{right:10px}
+.cmp-line{position:absolute;top:0;bottom:0;left:var(--pos,50%);width:3px;background:var(--accent);pointer-events:none}
+.cmp input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+
+/* 4 State toggle */
+.seg{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.seg button{min-height:36px;padding:0 12px;border:1px solid var(--line);border-radius:99px;background:var(--surface);color:var(--muted);font:600 .8rem var(--body);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.state-pane{border:1px dashed var(--line);border-radius:var(--r-md);padding:18px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:var(--muted)}
+.skel{height:12px;width:80%;border-radius:6px;background:linear-gradient(90deg,var(--line),var(--surface),var(--line));background-size:200% 100%;animation:sh 1.2s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}}
+
+/* 5 Clickable flow */
+.flow-screen{flex:1;display:flex;flex-direction:column;gap:10px;justify-content:center}
+.flow-screen h3{margin:0;font-family:var(--display)}
+.dots{display:flex;gap:6px;justify-content:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.dot.on{background:var(--accent)}
+
+/* hidden panes must stay hidden even when a class sets display */
+.kit [hidden]{display:none !important}

@@ -1,0 +1,26 @@
+/* UI kit tokens. Change a value here and every component updates.
+   Default look = portfolio site (navy + blue + gold).
+   Add class "theme-surfer" on any wrapper for the House Surfer look (teal + coral). */
+:root{
+  --bg:#F5F6F8; --surface:#FFFFFF; --ink:#14213D; --muted:#55607A; --line:#D9DDE6;
+  --accent:#1F5FAD; --accent-ink:#FFFFFF; --hi:#F2B705; --good:#1E7A4C; --bad:#B3402A;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r-sm:8px; --r-md:14px; --r-lg:28px; --gap:16px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1424; --surface:#161E33; --ink:#E8ECF5; --muted:#A3ADC4; --line:#2A3550;
+  --accent:#7DB0F0; --accent-ink:#0E1424; --good:#5CC98F; --bad:#F08467; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1424; --surface:#161E33; --ink:#E8ECF5; --muted:#A3ADC4; --line:#2A3550;
+  --accent:#7DB0F0; --accent-ink:#0E1424; --good:#5CC98F; --bad:#F08467; color-scheme:dark}
+
+/* House Surfer brand: light values, then dark values */
+.theme-surfer{--bg:#f3f1ec; --surface:#fff; --ink:#1d2321; --muted:#68716d; --line:#e3e0d8;
+  --accent:#0f766e; --accent-ink:#fff; --hi:#e8664a; --good:#0f766e}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .theme-surfer{
+  --bg:#141816; --surface:#1e2422; --ink:#eef1ef; --muted:#9aa5a0; --line:#2f3734;
+  --accent:#2fb5a7; --accent-ink:#0e1514; --hi:#f08467; --good:#2fb5a7}}
+:root[data-theme="dark"] .theme-surfer{--bg:#141816; --surface:#1e2422; --ink:#eef1ef; --muted:#9aa5a0; --line:#2f3734;
+  --accent:#2fb5a7; --accent-ink:#0e1514; --hi:#f08467; --good:#2fb5a7}
