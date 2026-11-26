@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import DemoBanner from './components/DemoBanner.jsx'
+import DemoMenu from './components/DemoMenu.jsx'
 import Logo from './components/Logo.jsx'
 import TabBar from './components/TabBar.jsx'
 import HomePage from './screens/HomePage.jsx'
@@ -38,7 +38,7 @@ export default function App() {
   if (!profile) {
     return (
       <>
-        <DemoBanner />
+        <DemoMenu withGuide={false} />
         <Signup />
       </>
     )
@@ -49,7 +49,7 @@ export default function App() {
       <button className="skip" onClick={() => document.getElementById("main")?.focus()}>
         Skip to content
       </button>
-      <DemoBanner />
+      <DemoMenu />
       <header className="appbar">
         <Logo home />
         {/* Karma so far: ratings and comments. Likes received need other users (V2). */}

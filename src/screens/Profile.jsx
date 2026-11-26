@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import Badge from '../components/Badge.jsx'
-import DemoBar from '../components/DemoBar.jsx'
 import ThemeSwitch from '../components/ThemeSwitch.jsx'
 import { HouseIcon } from '../components/Icons.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
@@ -40,7 +39,6 @@ export default function Profile() {
 
   return (
     <div>
-      <DemoBar />
       <div className="avatar">
         <HouseIcon />
       </div>
@@ -95,7 +93,7 @@ export default function Profile() {
         <div className="profile-col">
           <section className="profile-sec">
             <h2 className="sec-t">Badges</h2>
-            <p className="muted small">Coming soon. No badge unlocks in the demo. Tap one to see how to earn it.</p>
+            <p className="muted small">No badge unlocks in the demo. Tap one to see how to earn it.</p>
             <ul className="badge-grid plist">
               {BADGES.map((b) => (
                 <Badge key={b.id} badge={b} earned={previewEarned} />

@@ -30,6 +30,7 @@ Sections 1 to 7 are pushed (Nov 22).
 | P6 | UI polish: Part F (sample photos on about 1 in 3 single-family homes) | **Done and pushed (Nov 23)** |
 | P7 | UI polish: Part G (badge icons and Surfer Elite, demo bar on Profile, laptop layouts for welcome, home page and map list) plus the house drawing fixes | **Done and pushed (Nov 23)** |
 | P8 | UI polish: Part H (map filter chips, "See all (N)", garage fence gaps, PRD "Map at city scale") | **Done and pushed (Nov 23)** |
+| P9 | UI polish: Part I (equal badge cards, badge colors, one floating Demo button) | **Done, committed, not pushed (Nov 25)** |
 | H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
@@ -59,6 +60,14 @@ Sections 1 to 7 are pushed (Nov 22).
 | Accessibility basics (PRD Accessibility section) | Planned for the UI polish pass |
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
+
+## UI polish Part I (Nov 25, committed, not pushed)
+Parts A to H and walkability kept. Checked at 390 and 1280 px, light and dark (headless Edge): no sideways scroll; 183 tests pass, build passes.
+- **Badge cards:** all six are 148 px tall and the same width in every row (checked by measuring); name and how-to clamp to two lines
+- **Badge colors:** First Steps green, Block Walker blue, Good Neighbor Voice purple, Crowd Favorite coral, Curb Photographer amber, Surfer Elite gold on black. Locked keeps its color, lighter tint, dashed edge, small lock. New tokens `--b-green` etc. in all three theme blocks; contrast tests added (3:1)
+- **"COMING SOON" removed** from each card. The how-to line stays; the note above the grid now reads "No badge unlocks in the demo. Tap one to see how to earn it."
+- **Demo button:** the Profile Demo bar and the top strip are gone. One 44 px round "i" button floats bottom-left on every screen (also on sign-up, with Start over only). Opens a panel with "Try this guide" and "Start over" (still asks first). `aria-expanded`, Esc and outside click close it, focus returns to the button, focus moves into the panel on open (all checked). Code: `DemoMenu.jsx`; `DemoBanner.jsx` and `DemoBar.jsx` deleted
+- **Clash to know about:** on phones the button sits just above the tab bar (clears it), but it does float over the bottom-left corner of page content while scrolling, and the "Saved" bar covers it briefly. A compact alternative would be an "i" button in the app bar. Not done: the Map screen at 390 px was not looked at with the button over it; screen reader pass
 
 ## Walkability and Steep hill (Nov 25, committed, not pushed)
 Free OpenStreetMap places plus free elevation tiles, worked out in the data script. Formula and reasons in DECISIONS.md.
