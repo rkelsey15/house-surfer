@@ -1,6 +1,7 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import Badge from '../components/Badge.jsx'
+import { BadgeMark } from '../components/badgeArt.jsx'
 import ThemeSwitch from '../components/ThemeSwitch.jsx'
 import Avatar from '../components/Avatar.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
@@ -11,7 +12,8 @@ import { MOOD_PHOTOS, PEXELS_LICENSE_URL } from '../lib/credits.js'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { usePhotos } from '../lib/PhotosContext.jsx'
 import { BADGES, myComments, recentActivity } from '../lib/profileLists.js'
-import { earnedBadgeIds, snappedHomeCount } from '../lib/badgeRules.js'
+import { resolveFeatured } from '../lib/featured.js'
+import { useMyBadges } from '../lib/useMyBadges.js'
 import { ActivityRow, CommentRow } from '../components/ProfileRows.jsx'
 
 // Profile shows only the latest few of each list; "See all" opens the full page.
@@ -36,14 +38,21 @@ export default function Profile() {
     [ratings, comments, likes, photos, profile.handle],
   )
   // Four badges are worked out from what is already saved (rules in badgeRules.js).
-  const earnedIds = earnedBadgeIds({ ratingCount: count, commentCount, snappedHomes: snappedHomeCount(photos) })
+  const my = useMyBadges()
+  const [selecting, setSelecting] = useState(false)
   // Design preview only: #/profile?badges=earned shows the earned look. Nothing is earned in the demo.
   const previewEarned = new URLSearchParams(useLocation().search).get('badges') === 'earned'
+  const earnedIds = previewEarned ? BADGES.map((b) => b.id) : my.earnedIds
+  const featured = resolveFeatured(my.saved, earnedIds)
+  const featuredName = BADGES.find((b) => b.id === featured)?.name
 
   return (
     <div>
       <Avatar />
-      <h1 className="handle">{profile.handle}</h1>
+      <div className="handle-row">
+        <h1 className="handle">{profile.handle}</h1>
+        {featured && <BadgeMark id={featured} />}
+      </div>
       <div className="anon">Anonymous · surfing Queen Anne since {monthYear(profile.joined)}</div>
 
       <div className="stats">
@@ -95,9 +104,24 @@ export default function Profile() {
           <section className="profile-sec">
             <h2 className="sec-t">Badges</h2>
             <p className="muted small">Earn badges by using the demo. Two need other surfers (coming in V2).</p>
+            <div className="feat-row">
+              {earnedIds.length === 0 ? (
+                <p className="muted small">Earn a badge to feature it next to your name.</p>
+              ) : (
+                <>
+                  <p className="small" aria-live="polite">
+                    Featured: <b>{featuredName}</b>
+                    {selecting && <span className="muted"> (tap an earned badge to change it)</span>}
+                  </p>
+                  <button className="btn" aria-pressed={selecting} onClick={() => setSelecting((s) => !s)}>
+                    {selecting ? 'Done' : 'Edit featured badge'}
+                  </button>
+                </>
+              )}
+            </div>
             <ul className="badge-grid plist">
               {BADGES.map((b) => (
-                <Badge key={b.id} badge={b} earned={previewEarned || earnedIds.includes(b.id)} />
+                <Badge key={b.id} badge={b} earned={earnedIds.includes(b.id)} featured={featured === b.id} selecting={selecting} onSelect={my.setSaved} />
               ))}
             </ul>
           </section>

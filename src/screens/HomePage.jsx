@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import SurferHandle from '../components/SurferHandle.jsx'
 import { useEffect, useId, useRef } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import HomeCover from '../components/HomeCover.jsx'
@@ -103,7 +104,7 @@ function CommentView({ c, isReply, likeCount, liked, replying, onReply, editing,
   return (
     <div className={`comment${isReply ? ' reply' : ''}`}>
       <div className="who">
-        <b>{c.user}</b>
+        <SurferHandle handle={c.user} sample={sample} />
         {sample && <span className="sample-tag" title="Made-up sample comment">sample</span>}
         {' · '}{timeAgo(c.created_at)}{c.edited_at ? ' · edited' : ''}
       </div>

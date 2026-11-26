@@ -54,7 +54,7 @@ test('six badges, each with its own name, how-to and tap text; Surfer Elite has 
 
 test('every badge has its own icon', async () => {
   const { readFileSync } = await import('node:fs')
-  const src = readFileSync(new URL('../src/components/Badge.jsx', import.meta.url), 'utf8')
+  const src = readFileSync(new URL('../src/components/badgeArt.jsx', import.meta.url), 'utf8')
   const block = src.slice(src.indexOf('const ICONS'), src.indexOf('}', src.indexOf('const ICONS')))
   const icons = [...block.matchAll(/(\w+Icon),/g)].map((m) => m[1])
   assert.equal(new Set(icons).size, BADGES.length, 'six different icons')

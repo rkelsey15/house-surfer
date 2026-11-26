@@ -32,6 +32,7 @@ Sections 1 to 7 are pushed (Nov 22).
 | P8 | UI polish: Part H (map filter chips, "See all (N)", garage fence gaps, PRD "Map at city scale") | **Done and pushed (Nov 23)** |
 | P9 | UI polish: Part I (equal badge cards, badge colors, one floating Demo button, illustration chip, map starts on top homes) | **Done: items 1 to 4 pushed, 5 and 6 committed (Nov 25)** |
 | P10 | UI polish: Part J (four badges unlock, badge toast, profile avatars) | **Done, committed, not pushed (Nov 25)** |
+| P11 | UI polish: Part K (featured badge, surfer card, sample surfers) | **Done (Nov 25)** |
 | H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
@@ -61,6 +62,17 @@ Sections 1 to 7 are pushed (Nov 22).
 | Accessibility basics (PRD Accessibility section) | Planned for the UI polish pass |
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
+
+## UI polish Part K (Nov 25)
+Parts A to J and walkability kept. Checked at 390 and 1280 px, light and dark (headless Edge, seeded data); 218 tests pass, build passes, no sideways scroll.
+- **Featured badge:** Profile, Badges, "Edit featured badge", tap an earned badge (toggle buttons with `aria-pressed`, the choice is read out in a status line). Default Surfer Elite if earned, else the first earned. One value, `hs.featured_badge`; Reset demo clears it. `?badges=earned` on the Profile still previews every badge
+- **Where it shows:** a 24 px colored circle next to the handle in the Profile header and on that person's comments and replies; Surfer Elite is a black "ELITE" pill with a gold edge. Accessible name like "First Steps badge"
+- **Surfer card:** tap any commenter's handle. Popover on laptops, bottom sheet on phones. Shows handle, "Surfing since <month year>", homes rated, comments and all earned badges with short descriptions. No karma, locked badges, progress, activity or ratings. Esc, outside tap and Close dismiss it; focus returns to the handle; 44 px Close button. Checked: sheet role is a modal dialog, the popover is not; your own handle shows your real numbers
+- **Sample surfers:** GableGazer7, CedarSurfer12, PorchLightPete and TurretTom21 have made-up stats and 1 to 3 badges and say "Sample surfer". Other sample commenters show a bare "Sample surfer" card. TurretTom21 shows the ELITE pill
+- **Karma** stays "karma", on your own Profile only (DECISIONS)
+- **Bug fixed on the way:** the small "sample" tag on sample comments had floated loose since Part F (a global CSS rule); now scoped to photos
+- Tests added (`tests/featured.test.js`): default featured badge, one-badge limit, saved choice and Reset, card keys, card never has karma or locked badges, sample surfers follow the badge rules. Two older tests updated for the move of the badge icons to `badgeArt.jsx` and a sheet radius
+- **Not done or not checked:** no screen reader pass on the card or the featured picker; the popover can run off the right edge of a very narrow comment column (not seen at 1280 px); the card does not cover the Profile "My comments" rows (they show no handle); handles on the Top and Map screens do not open a card (only comments do)
 
 ## UI polish Part J (Nov 25, committed, not pushed)
 Parts A to I and walkability kept. Checked at 390 and 1280 px, light and dark (headless Edge, with seeded data: 25 ratings, 10 comments); 210 tests pass, build passes, no sideways scroll.
