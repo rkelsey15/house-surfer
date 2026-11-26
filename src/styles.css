@@ -230,11 +230,11 @@ h2 { font-size: var(--fs-h2); line-height: 1.25; font-weight: 700; }
   background: var(--surface);
   color: var(--ink);
 }
-.btn:hover:not(:disabled) { background: var(--brand-soft); }
+.btn:hover:not(:disabled):not([aria-disabled='true']) { background: var(--brand-soft); }
 .btn .ico { width: 18px; height: 18px; flex: none; }
 /* Primary: the one main action on a screen. */
 .btn.pri { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
-.btn.pri:hover:not(:disabled) { background: var(--brand); filter: brightness(.92); }
+.btn.pri:hover:not(:disabled):not([aria-disabled='true']) { background: var(--brand); filter: brightness(.92); }
 /* Quiet: low-weight actions (Back, Show on map, Dismiss). No box until hovered. */
 .btn.quiet { border-color: transparent; background: none; color: var(--brand); padding: 0 var(--s2); }
 .btn.quiet:hover:not(:disabled) { background: var(--brand-soft); }
@@ -391,7 +391,9 @@ h1.addr { font-size: var(--fs-h1); line-height: 1.2; letter-spacing: -0.02em; }
 .star.on svg { fill: currentColor; }
 .feed-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--s2); margin-top: var(--s4); }
 .feed-actions .btn { padding: 0 var(--s2); }
-.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn:disabled, .btn[aria-disabled='true'] { opacity: .45; cursor: not-allowed; }
+.composer-hint { margin-top: var(--s1); font-size: var(--fs-small); font-weight: 600; color: var(--ink); text-align: right; }
+.composer-hint:empty { display: none; }
 
 /* ---------- Home page ---------- */
 .back { margin: 0 0 var(--s2) calc(var(--s2) * -1); }

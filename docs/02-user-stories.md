@@ -36,7 +36,7 @@ This replaces the "invite up to 10 friends" framing in the PRD for V1. Metrics, 
 
 **Story 2.** As a first-time visitor, I want a short checklist of things to try, so I see the best parts in about a minute.
 
-- **2.1** Given I just picked my handle, when the feed opens, then I see a "Try this" checklist with four items: rate 3 homes, open a home and comment, try writing about a neighbor to see moderation, view the map.
+- **2.1** Given I just picked my handle, when the feed opens, then I see a "Try this" checklist with four items: rate 3 homes, rate a home then comment on it, try writing about a neighbor to see moderation, view the map.
 - **2.2** Given the checklist is showing, when I do one of the items (3 ratings, post a comment, get a comment blocked, open the map), then that item gets a checkmark without a page refresh.
 - **2.3** Given I finish all four items, then the checklist shows a short "You've seen it all" state and can be dismissed.
 - **2.4** Given the checklist is showing, when I dismiss it, then it stays hidden on later visits.
@@ -159,6 +159,23 @@ What gets blocked:
 
 - **8.1** Given a comment is seeded sample data, when it shows on a home page, then it has a small "sample" tag; my own comments never do.
 - **8.2** Given the tag shows, then it is readable in light and dark mode on phone and laptop sizes.
+
+---
+
+## 9. Rate before you comment
+
+**Story 9.** As a visitor, I want every comment to come with a rating, so comments are tied to an opinion about the house and the rating count is never lower than the comment count.
+
+The rule: a home has three actions. **Skip** (no rating, no comment), **Rate it and go on to Next**, and **Rate it and comment**. A new top-level comment needs a star rating on that home. Replies and edits are exceptions.
+
+- **9.1** Given I have not rated a home, when I look at its comment box, then Post comment is unavailable (marked unavailable to screen readers, still reachable by keyboard) and the line "Rate this home to leave a comment." shows under the box, announced as a status message. The stars are on the same screen above it.
+- **9.2** Given I have not rated the home, when I tap Post comment with text typed, then nothing is saved and my text stays.
+- **9.3** Given the line is showing, when I pick a star, then Post comment becomes available right away, the line goes away, and my typed text is still there.
+- **9.4** Given I have already rated the home (now or earlier), when I open it, then the comment box is open with no line and Post works.
+- **9.5** Given I have not rated a home, when I reply to someone else's comment, then Reply works with no rating needed.
+- **9.6** Given I edit or delete my own comment, then no rating is needed.
+- **9.7** Given I am on Surf, then Skip never saves a rating or a comment, Next needs a rating, and Comments opens the home; if I have rated it the comment box is ready to type in, and if I have not it shows 9.1. There is no path that saves a comment without a rating.
+- **9.8** Given the Try this guide, then its wording matches the rule: "Rate 3 homes" and "Rate a home, then comment on it".
 
 ---
 

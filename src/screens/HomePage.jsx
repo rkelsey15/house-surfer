@@ -16,6 +16,7 @@ import { ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, CheckIcon } from '../compon
 import { logEvent } from '../lib/events.js'
 import { advanceFeed } from '../lib/feedSession.js'
 import { moderate } from '../lib/moderation.js'
+import { RATE_FIRST_MESSAGE, canPostComment } from '../lib/commentRule.js'
 import { BLOCK_MESSAGE, WHY_MESSAGE } from '../lib/moderation-words.js'
 import { LAPTOP_QUERY, useMediaQuery } from '../lib/useMediaQuery.js'
 import { isSample, sampleComments, sampleLikes, sampleRating } from '../lib/sampleData.js'
@@ -29,7 +30,9 @@ function timeAgo(iso) {
 }
 
 // A box for writing a new comment, a reply, or an edit.
-function Composer({ initial = '', placeholder, button, onSubmit, onCancel, autoFocus }) {
+// `needsRating` is true for a new top-level comment on a home the visitor has not rated yet: Post is
+// then unavailable and a line says why. (Replies and edits never need a rating.)
+function Composer({ initial = '', placeholder, button, onSubmit, onCancel, autoFocus, needsRating = false }) {
   const [text, setText] = useState(initial)
   const [error, setError] = useState(null)
   const { markDone } = useGuide()
@@ -41,9 +44,10 @@ function Composer({ initial = '', placeholder, button, onSubmit, onCancel, autoF
     if (blockCount) errorRef.current?.focus()
   }, [blockCount])
 
+  const hintId = useId()
   const submit = () => {
     const t = text.trim()
-    if (!t) return
+    if (!t || needsRating) return
     const result = moderate(t)
     if (!result.ok) {
       logEvent('comment_blocked', { reason: result.reason })
@@ -80,8 +84,20 @@ function Composer({ initial = '', placeholder, button, onSubmit, onCancel, autoF
       <div className="composer-bar">
         <span className="muted small">{text.length}/{MAX_COMMENT_LENGTH}</span>
         {onCancel && <button className="btn" onClick={onCancel}>Cancel</button>}
-        <button className="btn pri" onClick={submit} disabled={!text.trim()}>{button}</button>
+        {/* aria-disabled (not disabled) keeps the button reachable, so a screen reader announces
+            "dimmed" and reads the line below. It does nothing until a star is picked. */}
+        <button
+          className="btn pri"
+          onClick={submit}
+          disabled={!needsRating && !text.trim()}
+          aria-disabled={needsRating ? true : undefined}
+          aria-describedby={needsRating ? hintId : undefined}
+        >
+          {button}
+        </button>
       </div>
+      {/* Always on the page, so the line is announced when it appears and when it goes away. */}
+      <p className="composer-hint" id={hintId} role="status">{needsRating ? RATE_FIRST_MESSAGE : ''}</p>
     </div>
   )
 }
@@ -329,7 +345,7 @@ function HomePageFor({ id }) {
       </div>
       <div className="home-comments">
       <h2 className="sec-t">Comments</h2>
-      <Composer placeholder="Say something about the house…" button="Post comment"
+      <Composer placeholder="Say something about the house…" button="Post comment" needsRating={!canPostComment({ stars: mine })} autoFocus={!!location.state?.compose && mine > 0}
         onSubmit={(t) => {
           addComment(id, t)
           setSaved('comment')

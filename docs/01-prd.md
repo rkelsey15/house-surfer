@@ -9,7 +9,7 @@ Nov 15, 2026 · Ryan Kelsey
 |  |  |
 | --- | --- |
 | **Who it's for** | People who browse homes for fun, on the couch or on a walk with friends |
-| **Core loop** | See a house, rate it, read or add a comment, earn karma, come back |
+| **Core loop** | See a house, rate it, read or add a comment (you must rate a home before you comment on it), earn karma, come back |
 | **V1 scope** | Queen Anne, Seattle; about 8,000 houses from King County public records |
 | **V1 audience** | Ryan, then up to 10 invited friends |
 | **One rule** | Talk about the house, never the people who live there |
@@ -90,7 +90,7 @@ Targets are starting guesses for a 10-person test, set to be revisited after wee
 - As a new user, I pick an anonymous handle so I can join without sharing my name.
 - As a Couch Surfer, I swipe through houses one at a time and rate each 1 to 5 stars.
 - As any user, I open a home to see its average rating, photos and threaded comments.
-- As any user, I post a comment, reply to one, like one, and edit or delete my own.
+- As any user, I rate a home and then comment on it, reply to anyone's comment, like one, and edit or delete my own. I cannot leave a new comment on a home I have not rated.
 - As a Sidewalk Scout, I snap a photo of a house I'm walking past; the app matches it by location and I rate it.
 - As any user, I browse homes on a map and filter by top rated or unrated.
 - As any user, I see my karma, homes rated and comments on my profile.
@@ -105,7 +105,8 @@ P0 ships in V1 (the proof of concept), P1 in V2, and P2 in V3 or later. See Mile
 | P0 | Account | Sign in and pick a generated anonymous handle; no real names shown anywhere |
 | P0 | Rating | Rate any house 1 to 5 stars; one rating per user per home, editable |
 | P0 | Rating | Home shows its average and count, Yelp-style ("4.5 from 32 ratings") |
-| P0 | Comments | Post a comment on a home; threaded replies; like a comment |
+| P0 | Comments | **Rate before you comment.** A home has three actions: **Skip** (no rating, no comment), **Rate it and go on to Next**, and **Rate it and comment**. A new top-level comment needs a star rating on that home (already rated counts). Replies to other people's comments and edits to your own comment do not need a rating. Without a rating the Post button is unavailable and the box says "Rate this home to leave a comment." There is no way to comment and skip |
+| P0 | Comments | Threaded replies; like a comment |
 | P0 | Comments | Edit (marked "edited") or delete your own comments |
 | P0 | Feed | One home at a time, rate then next; mobile-first layout |
 | P0 | Map | Map with pins (green 4+ stars, orange hot this week, gray unrated) and a list view on web |
@@ -301,7 +302,7 @@ Level of effort assumes building with Claude: **S** = under one working session,
 | Capability | Effort |
 | --- | --- |
 | Personalized "homes to rate next" from your ratings, comments and badges (V5) | L |
-| Business rules, such as rating 20 homes before you can post comments | S |
+| Stricter business rules, such as rating 20 homes before you can post comments (V1 already requires a rating on the home you comment on) | S |
 | Rename karma to something house-themed, such as "Curb Cred" (decided Nov 25: keep "karma" for now) | S |
 | Spend karma on "super likes" (idea only; karma stays private) | M |
 | Surfer Elite changes color by year ("Elite '27") | S |

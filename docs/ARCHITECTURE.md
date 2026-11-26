@@ -57,7 +57,7 @@ If the picture does not show, your viewer does not render Mermaid. GitHub does (
 | Feature | Screen or component | Logic in `src/lib/` | Tests |
 | --- | --- | --- | --- |
 | **Surf** (feed, rate, skip) | `Surf.jsx`, `StarRating`, `TryThisGuide` | `feedSession.js` (shuffled queue and your place, shared with "Next house"), `GuideContext.jsx` | `feed` |
-| **Home page and comments** | `HomePage.jsx` (threads, composer, "Next house", "Saved" bar) | `CommentsContext.jsx`, `RatingsContext.jsx`, `sampleData.js` | `moderation` |
+| **Home page and comments** | `HomePage.jsx` (threads, composer, "Next house", "Saved" bar) | `CommentsContext.jsx`, `RatingsContext.jsx`, `sampleData.js`, `commentRule.js` (rate before you comment: new top-level comments need a rating on that home; replies and edits do not) | `moderation` |
 | **Moderation** (block comments about people) | the composer in `HomePage.jsx` | `moderation.js`, word lists in `moderation-words.js` | `moderation` |
 | **Map and list** | `MapScreen.jsx` | `homeStats.js`, `rules.js` (gold, hot, week thresholds), `pins.js` (pin shapes, the filter chips and which homes pass them) | `a11y`, `top` |
 | **Snap a house** | `Snap.jsx` | `imageTools.js` (shrink and strip GPS), `nearest.js`, `photoDb.js`, `PhotosContext.jsx` | `snap` |

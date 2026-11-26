@@ -63,7 +63,7 @@ export default function Surf() {
 
         <div className="feed-actions">
           <button className="btn" onClick={next}>Skip</button>
-          <button className="btn" onClick={() => navigate('/home/' + home.id, { state: { source: 'feed' } })}>Comments</button>
+          <button className="btn" onClick={() => navigate('/home/' + home.id, { state: { source: 'feed', compose: mine > 0 } })}>Comments</button>
           <button className="btn pri" onClick={next} disabled={!mine}>Next</button>
         </div>
         <p className="muted center note">{count} home{count === 1 ? '' : 's'} rated so far</p>

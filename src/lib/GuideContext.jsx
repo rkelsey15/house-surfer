@@ -9,7 +9,7 @@ const GuideContext = createContext(null)
 
 export const GUIDE_ITEMS = [
   { key: 'rate3', label: 'Rate 3 homes' },
-  { key: 'comment', label: 'Open a home and comment' },
+  { key: 'comment', label: 'Rate a home, then comment on it' },
   { key: 'moderation', label: 'Try writing about a neighbor to see moderation', hint: 'Try writing "The neighbors are loud"' },
   { key: 'map', label: 'View the map' },
 ]

@@ -33,6 +33,7 @@ Sections 1 to 7 are pushed (Nov 22).
 | P9 | UI polish: Part I (equal badge cards, badge colors, one floating Demo button, illustration chip, map starts on top homes) | **Done and pushed (Nov 25)** |
 | P10 | UI polish: Part J (four badges unlock, badge toast, profile avatars) | **Done and pushed (Nov 25)** |
 | P11 | UI polish: Part K (featured badge, surfer card, sample surfers) | **Done and pushed (Nov 25)** |
+| P12 | Workflow rule: rate a home before you comment on it | **Done, committed, not pushed (Nov 25)** |
 | H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
@@ -62,6 +63,16 @@ Sections 1 to 7 are pushed (Nov 22).
 | Accessibility basics (PRD Accessibility section) | Planned for the UI polish pass |
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
+
+## Rate before you comment (Nov 25, committed, not pushed)
+Workflow rule change. Parts A to K and walkability kept. Checked at 390 and 1280 px, light and dark (headless Edge, fresh visitor); 226 tests pass, build passes, no sideways scroll.
+- **Rule:** a home has three actions: Skip, Rate it and go on to Next, Rate it and comment. A new top-level comment needs a star rating on that home (already rated counts). Replies and edits do not. Code: `src/lib/commentRule.js`, the top composer in `HomePage.jsx`
+- **Box without a rating:** Post is dimmed and `aria-disabled` (still reachable by keyboard), a status line says "Rate this home to leave a comment.", clicking Post saves nothing and keeps the text. Picking a star enables Post at once, text kept. Seen working in all four size and theme combinations
+- **Surf:** Next still needs a rating; Skip saves nothing; Comments opens the home, with the box focused only when the home is rated. No path comments without a rating
+- **Try this guide:** "Open a home and comment" is now "Rate a home, then comment on it"; "Rate 3 homes" already matched
+- **Docs:** PRD (core loop, user story, requirements, future ideas note) and `docs/02-user-stories.md` (new section 9, AC 9.1 to 9.8, AC 2.1 wording)
+- Tests (`tests/commentRule.test.js`): blocked without a rating, allowed after rating, allowed if already rated, replies allowed without one, the line, the wiring (top box only, replies and edits not gated), Surf has no comment-and-skip path, guide wording
+- **Not done or not checked:** the rule is only enforced on screen (V2 needs the database to enforce it); on laptops the stars are in the left column and the box in the right, not directly above it; no screen reader pass on the dimmed Post button; a visitor with old saved comments on unrated homes keeps them
 
 ## UI polish Part K (Nov 25, pushed)
 Parts A to J and walkability kept. Checked at 390 and 1280 px, light and dark (headless Edge, seeded data); 218 tests pass, build passes, no sideways scroll.
