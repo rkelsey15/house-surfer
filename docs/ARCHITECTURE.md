@@ -43,7 +43,7 @@ If the picture does not show, your viewer does not render Mermaid. GitHub does (
 | `src/config.js` | Feature flags (only `showTownhouses`) |
 | `src/styles.css` | All styling. Color, radius, type and spacing **tokens** at the top; light and dark mode |
 | `src/screens/` | One file per screen: `Signup`, `Surf`, `HomePage`, `MapScreen`, `Snap`, `Top`, `Profile`, `ProfileList` (the "See all" pages), `Credits`, `DrawingGallery` (hidden, `#/drawings`), `Stats` |
-| `src/components/` | Shared pieces: `HouseArt` (drawings), `HomeCover` (photo or drawing, with the sample label), `Badge`, `DemoMenu`, `StarRating`, `TabBar`, `Logo`, `TryThisGuide`, `MoodImage`, `Icons`, `ProfileRows` (comment and activity rows) |
+| `src/components/` | Shared pieces: `HouseArt` (drawings), `HomeCover` (photo or drawing, with the sample label), `Badge`, `BadgeToast`, `Avatar`, `DemoMenu`, `StarRating`, `TabBar`, `Logo`, `TryThisGuide`, `MoodImage`, `Icons`, `ProfileRows` (comment and activity rows) |
 | `src/lib/` | Everything that is not a screen. React contexts (`*Context.jsx`) hold saved state; plain `.js` files are pure logic and are the ones with tests |
 | `scripts/build-homes.mjs` | The county data pipeline |
 | `public/` | Served as-is: `data/homes.json`, `images/mood/` (3 stock photos), `images/sample/` (20 sample house photos used as covers), `images/homes/` (your own sample covers, see `docs/STATUS.md`), `favicon.svg` |
@@ -98,9 +98,12 @@ There are no owner or resident names anywhere, ever. `walk`, `places` and `hill`
 | `hs.events` | `[{ name, at, handle, ...fields }]`, newest 2,000 kept. Never holds comment text, photos or location |
 | `hs.theme` | `"system"`, `"light"` or `"dark"` |
 | `hs.guide` | `{ dismissed, done: { rate3, comment, moderation, map } }` |
-| `hs.map_pins` | Which map filter chips are on: an array of `unrated`, `low`, `mid`, `high`, `hot`, `week` (all six by default). Filters both the map and the List |
+| `hs.map_pins` | Which map filter chips are on: an array of `unrated`, `low`, `mid`, `high`, `hot`, `week`. **Default (nothing saved) is `high`, `hot`, `week`** (770 homes) plus any home you rated; "All" turns all six on. Filters both the map and the List |
+| `hs.avatar` | One avatar id (`teal`, `green`, `blue`, `purple`, `coral`, `amber`, `pink`, `slate`); anything else means `teal`. Cleared by Reset demo |
 
-**Event names and their extra fields:** `app_opened {device}`, `home_viewed {home_id, source}` (source is one of feed, map, search, top, snap, other), `rating_submitted {home_id, stars, is_edit}`, `comment_posted {home_id, is_reply}`, `comment_edited {home_id}`, `comment_deleted {comment_id}`, `like_given {comment_id}`, `photo_uploaded {home_id}`, `comment_blocked {reason}`, `theme_changed {theme}`.
+**Event names and their extra fields:** `app_opened {device}`, `home_viewed {home_id, source}` (source is one of feed, map, search, top, snap, other), `rating_submitted {home_id, stars, is_edit}`, `comment_posted {home_id, is_reply}`, `comment_edited {home_id}`, `comment_deleted {comment_id}`, `like_given {comment_id}`, `photo_uploaded {home_id}`, `comment_blocked {reason}`, `theme_changed {theme}`, `badge_earned {badge}` (the badge's name only).
+
+**Badge rules** (`src/lib/badgeRules.js`, nothing saved: worked out from ratings, comments and Snap photos each time): First Steps = 5 rated homes; Block Walker = 25 rated homes; Good Neighbor Voice = 10 comments (mine, not deleted, replies count); Curb Photographer = photos of 5 different homes. Crowd Favorite and Surfer Elite need other surfers (V2) and never unlock in the demo. The first time one unlocks, `BadgeToast` logs `badge_earned` and shows "Badge earned: name"; "first time" is read from the event log, so Reset demo (which clears the log) lets it fire again.
 
 **IndexedDB:** database `house-surfer` (version 1), store `photos`, rows `{ id, home_id, blob, created_at }`, index on `home_id`.
 

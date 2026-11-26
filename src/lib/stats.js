@@ -3,6 +3,7 @@
 export const EVENT_NAMES = [
   'app_opened', 'home_viewed', 'rating_submitted', 'comment_posted', 'comment_edited',
   'comment_deleted', 'like_given', 'photo_uploaded', 'comment_blocked', 'theme_changed',
+  'badge_earned',
 ]
 
 const DAY = 86400000

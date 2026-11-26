@@ -15,8 +15,7 @@ const ICONS = {
 // small lock. Surfer Elite is gold on black whatever the theme.
 const TONES = { 'first-steps': 'green', 'block-walker': 'blue', voice: 'purple', liked: 'coral', photographer: 'amber', elite: 'elite' }
 
-// A badge tile. Tap it to read how to earn it. `earned` is false for every badge in the
-// demo (nothing unlocks yet); the earned look exists so the design is ready for V2.
+// A badge tile. Tap it to read how to earn it. `earned` shows it in full color with no lock.
 export default function Badge({ badge, earned = false }) {
   const [open, setOpen] = useState(false)
   const detailId = useId()
@@ -35,10 +34,10 @@ export default function Badge({ badge, earned = false }) {
         </span>
         <span className="sr-only">{earned ? 'Earned: ' : 'Locked: '}</span>
         <b>{badge.name}</b>
-        <span className="badge-how">{badge.how}</span>
+        <span className="badge-how">{!earned && badge.needsOthers ? 'Needs other surfers (V2)' : badge.how}</span>
       </button>
       <p className="badge-detail" id={detailId} hidden={!open}>
-        <b>How to earn it:</b> {badge.detail}
+        <b>{earned ? 'How you earned it:' : 'How to earn it:'}</b> {badge.detail}
       </p>
     </li>
   )

@@ -30,6 +30,8 @@
   --b-purple: #7e22ce; --b-purple-soft: #eddcfa;
   --b-coral: #b8391f; --b-coral-soft: #fbe3dc;
   --b-amber: #8a5a00; --b-amber-soft: #f6e7c2;
+  --b-pink: #be185d; --b-pink-soft: #fbe0ec;
+  --b-slate: #475569; --b-slate-soft: #e2e8f0;
   /* Corner radius: 8 small things, 12 controls (buttons, inputs, chips), 16 cards. Circles stay round. */
   --r-sm: 8px;
   --r-ctl: 12px;
@@ -76,6 +78,8 @@
     --b-purple: #c4a0f5; --b-purple-soft: #2b1b42;
     --b-coral: #f08467; --b-coral-soft: #3b231d;
     --b-amber: #e8b443; --b-amber-soft: #3a2e10;
+    --b-pink: #f49ac1; --b-pink-soft: #3d1a2b;
+    --b-slate: #a9b8cc; --b-slate-soft: #263140;
     color-scheme: dark;
   }
 }
@@ -106,6 +110,8 @@
   --b-purple: #c4a0f5; --b-purple-soft: #2b1b42;
   --b-coral: #f08467; --b-coral-soft: #3b231d;
   --b-amber: #e8b443; --b-amber-soft: #3a2e10;
+  --b-pink: #f49ac1; --b-pink-soft: #3d1a2b;
+  --b-slate: #a9b8cc; --b-slate-soft: #263140;
   color-scheme: dark;
 }
 
@@ -288,7 +294,20 @@ h1.addr { font-size: var(--fs-h1); line-height: 1.2; letter-spacing: -0.02em; }
 .coming p { margin-top: 8px; }
 
 /* ---------- Profile ---------- */
-.avatar { width: 64px; height: 64px; border-radius: var(--r-card); background: var(--brand-soft); display: grid; place-items: center; margin: 6px auto 0; color: var(--brand); }
+.avatar { width: 64px; height: 64px; border-radius: var(--r-card); background: var(--av-bg, var(--brand-soft)); display: grid; place-items: center; margin: 6px auto 0; color: var(--av-fg, var(--brand)); }
+/* Profile picture picker: tap the picture, pick one of eight colored houses. */
+.avatar-wrap { text-align: center; }
+.avatar-btn { position: relative; border: 0; cursor: pointer; font: inherit; }
+.avatar-edit { position: absolute; right: -6px; bottom: -6px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--surface); border: 1px solid var(--control-line); color: var(--ink); }
+.avatar-edit .ico { width: 13px; height: 13px; }
+.avatar-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s2); margin: var(--s3) auto 0; padding: var(--s3); max-width: 340px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card); }
+.avatar-choices[hidden] { display: none; }
+.avatar-opt { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-ctl); border: 2px solid transparent; background: var(--av-bg); color: var(--av-fg); cursor: pointer; }
+.avatar-opt .ico { width: 26px; height: 26px; }
+.avatar-opt[aria-pressed='true'] { border-color: var(--ink); }
+/* Badge earned toast: under the app bar, centered, never over the tab bar. */
+.toast-region { position: fixed; z-index: 40; left: 0; right: 0; top: calc(60px + env(safe-area-inset-top)); display: flex; justify-content: center; padding: 0 var(--s4); pointer-events: none; }
+.toast { pointer-events: auto; display: flex; align-items: center; gap: var(--s2); padding: var(--s1) var(--s1) var(--s1) var(--s4); background: var(--surface); color: var(--ink); border: 1px solid var(--brand); border-radius: var(--r-card); box-shadow: 0 8px 24px rgba(0, 0, 0, .22); font-weight: 600; }
 .handle { text-align: center; margin: var(--s2) 0 0; }
 .anon { text-align: center; color: var(--muted); font-size: 12px; }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s2); margin-top: var(--s4); }

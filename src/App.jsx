@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import BadgeToast from './components/BadgeToast.jsx'
 import DemoMenu from './components/DemoMenu.jsx'
 import Logo from './components/Logo.jsx'
 import TabBar from './components/TabBar.jsx'
@@ -50,6 +51,7 @@ export default function App() {
         Skip to content
       </button>
       <DemoMenu />
+      <BadgeToast />
       <header className="appbar">
         <Logo home />
         {/* Karma so far: ratings and comments. Likes received need other users (V2). */}

@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import Badge from '../components/Badge.jsx'
 import ThemeSwitch from '../components/ThemeSwitch.jsx'
-import { HouseIcon } from '../components/Icons.jsx'
+import Avatar from '../components/Avatar.jsx'
 import { useProfile } from '../lib/ProfileContext.jsx'
 import { useComments } from '../lib/CommentsContext.jsx'
 import { useRatings } from '../lib/RatingsContext.jsx'
@@ -11,6 +11,7 @@ import { MOOD_PHOTOS, PEXELS_LICENSE_URL } from '../lib/credits.js'
 import { useHomes } from '../lib/HomesContext.jsx'
 import { usePhotos } from '../lib/PhotosContext.jsx'
 import { BADGES, myComments, recentActivity } from '../lib/profileLists.js'
+import { earnedBadgeIds, snappedHomeCount } from '../lib/badgeRules.js'
 import { ActivityRow, CommentRow } from '../components/ProfileRows.jsx'
 
 // Profile shows only the latest few of each list; "See all" opens the full page.
@@ -34,14 +35,14 @@ export default function Profile() {
     () => recentActivity({ ratings, comments, likes, photos, me: profile.handle, limit: Infinity }),
     [ratings, comments, likes, photos, profile.handle],
   )
+  // Four badges are worked out from what is already saved (rules in badgeRules.js).
+  const earnedIds = earnedBadgeIds({ ratingCount: count, commentCount, snappedHomes: snappedHomeCount(photos) })
   // Design preview only: #/profile?badges=earned shows the earned look. Nothing is earned in the demo.
   const previewEarned = new URLSearchParams(useLocation().search).get('badges') === 'earned'
 
   return (
     <div>
-      <div className="avatar">
-        <HouseIcon />
-      </div>
+      <Avatar />
       <h1 className="handle">{profile.handle}</h1>
       <div className="anon">Anonymous · surfing Queen Anne since {monthYear(profile.joined)}</div>
 
@@ -96,7 +97,7 @@ export default function Profile() {
             <p className="muted small">Earn badges by using the demo. Two need other surfers (coming in V2).</p>
             <ul className="badge-grid plist">
               {BADGES.map((b) => (
-                <Badge key={b.id} badge={b} earned={previewEarned} />
+                <Badge key={b.id} badge={b} earned={previewEarned || earnedIds.includes(b.id)} />
               ))}
             </ul>
           </section>

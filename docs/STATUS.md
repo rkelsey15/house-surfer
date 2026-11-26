@@ -30,7 +30,8 @@ Sections 1 to 7 are pushed (Nov 22).
 | P6 | UI polish: Part F (sample photos on about 1 in 3 single-family homes) | **Done and pushed (Nov 23)** |
 | P7 | UI polish: Part G (badge icons and Surfer Elite, demo bar on Profile, laptop layouts for welcome, home page and map list) plus the house drawing fixes | **Done and pushed (Nov 23)** |
 | P8 | UI polish: Part H (map filter chips, "See all (N)", garage fence gaps, PRD "Map at city scale") | **Done and pushed (Nov 23)** |
-| P9 | UI polish: Part I (equal badge cards, badge colors, one floating Demo button) | **Done, committed, not pushed (Nov 25)** |
+| P9 | UI polish: Part I (equal badge cards, badge colors, one floating Demo button, illustration chip, map starts on top homes) | **Done: items 1 to 4 pushed, 5 and 6 committed (Nov 25)** |
+| P10 | UI polish: Part J (four badges unlock, badge toast, profile avatars) | **Done, committed, not pushed (Nov 25)** |
 | H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
@@ -43,7 +44,7 @@ Sections 1 to 7 are pushed (Nov 22).
 - Demo framing: dismissible banner (a floating pill at bottom-left on laptops), "Reset demo" on Profile with a confirm step; clears only `hs.` keys
 - "Try this" checklist on the feed (rate 3, comment, see moderation, view the map); collapses on phones; reopens from Profile
 - Snap a house (`/snap`): take or pick a photo on phones, upload or "Use a sample photo" on laptops; pick the house from the 5 nearest (if location is allowed) or by address search; shrunk to 1200 px on a canvas (drops GPS data); "No people or license plates" confirm; saved in IndexedDB on this device; the first photo becomes the home's cover; extra photos show in a strip; Reset demo deletes them
-- Profile: handle, karma, homes rated and comments; My comments (newest first, opens the home, empty state links to the feed); Recent activity (last 10 actions, "2 min ago"); five locked badges marked "Coming soon"; Settings; a separate Demo section
+- Profile: handle, karma, homes rated and comments; My comments (newest first, opens the home, empty state links to the feed); Recent activity (last 10 actions, "2 min ago"); six badges (four can be earned); avatar picker; Settings
 - Event logging: all 10 events (`report_filed` is not built, no report button) saved in `hs.events` with handle and fields, never comment text, photos or location. `/stats` (link on Profile): north-star ratings per active user for 4 weeks, plus per-event counts for the last 14 days (tap a row for the days), with a "Demo data: one visitor, this device only" note. Reset demo clears the log
 - Top screen (`/top`): Home of the week card (crown), Hot this week (flame, top 5 by recent activity), Top rated (gold rule: 4.5+ with 3+ ratings, best first, 10 at a time with "Show more"). Uses the same stats as the map, so the two always agree. Friendly empty states; every row opens the home page
 - Moderation: `src/lib/moderation.js` with word lists in `src/lib/moderation-words.js`. Blocks comments about people and insults on new comments, replies and edits. Handles spacing ("o w n e r s"), number swaps ("n3ighbors") and repeated letters, keeps "family room" and "neighborhood" working
@@ -61,12 +62,23 @@ Sections 1 to 7 are pushed (Nov 22).
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
 
-## UI polish Part I (Nov 25, committed, not pushed)
+## UI polish Part J (Nov 25, committed, not pushed)
+Parts A to I and walkability kept. Checked at 390 and 1280 px, light and dark (headless Edge, with seeded data: 25 ratings, 10 comments); 210 tests pass, build passes, no sideways scroll.
+- **Four badges unlock**, computed from data on the device (rules in `src/lib/badgeRules.js`, none stored): First Steps 5 rated homes, Block Walker 25, Good Neighbor Voice 10 comments, Curb Photographer 5 different homes snapped. Earned = full color, no lock. Crowd Favorite and Surfer Elite stay locked and say "Needs other surfers (V2)"
+- **Toast:** "Badge earned: name" (live region, one at a time, 6 seconds or Dismiss) the first time a badge unlocks; logs `badge_earned {badge}` (name only). "First time" comes from the event log, so there is no new storage. Seeded test: three unlocked at once, three events, no repeat after reload
+- **Avatars:** tap the profile picture, pick one of 8 colored houses (teal, green, blue, purple, coral, amber, pink, slate), 44 px buttons; saved as one value, `hs.avatar`; Reset demo clears it. Focus returns to the picture; Esc closes. No photo upload
+- Tests added (`tests/badges.test.js`): each unlock rule at its edge, five photos of one house is not five, the two V2 badges never unlock, `badge_earned` is a known event, avatar cleaning and Reset
+- **Not done or not checked:** Curb Photographer was tested by logic only (no seeded photos on screen); the toast can sit over the avatar for a few seconds; no screen reader pass on the toast or the avatar picker; sample ratings do not count toward Block Walker; the `docs/02-user-stories.md` AC 7.1 event list is not updated
+
+## UI polish Part I (Nov 25, items 1 to 4 pushed, 5 and 6 committed)
 Parts A to H and walkability kept. Checked at 390 and 1280 px, light and dark (headless Edge): no sideways scroll; 183 tests pass, build passes.
 - **Badge cards:** all six are 148 px tall and the same width in every row (checked by measuring); name and how-to clamp to two lines
 - **Badge colors:** First Steps green, Block Walker blue, Good Neighbor Voice purple, Crowd Favorite coral, Curb Photographer amber, Surfer Elite gold on black. Locked keeps its color, lighter tint, dashed edge, small lock. New tokens `--b-green` etc. in all three theme blocks; contrast tests added (3:1)
 - **"COMING SOON" removed** from each card. The how-to line stays; the note above the grid now reads "No badge unlocks in the demo. Tap one to see how to earn it."
 - **Demo button:** the Profile Demo bar and the top strip are gone. One 44 px round "i" button floats bottom-left on every screen (also on sign-up, with Start over only). Opens a panel with "Try this guide" and "Start over" (still asks first). `aria-expanded`, Esc and outside click close it, focus returns to the button, focus moves into the panel on open (all checked). Code: `DemoMenu.jsx`; `DemoBanner.jsx` and `DemoBar.jsx` deleted
+- **Note text** is now "Earn badges by using the demo. Two need other surfers (coming in V2)."
+- **Illustration chip (item 5):** every house drawing has "Illustration, not this home" bottom-right ("Illustration" under 150 px tall; charcoal #3e4442 at 88%, white 11.5 px, 8 px corners). Alt text: "Illustration, not this home: a Craftsman-era duplex, built 1924". Real and sample photos unchanged; the butterfly roof is untouched. Contrast tested over white and black
+- **Map default (item 6):** **770 of 5,391 homes** show at first (631 Gold, 163 Hot, 1 Home of the week, some overlap) plus any home you rated, so nothing was added from the lower chips. The line "Showing top homes. Tap All to see every house." sits under the chips while that default is on. A saved choice from an earlier visit is kept
 - **Clash to know about:** on phones the button sits just above the tab bar (clears it), but it does float over the bottom-left corner of page content while scrolling, and the "Saved" bar covers it briefly. A compact alternative would be an "i" button in the app bar. Not done: the Map screen at 390 px was not looked at with the button over it; screen reader pass
 
 ## Walkability and Steep hill (Nov 25, committed, not pushed)

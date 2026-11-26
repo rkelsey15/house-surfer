@@ -55,6 +55,13 @@ export const HouseIcon = () => (
   </svg>
 )
 
+export const PencilIcon = () => (
+  <svg {...base}>
+    <path d="M4 20l1-4L16 5l3 3L8 19z" />
+    <path d="M14 7l3 3" />
+  </svg>
+)
+
 export const CloseIcon = () => (
   <svg {...base}>
     <path d="M6 6l12 12M18 6 6 18" />
