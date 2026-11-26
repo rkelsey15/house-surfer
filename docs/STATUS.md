@@ -210,9 +210,16 @@ Do this when you have the photos. Nothing changes until `covers.json` lists a ph
 4. **Quieter demo note on laptops:** the bottom-left pill covers a little of the list; shrink it to an "i" icon after a few seconds.
 5. **Better blocked-comment moment:** move focus to the message so screen readers read it, and add a short "Why?" line that explains the house rule.
 
+## Product decisions, Nov 25 (docs only, no code)
+Written into `docs/01-prd.md` (requirements table, V2, Future ideas, Risks, Open questions) and `docs/DECISIONS.md`:
+- **Profile pictures:** 8 built-in house avatars in V1 and the demo; about 20 in V2; photo upload is a later V2 item, not planned for the demo (needs image moderation, safe storage, size limits, a report path and a check against the anonymous-handle rule)
+- **Karma:** the name stays for now and karma is private (others never see it). Idea only: spend karma on "super likes"
+- **Badges:** earned automatically; V2 features one badge next to a username and a username card shows earned badges only. Crowd Favorite and Surfer Elite need other users, so they stay locked in the demo. Idea only: Surfer Elite color by year ("Elite '27")
+- **Open question removed:** "What should karma be called?" (also "Which badges make the first set?" is closed: six built). New open question: which image moderation approach, if upload is ever built
+- The featured badge and the username card are not in the demo; nothing in `src/` changed
+
 ## Open questions
-- What should karma be called? (Curb Cred, Bricks, Keys)
-- Which badges make the first set?
+- Which image moderation approach for profile photos, if upload is ever built? (later V2)
 - Which neighborhood is second?
 - Moderation word lists are a starter set. Does Ryan want to review `src/lib/moderation-words.js` before the demo goes out?
 

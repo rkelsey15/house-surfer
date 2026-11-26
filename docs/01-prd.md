@@ -112,18 +112,18 @@ P0 ships in V1 (the proof of concept), P1 in V2, and P2 in V3 or later. See Mile
 | P0 | Search and filter | Search by street; filter top rated, unrated, style tags |
 | P0 | Photos | Upload a sidewalk photo; first approved photo becomes the cover; illustration until then |
 | P0 | Safety | Every comment and photo is screened before posting; report button |
-| P0 | Profile | Handle, karma, homes rated, comments, recent activity |
+| P0 | Profile | Handle, one of 8 built-in house avatars, karma (private), homes rated, comments, recent activity |
 | P0 | Points | Karma: +5 per rating, +10 per comment, +1 per like received (values to tune) |
 | P0 | Theme | Light and dark mode, following the phone's setting with a manual switch |
 | P0 | Metrics | Log every user action as an event (see Metrics) |
 | P1 | Account | Real login for friends (email link, Apple or Google) |
 | P1 | Social | Shared data across users; rate limits |
 | P1 | Safety | Auto-hide at 3 reports; owner review queue |
-| P1 | Points | Badges (Couch Surfer, Sidewalk Scout, Price Whisperer) |
+| P1 | Points | Badges, earned automatically (the demo has six: First Steps, Block Walker, Good Neighbor Voice, Crowd Favorite, Curb Photographer, Surfer Elite). In V2 each person features one earned badge next to their username, and tapping a username shows a card of their earned badges only |
 | P2 | Content | Street View image per home; more neighborhoods |
 | P2 | Homeowner | Claim a home to reply as owner, or hide it |
 | P2 | Discovery | Personalized "homes to rate next" |
-| P2 | Points | Rename karma to something house-themed |
+| P2 | Points | Rename karma to something house-themed (later option; the name stays "karma" for now) |
 
 ### Trust, safety and privacy
 
@@ -280,7 +280,10 @@ Level of effort assumes building with Claude: **S** = under one working session,
 | Claude moderation on every comment and photo | M |
 | Report button, auto-hide at 3 reports, review queue | S |
 | Rate limits | S |
-| First badges | M |
+| Badges earned from real activity: Crowd Favorite (likes from other surfers) and Surfer Elite (needs other real users) unlock here; they stay locked in the demo | M |
+| Feature one earned badge next to your username | S |
+| Username card: tap a username to see that person's earned badges only (no karma, no locked badges) | S |
+| Built-in avatar set grows from 8 to about 20 house avatars | S |
 
 ### V3: security and scale (up to 100)
 
@@ -299,7 +302,10 @@ Level of effort assumes building with Claude: **S** = under one working session,
 | --- | --- |
 | Personalized "homes to rate next" from your ratings, comments and badges (V5) | L |
 | Business rules, such as rating 20 homes before you can post comments | S |
-| Rename karma to something house-themed | S |
+| Rename karma to something house-themed, such as "Curb Cred" (decided Nov 25: keep "karma" for now) | S |
+| Spend karma on "super likes" (idea only; karma stays private) | M |
+| Surfer Elite changes color by year ("Elite '27") | S |
+| Profile photo upload (later V2 item, **not planned for the demo**). Needs: image moderation (faces, inappropriate content), safe storage, size limits, a report path, and a check against the anonymous-handle rule | L |
 | "Hear this house": a spoken summary built from the home's data (see Accessibility) | S |
 | "Guess the price" game on recently sold homes | M |
 | Native iPhone and Android apps | L |
@@ -338,11 +344,16 @@ Not decided: whether clustering runs in the browser (fine up to tens of thousand
 | Photo location matches the wrong house | Let users confirm or pick from nearby homes |
 | County data fields differ from what's planned | Confirm in the data pull before building the UI on it |
 | Brand confusion | "Zillow Surfer" appears only in the case study pitch; the app is House Surfer |
+| Profile photos break the anonymous-handle rule (a face or a name in a photo identifies a person) | Built-in house avatars only in V1 and the demo; photo upload waits for image moderation (faces, inappropriate content), safe storage, size limits and a report path, and is checked against the anonymous-handle rule before it ships |
+| Karma becomes a status contest, or invites gaming | Karma is private: other surfers never see it. Public recognition comes from earned badges instead; a "super likes" spend is an idea only, not committed |
+| Badges that need other people (Crowd Favorite, Surfer Elite) cannot be tested in a one-person demo | They stay locked in the demo and say "Needs other surfers (V2)"; the rules are written down in V2 and get tested once there are real users |
+| A featured badge or username card reveals more than the person intended | The card shows earned badges only: no karma, no locked badges, no activity history; the featured badge is the person's own choice |
 
 **Open questions**
 
-- [ ] What should karma be called? (Ideas: Curb Cred, Bricks, Keys)
-- [ ] Which badges make the first set?
+- [x] ~~What should karma be called?~~ Decided Nov 25: keep "karma" for now (Reddit-familiar); a rename such as "Curb Cred" is a later option
+- [x] ~~Which badges make the first set?~~ Six, built in the demo; four can be earned there, two wait for other users (V2)
+- [ ] Which image moderation approach for profile photos, if upload is ever built? (faces and inappropriate content; later V2, not planned for the demo)
 - [ ] Go to stage 3 (real logins for friends), or stop at the live single-player link?
 - [ ] Which neighborhood is second?
 
