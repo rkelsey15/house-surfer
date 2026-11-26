@@ -567,6 +567,18 @@ export function HouseScene({ design: d, height = 210, label = 'House drawing' })
   )
 }
 
+export const ILLUSTRATION_TAG = 'Illustration, not this home'
+export const ILLUSTRATION_TAG_SHORT = 'Illustration'
+
 export default function HouseArt({ home, height = 210 }) {
-  return <HouseScene design={houseDesign(home)} height={height} label={houseAlt(home)} />
+  // A small chip in the bottom-right corner says this is a drawing, not a photo of the home.
+  // The chip is hidden from screen readers; the drawing's own text says the same thing.
+  return (
+    <div className="cover-wrap">
+      <HouseScene design={houseDesign(home)} height={height} label={houseAlt(home)} />
+      <span className={height >= 150 ? 'illus-tag' : 'illus-tag illus-tag-sm'} aria-hidden="true">
+        {height >= 150 ? ILLUSTRATION_TAG : ILLUSTRATION_TAG_SHORT}
+      </span>
+    </div>
+  )
 }

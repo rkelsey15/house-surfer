@@ -12,9 +12,9 @@ test('stars read "Rate N of 5 stars" and the pick is announced', () => {
 })
 
 test('house drawings get a one-line description from the data', () => {
-  assert.equal(houseAlt({ style: 'Craftsman era', type: 'Duplex', yearBuilt: 1924 }), 'Illustration of a Craftsman-era duplex, built 1924')
-  assert.equal(houseAlt({ style: 'Mid-century', type: 'Single-family', yearBuilt: 1962 }), 'Illustration of a mid-century house, built 1962')
-  assert.equal(houseAlt({ style: 'Weird', type: 'Triplex' }), 'Illustration of a triplex')
+  assert.equal(houseAlt({ style: 'Craftsman era', type: 'Duplex', yearBuilt: 1924 }), 'Illustration, not this home: a Craftsman-era duplex, built 1924')
+  assert.equal(houseAlt({ style: 'Mid-century', type: 'Single-family', yearBuilt: 1962 }), 'Illustration, not this home: a mid-century house, built 1962')
+  assert.equal(houseAlt({ style: 'Weird', type: 'Triplex' }), 'Illustration, not this home: a triplex')
 })
 
 test('every pin kind has its own shape (not only its own color)', () => {

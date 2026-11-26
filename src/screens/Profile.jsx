@@ -93,7 +93,7 @@ export default function Profile() {
         <div className="profile-col">
           <section className="profile-sec">
             <h2 className="sec-t">Badges</h2>
-            <p className="muted small">No badge unlocks in the demo. Tap one to see how to earn it.</p>
+            <p className="muted small">Earn badges by using the demo. Two need other surfers (coming in V2).</p>
             <ul className="badge-grid plist">
               {BADGES.map((b) => (
                 <Badge key={b.id} badge={b} earned={previewEarned} />

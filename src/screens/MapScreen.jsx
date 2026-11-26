@@ -6,12 +6,13 @@ import 'leaflet/dist/leaflet.css'
 import HomeCover from '../components/HomeCover.jsx'
 import { useGuide } from '../lib/GuideContext.jsx'
 import { useHomes } from '../lib/HomesContext.jsx'
+import { useRatings } from '../lib/RatingsContext.jsx'
 import { pinKind, useHomeStats } from '../lib/homeStats.js'
 import { FLAME, CROWN } from '../lib/badges.js'
 import { factsLine, ratingText, typeLine } from '../lib/format.js'
 import { CheckIcon, CloseIcon } from '../components/Icons.jsx'
 import { prefersReducedMotion } from '../lib/a11y.js'
-import { PIN_COLORS, PIN_FILTERS, PIN_FILTER_KEYS, cleanPinFilter, passesPinFilter, pinFilterName, pinShape, pinStyle, shapePoints } from '../lib/pins.js'
+import { DEFAULT_PIN_FILTER, PIN_COLORS, PIN_FILTERS, PIN_FILTER_KEYS, cleanPinFilter, isDefaultPinFilter, passesPinFilter, pinFilterName, pinShape, pinStyle, shapePoints } from '../lib/pins.js'
 import { useStoredState } from '../lib/useStoredState.js'
 
 // A pin that can be a circle, square, diamond or star (see lib/pins.js), drawn on
@@ -189,6 +190,7 @@ function PinIcon({ kind }) {
 function PinFilter({ on, setOn, shown, total }) {
   const toggle = (key) => setOn((cur) => (cur.includes(key) ? cur.filter((k) => k !== key) : PIN_FILTER_KEYS.filter((k) => k === key || cur.includes(k))))
   return (
+    <>
     <div className="chips pinfilter" role="group" aria-label="Pin types to show">
       <span className="muted small chips-count" aria-live="polite">
         Showing {shown.toLocaleString('en-US')} of {total.toLocaleString('en-US')}
@@ -207,6 +209,8 @@ function PinFilter({ on, setOn, shown, total }) {
         )
       })}
     </div>
+    {isDefaultPinFilter(on) && <p className="muted small pinfilter-note">Showing top homes. Tap All to see every house.</p>}
+    </>
   )
 }
 
@@ -215,9 +219,10 @@ export default function MapScreen() {
   useEffect(() => markDone('map'), [markDone])
   const { homes, status, error } = useHomes()
   const stats = useHomeStats(homes)
+  const { ratings } = useRatings()
   const [ui, setUi] = useState(() => session.ui)
   // Which pin types are shown (the chips). Remembered across visits.
-  const [pinOn, setPinOn] = useStoredState('hs.map_pins', PIN_FILTER_KEYS, cleanPinFilter)
+  const [pinOn, setPinOn] = useStoredState('hs.map_pins', DEFAULT_PIN_FILTER, cleanPinFilter)
   const [focus, setFocus] = useState(null)
   const [zoom, setZoom] = useState(session.map.zoom)
   const [shown, setShown] = useState(LIST_PAGE)
@@ -235,7 +240,7 @@ export default function MapScreen() {
       if (!s) return false
       if (q && !h.address.toLowerCase().includes(q)) return false
       if (ui.style !== 'all' && h.style !== ui.style) return false
-      if (!passesPinFilter(pinKind(s), s.hot, pinOn)) return false
+      if (!passesPinFilter(pinKind(s), s.hot, pinOn, !!ratings[h.id])) return false
       if (ui.filter === 'top') return ['high', 'week'].includes(pinKind(s))
       if (ui.filter === 'unrated') return s.count === 0
       return true
@@ -244,7 +249,7 @@ export default function MapScreen() {
     if (ui.filter === 'top') out.sort((a, b) => stats.get(b.id).avg - stats.get(a.id).avg || stats.get(b.id).count - stats.get(a.id).count)
     else out.sort((a, b) => a.address.localeCompare(b.address, 'en', { numeric: true }))
     return out
-  }, [homes, stats, pinOn, ui.query, ui.filter, ui.style])
+  }, [homes, stats, ratings, pinOn, ui.query, ui.filter, ui.style])
 
   // The map re-fits only when the search text changes, not on every rating.
   const filteredRef = useRef(filtered)

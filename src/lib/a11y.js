@@ -17,12 +17,12 @@ const ERA_WORDS = {
 const TYPE_WORDS = { 'Single-family': 'house', Duplex: 'duplex', Triplex: 'triplex', Townhouse: 'townhouse' }
 
 // One line describing a house drawing, built from the data only:
-// "Illustration of a Craftsman-era duplex, built 1924".
+// "Illustration, not this home: a Craftsman-era duplex, built 1924". Matches the chip on the drawing.
 export function houseAlt(home) {
   const era = ERA_WORDS[home.style] ?? ''
   const type = TYPE_WORDS[home.type] ?? 'house'
   const built = home.yearBuilt ? `, built ${home.yearBuilt}` : ''
-  return `Illustration of a ${era ? era + ' ' : ''}${type}${built}`
+  return `Illustration, not this home: a ${era ? era + ' ' : ''}${type}${built}`
 }
 
 // True when the device asks for less motion (WCAG 2.3.3). Safe outside a browser.

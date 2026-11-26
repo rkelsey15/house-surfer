@@ -55,6 +55,15 @@ const PAIRS = [
   ['brand', 'surface', GRAPHIC, 'focus ring on cards'],
 ]
 
+// The illustration chip is charcoal at 88% over the picture. Worst case: over white (lightest) in either theme.
+test('illustration chip: white text on charcoal 88% is at least 4.5:1 even over white', () => {
+  const mix = (c, over, a) => '#' + [0, 2, 4].map((i) => Math.round(parseInt(c.slice(1 + i, 3 + i), 16) * a + parseInt(over.slice(1 + i, 3 + i), 16) * (1 - a)).toString(16).padStart(2, '0')).join('')
+  for (const behind of ['#ffffff', '#000000']) {
+    const bg = mix('#3e4442', behind, 0.88)
+    assert.ok(contrastRatio('#ffffff', bg) >= TEXT, bg)
+  }
+})
+
 for (const [theme, t] of Object.entries(THEMES)) {
   for (const [fg, bg, min, what] of PAIRS) {
     test(`${theme}: ${what} (${fg} on ${bg}) is at least ${min}:1`, () => {

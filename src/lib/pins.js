@@ -29,12 +29,17 @@ export const PIN_FILTERS = [
 ]
 export const PIN_FILTER_KEYS = PIN_FILTERS.map((f) => f.key)
 
-// A home shows when its pin type is on, or when it is hot and "Hot" is on (the flame sits on
-// top of any pin type). `on` is the list of chip keys that are switched on.
-export const passesPinFilter = (kind, hot, on) => on.includes(kind) || (hot && on.includes('hot'))
+// What a first-time visitor sees: only the standout homes. "All" turns everything on.
+export const DEFAULT_PIN_FILTER = ['high', 'hot', 'week']
+export const isDefaultPinFilter = (on) => on.length === DEFAULT_PIN_FILTER.length && DEFAULT_PIN_FILTER.every((k) => on.includes(k))
 
-// Read the saved choice back: keep only known keys; anything unreadable means "all on".
-export const cleanPinFilter = (saved) => (Array.isArray(saved) ? PIN_FILTER_KEYS.filter((k) => saved.includes(k)) : PIN_FILTER_KEYS)
+// A home shows when its pin type is on, or when it is hot and "Hot" is on (the flame sits on
+// top of any pin type). `on` is the list of chip keys that are switched on. A home the visitor
+// has rated (`mine`) also shows, as long as at least one chip is on ("None" really means none).
+export const passesPinFilter = (kind, hot, on, mine = false) => on.includes(kind) || (hot && on.includes('hot')) || (mine && on.length > 0)
+
+// Read the saved choice back: keep only known keys; anything unreadable means the default.
+export const cleanPinFilter = (saved) => (Array.isArray(saved) ? PIN_FILTER_KEYS.filter((k) => saved.includes(k)) : DEFAULT_PIN_FILTER)
 
 // Screen reader name for a chip, like "Gold homes, shown".
 export const pinFilterName = (f, isOn) => `${f.name}, ${isOn ? 'shown' : 'hidden'}`
