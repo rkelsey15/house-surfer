@@ -18,21 +18,21 @@ Sections 1 to 7 are pushed (Nov 22).
 | 2 | "Try this" guide | **Done** |
 | 3 | Moderation (rule-based) | **Done** (44 tests, `npm test`) |
 | 4 | Snap a house, lite | **Built and pushed; iPhone Safari test pending** |
-| 5 | Top screen | **Done** (awaiting review) |
-| 6 | Profile: my comments, activity, locked badges | **Done** (awaiting review) |
-| 7 | Event logging and `/stats` | **Done** (awaiting review) |
+| 5 | Top screen | **Done and pushed** |
+| 6 | Profile: my comments, activity, badges | **Done and pushed** |
+| 7 | Event logging and `/stats` | **Done and pushed** |
 | 8 | "Sample" tag on seeded comments | Looks done already (tag shows in screenshots); confirm at the end |
-| P | UI polish: Part A (accessibility basics + the 5 ideas) | **Done and pushed (Nov 23); awaiting Ryan's review** |
-| P2 | UI polish: Part B (the look) | **Done and pushed (Nov 23); awaiting Ryan's review** |
+| P | UI polish: Part A (accessibility basics + the 5 ideas) | **Done and pushed (Nov 23)** |
+| P2 | UI polish: Part B (the look) | **Done and pushed (Nov 23)** |
 | P3 | UI polish: Part C (less bland, surfing flow) | **Done and pushed (Nov 23)** |
 | P4 | UI polish: Part D (theme setting moves to Profile, Top two columns on laptops) | **Done and pushed (Nov 23)** |
 | P5 | UI polish: Part E (Profile "See all" pages, Profile laptop columns, ComingSoon deleted, welcome photo) | **Done and pushed (Nov 23)** |
 | P6 | UI polish: Part F (sample photos on about 1 in 3 single-family homes) | **Done and pushed (Nov 23)** |
 | P7 | UI polish: Part G (badge icons and Surfer Elite, demo bar on Profile, laptop layouts for welcome, home page and map list) plus the house drawing fixes | **Done and pushed (Nov 23)** |
 | P8 | UI polish: Part H (map filter chips, "See all (N)", garage fence gaps, PRD "Map at city scale") | **Done and pushed (Nov 23)** |
-| P9 | UI polish: Part I (equal badge cards, badge colors, one floating Demo button, illustration chip, map starts on top homes) | **Done: items 1 to 4 pushed, 5 and 6 committed (Nov 25)** |
-| P10 | UI polish: Part J (four badges unlock, badge toast, profile avatars) | **Done, committed, not pushed (Nov 25)** |
-| P11 | UI polish: Part K (featured badge, surfer card, sample surfers) | **Done (Nov 25)** |
+| P9 | UI polish: Part I (equal badge cards, badge colors, one floating Demo button, illustration chip, map starts on top homes) | **Done and pushed (Nov 25)** |
+| P10 | UI polish: Part J (four badges unlock, badge toast, profile avatars) | **Done and pushed (Nov 25)** |
+| P11 | UI polish: Part K (featured badge, surfer card, sample surfers) | **Done and pushed (Nov 25)** |
 | H | Handoff docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, README links, comments in tricky code | **Done and pushed (Nov 23)** |
 | CS | Case study | Next |
 | D1 | PRD Appendix G, "Path to a real launch" | To do, **last** (docs only) |
@@ -63,7 +63,7 @@ Sections 1 to 7 are pushed (Nov 22).
 | Seed photos and a demo video with captions, case study, README polish | To do |
 | V2 (Supabase, logins, Claude moderation) | Paper design only, not built |
 
-## UI polish Part K (Nov 25)
+## UI polish Part K (Nov 25, pushed)
 Parts A to J and walkability kept. Checked at 390 and 1280 px, light and dark (headless Edge, seeded data); 218 tests pass, build passes, no sideways scroll.
 - **Featured badge:** Profile, Badges, "Edit featured badge", tap an earned badge (toggle buttons with `aria-pressed`, the choice is read out in a status line). Default Surfer Elite if earned, else the first earned. One value, `hs.featured_badge`; Reset demo clears it. `?badges=earned` on the Profile still previews every badge
 - **Where it shows:** a 24 px colored circle next to the handle in the Profile header and on that person's comments and replies; Surfer Elite is a black "ELITE" pill with a gold edge. Accessible name like "First Steps badge"
@@ -74,7 +74,7 @@ Parts A to J and walkability kept. Checked at 390 and 1280 px, light and dark (h
 - Tests added (`tests/featured.test.js`): default featured badge, one-badge limit, saved choice and Reset, card keys, card never has karma or locked badges, sample surfers follow the badge rules. Two older tests updated for the move of the badge icons to `badgeArt.jsx` and a sheet radius
 - **Not done or not checked:** no screen reader pass on the card or the featured picker; the popover can run off the right edge of a very narrow comment column (not seen at 1280 px); the card does not cover the Profile "My comments" rows (they show no handle); handles on the Top and Map screens do not open a card (only comments do)
 
-## UI polish Part J (Nov 25, committed, not pushed)
+## UI polish Part J (Nov 25, pushed)
 Parts A to I and walkability kept. Checked at 390 and 1280 px, light and dark (headless Edge, with seeded data: 25 ratings, 10 comments); 210 tests pass, build passes, no sideways scroll.
 - **Four badges unlock**, computed from data on the device (rules in `src/lib/badgeRules.js`, none stored): First Steps 5 rated homes, Block Walker 25, Good Neighbor Voice 10 comments, Curb Photographer 5 different homes snapped. Earned = full color, no lock. Crowd Favorite and Surfer Elite stay locked and say "Needs other surfers (V2)"
 - **Toast:** "Badge earned: name" (live region, one at a time, 6 seconds or Dismiss) the first time a badge unlocks; logs `badge_earned {badge}` (name only). "First time" comes from the event log, so there is no new storage. Seeded test: three unlocked at once, three events, no repeat after reload
@@ -82,7 +82,7 @@ Parts A to I and walkability kept. Checked at 390 and 1280 px, light and dark (h
 - Tests added (`tests/badges.test.js`): each unlock rule at its edge, five photos of one house is not five, the two V2 badges never unlock, `badge_earned` is a known event, avatar cleaning and Reset
 - **Not done or not checked:** Curb Photographer was tested by logic only (no seeded photos on screen); the toast can sit over the avatar for a few seconds; no screen reader pass on the toast or the avatar picker; sample ratings do not count toward Block Walker; the `docs/02-user-stories.md` AC 7.1 event list is not updated
 
-## UI polish Part I (Nov 25, items 1 to 4 pushed, 5 and 6 committed)
+## UI polish Part I (Nov 25, pushed)
 Parts A to H and walkability kept. Checked at 390 and 1280 px, light and dark (headless Edge): no sideways scroll; 183 tests pass, build passes.
 - **Badge cards:** all six are 148 px tall and the same width in every row (checked by measuring); name and how-to clamp to two lines
 - **Badge colors:** First Steps green, Block Walker blue, Good Neighbor Voice purple, Crowd Favorite coral, Curb Photographer amber, Surfer Elite gold on black. Locked keeps its color, lighter tint, dashed edge, small lock. New tokens `--b-green` etc. in all three theme blocks; contrast tests added (3:1)
@@ -93,7 +93,7 @@ Parts A to H and walkability kept. Checked at 390 and 1280 px, light and dark (h
 - **Map default (item 6):** **770 of 5,391 homes** show at first (631 Gold, 163 Hot, 1 Home of the week, some overlap) plus any home you rated, so nothing was added from the lower chips. The line "Showing top homes. Tap All to see every house." sits under the chips while that default is on. A saved choice from an earlier visit is kept
 - **Clash to know about:** on phones the button sits just above the tab bar (clears it), but it does float over the bottom-left corner of page content while scrolling, and the "Saved" bar covers it briefly. A compact alternative would be an "i" button in the app bar. Not done: the Map screen at 390 px was not looked at with the button over it; screen reader pass
 
-## Walkability and Steep hill (Nov 25, committed, not pushed)
+## Walkability and Steep hill (Nov 25, pushed)
 Free OpenStreetMap places plus free elevation tiles, worked out in the data script. Formula and reasons in DECISIONS.md.
 - **Data:** `homes.json` is now 1,908 KB (was 1,378 KB, +530 KB, +38%; gzipped about 205 KB vs 159 KB). Each home has `walk` (0 to 100), `places` (five counts) and, on steep homes only, `hill: true`. No coordinates were added; the exact point is used in memory only. `npm run data` takes about 1 to 2 minutes the first time (one Overpass request, 12 elevation tiles), seconds after that
 - **Scores:** range 24 to 100, median 72. 627 homes 90+, 2,871 at 70 to 89, 1,212 at 50 to 69, 2,008 at 25 to 49, 2 under 25. 1,565 homes (23%) are steep. 1,649 OpenStreetMap places were used
@@ -222,7 +222,7 @@ Do this when you have the photos. Nothing changes until `covers.json` lists a ph
 4. **Quieter demo note on laptops:** the bottom-left pill covers a little of the list; shrink it to an "i" icon after a few seconds.
 5. **Better blocked-comment moment:** move focus to the message so screen readers read it, and add a short "Why?" line that explains the house rule.
 
-## Product decisions, Nov 25 (docs only, no code)
+## Product decisions, Nov 25 (docs only, pushed)
 Written into `docs/01-prd.md` (requirements table, V2, Future ideas, Risks, Open questions) and `docs/DECISIONS.md`:
 - **Profile pictures:** 8 built-in house avatars in V1 and the demo; about 20 in V2; photo upload is a later V2 item, not planned for the demo (needs image moderation, safe storage, size limits, a report path and a check against the anonymous-handle rule)
 - **Karma:** the name stays for now and karma is private (others never see it). Idea only: spend karma on "super likes"
